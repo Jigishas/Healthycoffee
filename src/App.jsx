@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import Navbar from './Components/Navbar/NAvbar'
+import Navbar from './Components/Navbar/Navbar'
 import Body from './Components/BODY/Below_Nav/Body'
 import ImageSlider from './Components/BODY/imageSlider/ImageSlider'
 //import Askme from './Components/ABOUT/Ask me/Askme'
