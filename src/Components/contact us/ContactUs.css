@@ -1,0 +1,67 @@
+.contactus-container {
+  max-width: 700px;
+  margin: 60px auto;
+  background: #f7f3ee;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(80, 60, 40, 0.08);
+  padding: 36px 28px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.contactus-container h1 {
+  color: #6b4f2a;
+  font-size: 2rem;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.contactus-content p {
+  color: #4e3620;
+  font-size: 1.08rem;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.contactus-methods {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.contactus-method {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(80, 60, 40, 0.06);
+  padding: 20px 18px;
+  min-width: 220px;
+  max-width: 320px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.contactus-method h2 {
+  color: #6b4f2a;
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+
+.contactus-link {
+  color: #8d7b5a;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contactus-link:hover {
+  color: #6b4f2a;
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .contactus-methods {
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+  }
+}

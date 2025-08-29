@@ -1,0 +1,24 @@
+.healthy-coffee {
+  border-right: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(80, 60, 40, 0.12);
+}
+h2{
+    color: #ed7723;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-align: center;
+    padding-top: 20px;
+    font-size: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    text-decoration: underline;
+
+}
+p{
+    color: #8b5e3c;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}

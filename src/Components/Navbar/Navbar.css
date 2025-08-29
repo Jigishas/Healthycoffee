@@ -1,0 +1,131 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    scroll-behavior: smooth;
+    list-style: none;
+    text-decoration: none;
+    background-color: white;
+}
+.navbar{
+    position: relative;
+    top: 0; left: 0; right: 0;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    z-index: 1000;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+ul{
+    gap: 40px;
+    align-items: center;
+    cursor: pointer;    
+}
+ul li{
+
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s ease;
+    display: inline-block;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+}
+ul li:hover{
+    color: #ee740a;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ee740a;
+    padding: 5px 10px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+
+
+}
+li{
+    list-style: none;
+    display: inline-block;
+    margin-right: 30px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+
+}
+.logo{
+    height: 10vh;
+    width: 20vh;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+.search{
+    position: relative;
+    width: 300px;
+    height: 40px;
+    padding: 0 15px;
+}
+input{
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #ee740a;
+    border-radius: 30px;
+    padding: 0 50px 0 20px;
+    font-size: 16px;
+    outline: none;
+}
+input::placeholder{
+    color: #999;
+    font-size: 16px;
+}
+.search-icon{
+    position: absolute;
+    height: 4vh;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #ee740a;
+    cursor: pointer;
+}
+@media (max-width: 900px) {
+    .navbar{
+        padding: 15px 20px;
+    }
+    .search{
+        width: 200px;
+        height: 35px;
+    }
+    input{
+        font-size: 14px;
+        padding: 0 40px 0 15px;
+    }
+    input::placeholder{
+        font-size: 14px;
+    }
+    .search-icon{
+        height: 3vh;
+        font-size: 18px;
+        right: 10px;
+    }
+    ul li{
+        font-size: 16px;
+        margin-right: 20px;
+    }
+    ul li :hover{
+        padding: 4px 8px;
+        border-radius: 4px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        transform: translateY(-1px);
+
+    }
+    .logo{
+        height: 8vh;
+        width: 16vh;
+    }
+}
