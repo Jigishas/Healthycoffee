@@ -26,3 +26,7 @@
     "vite": "^7.1.2"
   }
 }
+// package.json for GitHub Pages
+{
+  "homepage": "https://Jigishas.github.io/Heakthycoffee"
+}
