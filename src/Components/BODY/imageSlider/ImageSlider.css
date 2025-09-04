@@ -1,5 +1,7 @@
 .image-slider {
   width: 80%;
+  left:50%;
+  transform: translateX(-50%);
   max-width: 700px;
   margin: 40px 0px;
   overflow: hidden;
@@ -117,4 +119,13 @@ img {
   border-radius: 16px;
   pointer-events: none;
   margin-right: 0;
+}
+.healthy-coffee{
+  top: 0px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  align-items: center;
 }

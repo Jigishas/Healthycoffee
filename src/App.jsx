@@ -8,7 +8,9 @@ import Footer from './Components/footer/Footer'
 import Whatsapp from './Components/BODY/Ask me/Whatsapp'
 import Stat from './Components/BODY/Stat/Stat'
 import Belowimg from './Components/BODY/imageSlider/Belowimg'
-import AboutCoffee from './Components/ABOUT/AboutCoffee'
+//import AboutCoffee from './Components/ABOUT/AboutCoffee'
+import Askme from './Components/BODY/Ask me/Askme'
+import Upload from './Components/BODY/Ask me/upload'
 
 function App() {
   
@@ -18,9 +20,10 @@ function App() {
       <Body />
       <ImageSlider />
       <Belowimg />
-       <Stat />
-       <AboutCoffee />
-       <Whatsapp />
+      <Stat />
+      <Askme />
+      <Upload />
+      <Whatsapp />
       <Footer />
      
     </>

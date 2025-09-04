@@ -145,12 +145,7 @@ const Askme = () => {
         </div>
 
         
-      <h2>Ask me </h2>
-      <input type="file" name="choose file" id="file" className='file'/>
-      <textarea name="Askme" id="Ask me" placeholder='Ask me anything'></textarea>
-      <button type="submit">Submit</button>
     
-
      </div> 
   )
 }

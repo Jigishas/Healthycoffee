@@ -4,9 +4,9 @@ import './Belowimg.css'
 const Belowimg = () => {
   return (
     <div>
-      <div className='healthy-coffee'>
-        <h2>Healthy Coffee</h2>
-        <p>A healthy coffee plant is the foundation of the entire coffee industry. It ensures high yields of quality beans, supports farmer livelihoods, and is more resistant to pests and diseases, which is vital for sustainable production.</p>
+      <div className='healthy-coffee1'>
+        <h2>What we solve</h2>
+        <p>Challenges faced by coffee farmers are addressed efficiently and upto date solution are offfered.  Our product recommendations are acurate and certified by soil exprerts and coffee plant experts. </p>
         </div>
     </div>
   )

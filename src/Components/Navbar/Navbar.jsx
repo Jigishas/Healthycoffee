@@ -8,11 +8,7 @@ function Navbar() {
     <div className='navbar'>
       <img src={logo} alt=""  className='logo' />
 
-      <ul>
-        <li>Home</li>
-        <li>About</li>
-        <li>Contact</li>
-      </ul>
+    
       <div className='search'>
       <input type="text" name="text" id="search"  placeholder='Search'/>
       <img src={search} alt="" className='search-icon' />

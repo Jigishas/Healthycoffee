@@ -44,7 +44,7 @@ const Whatsapp = () => {
 
   return (
     <div className="whatsapp-container" id="askme">
-      <h2>Contact Us</h2>
+      <h2>Ask Us Anything</h2>
       <form onSubmit={handleSubmit}>
         <textarea
           value={message}

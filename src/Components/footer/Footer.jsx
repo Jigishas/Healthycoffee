@@ -40,7 +40,10 @@ const Footer = () => {
             <a href="#terms">Terms of Service</a>
           </div>
         </div>
-        
+        <div className='power'>
+          <p className='paragraph'><h5> Powered by HealthyCoffee</h5></p>
+          
+        </div>
         <div>
           <h3>Subscribe</h3>
           <form className="footer-subscribe" onSubmit={handleSubscribe}>

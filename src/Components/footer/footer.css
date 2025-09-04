@@ -110,3 +110,17 @@
   font-weight: 500;
   letter-spacing: 1px;
 }
+.power{
+    margin-top: 20px;
+    color: #f09c1d;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+.power h5{
+    display: inline;
+    color: #e22121;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
