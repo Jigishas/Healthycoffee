@@ -6,7 +6,7 @@ import time, os
 
 from training_utils import create_balanced_loaders, per_class_accuracy, EarlyStopping
 def main():
-    # ===== Augmentation =====
+    
     train_transform = transforms.Compose([
         transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
         transforms.RandomHorizontalFlip(),
@@ -20,7 +20,7 @@ def main():
         transforms.ToTensor()
     ])
 
-    # ===== Dataset paths =====
+    
     train_dir = "data/leaf_diseases/train"
     val_dir   = "data/leaf_diseases/val"
 
@@ -30,10 +30,10 @@ def main():
     idx_to_class = {v: k for k, v in train_dataset.class_to_idx.items()}
     num_classes = len(idx_to_class)
 
-    # ===== Loaders =====
+    
     train_loader, val_loader = create_balanced_loaders(train_dataset, val_dataset, batch_size=32, num_workers=4)
 
-    # ===== Model =====
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = models.efficientnet_b0(weights="IMAGENET1K_V1")
     model.classifier[1] = nn.Linear(model.classifier[1].in_features, num_classes)
@@ -42,7 +42,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
-    # ===== Training =====
+    
     epochs = 20
     best_acc = 0.0
     save_path = "models/leaf_diseases/efficientnet_disease_balanced.pth"
@@ -54,7 +54,7 @@ def main():
         start_time = time.time()
         print(f"\n===== Epoch {epoch+1}/{epochs} =====")
 
-        # Train
+        
         model.train()
         running_loss = 0.0
         for images, labels in train_loader:
@@ -70,7 +70,7 @@ def main():
 
         epoch_loss = running_loss / len(train_loader.dataset)
 
-        # Validate
+        
         model.eval()
         correct, total = 0, 0
         with torch.no_grad():
@@ -101,4 +101,5 @@ def main():
 if __name__ == "__main__":
     import multiprocessing
     multiprocessing.freeze_support()
+
     main()
