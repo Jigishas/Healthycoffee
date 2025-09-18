@@ -34,7 +34,7 @@ const ImageSlider = () => {
     </div>
     <div className='healthy-coffee'>
         <h2>Healthy Coffee</h2>
-        <p>A healthy coffee plant is the foundation of the entire coffee industry. It ensures high yields of quality beans, supports farmer livelihoods, and is more resistant to pests and diseases, which is vital for sustainable production.</p>
+        <p>A healthy coffee plant is the foundation of the entire coffee industry. It ensures high yields of quality beans, supports farmer livelihoods, and is more resistant to pests and diseases, which is vital for sustainable production. We introduce you to cofee companion, a world leading product that takes care of your coffee from planting to harvesting ensuring you as our Farmer yields more.  From analyzing the nutrients that the plant has to checking spots on the leaves and note the difference, our AI is what the farmer needs to grow a healthy coffee and surge in market produce.</p>
         </div>
 
   </>      

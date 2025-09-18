@@ -23,7 +23,7 @@ const faqs = [
 const AboutCoffee = () => {
   return (
     <div className="about-coffee-container" id="about-coffee">
-      <h1>About Coffee</h1>
+      <h1>About Coffee</h1> 
       <div className="about-coffee-content">
         <section>
           <h2>What is Coffee?</h2>
