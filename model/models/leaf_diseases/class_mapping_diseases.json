@@ -1,0 +1,22 @@
+{
+  "0": {
+    "name": "Cerscospora",
+    "description": "Small brown or grey spots with light centers, often enlarging and merging, caused by Cercospora coffeicola.",
+    "recommendation": "Remove infected leaves, maintain proper spacing, and apply protective fungicides. Ensure good drainage to prevent fungal growth. Use resistant varieties if available. Monitor regularly for early detection."
+  },
+  "1": {
+    "name": "Healthy",
+    "description": "Leaf shows no visible disease symptoms. Uniform green color and normal texture.",
+    "recommendation": "Maintain good agronomic practices, regular monitoring, and balanced fertilization. Continue preventive measures like proper pruning and weed control. Keep soil pH balanced and ensure adequate irrigation."
+  },
+  "2": {
+    "name": "Leaf rust",
+    "description": "Orange or yellow powdery spots, usually on the underside of leaves, caused by Hemileia vastatrix.",
+    "recommendation": "Remove and destroy infected leaves, improve air circulation, and apply recommended fungicides. Plant rust-resistant varieties. Avoid overhead irrigation. Apply fungicides preventively during rainy seasons."
+  },
+  "3": {
+    "name": "Phoma",
+    "description": "Dark brown to black lesions, often with yellow halos, caused by Phoma spp.",
+    "recommendation": "Prune affected branches, avoid overhead irrigation, and apply copper-based fungicides. Improve air circulation around plants. Use clean pruning tools. Apply fungicides as a preventive measure."
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "0": {
+    "name": "Healthy",
+    "description": "Leaf shows no visible nutrient deficiency symptoms.",
+    "recommendation": "Maintain balanced fertilization and good agronomic practices."
+  },
+  "1": {
+    "name": "Boron Deficiency",
+    "description": "Deformed or brittle young leaves, poor flowering and fruit set.",
+    "recommendation": "Apply boron-containing fertilizers such as borax in recommended doses."
+  },
+  "2": {
+    "name": "Calcium Deficiency",
+    "description": "Young leaves are distorted or hook-shaped, with necrotic tips.",
+    "recommendation": "Apply agricultural lime or gypsum to improve calcium levels."
+  },
+  "3": {
+    "name": "Iron Deficiency",
+    "description": "Interveinal chlorosis on young leaves while veins remain green.",
+    "recommendation": "Apply iron chelates or foliar sprays; ensure proper soil pH."
+  },
+  "4": {
+    "name": "Magnesium Deficiency",
+    "description": "Yellowing between veins on older leaves, veins remain green.",
+    "recommendation": "Apply magnesium sulfate (Epsom salts) or dolomitic lime."
+  },
+  "5": {
+    "name": "Manganese Deficiency",
+    "description": "Interveinal chlorosis with small necrotic spots on young leaves.",
+    "recommendation": "Apply manganese sulfate or foliar sprays."
+  },
+  "6": {
+    "name": "Nitrogen Deficiency",
+    "description": "Older leaves turn pale yellow starting from the tip.",
+    "recommendation": "Apply nitrogen-rich fertilizers such as urea or CAN."
+  },
+  "7": {
+    "name": "Phosphorus Deficiency",
+    "description": "Dark green foliage with purplish tinge, stunted growth.",
+    "recommendation": "Apply phosphorus fertilizers such as DAP or rock phosphate."
+  },
+  "8": {
+    "name": "Potassium Deficiency",
+    "description": "Leaf edges turn brown and curl, plants more disease-prone.",
+    "recommendation": "Apply muriate of potash (MOP) or potassium sulfate."
+  }
+}
