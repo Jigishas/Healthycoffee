@@ -319,3 +319,7 @@
  * Running on http://10.2.2.159:8000
 2025-11-01 21:47:46,815 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
 2025-11-01 21:48:10,184 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-11-01 21:48:10,626 - __main__ - INFO - disease prediction: Leaf rust (confidence: 0.5319, time: 0.4407s)
+2025-11-01 21:48:10,731 - __main__ - INFO - deficiency prediction: Calcium Deficiency (confidence: 1.0000, time: 0.1041s)
+2025-11-01 21:48:10,733 - __main__ - INFO - Prediction completed in 0.5468s
+2025-11-01 21:48:10,736 - werkzeug - INFO - 127.0.0.1 - - [01/Nov/2025 21:48:10] "POST /api/upload-image HTTP/1.1" 200 -
