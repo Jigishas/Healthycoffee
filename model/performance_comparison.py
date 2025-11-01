@@ -105,7 +105,7 @@ def run_performance_comparison():
         result = test_optimized_app()
         if result['success']:
             optimized_results.append(result)
-            print(".4f"        else:
+            print(f"   Success: {result['time']:.4f}s")
             print(f"   Failed: {result.get('error', 'Unknown error')}")
 
     # Calculate averages
@@ -117,18 +117,16 @@ def run_performance_comparison():
         print("\n" + "=" * 60)
         print("RESULTS SUMMARY:")
         print("=" * 60)
-        print(".4f"        print(".4f"        print(".2f"        print(f"Improvement: {((avg_original_time - avg_optimized_time) / avg_original_time * 100):.1f}% faster")
+        print(f"Improvement: {((avg_original_time - avg_optimized_time) / avg_original_time * 100):.1f}% faster")
 
         # Additional features
-        print("
-Additional Features in Optimized Version:")
+        print("\nAdditional Features in Optimized Version:")
         print("  ✓ Confidence threshold filtering (0.3)")
         print("  ✓ File size validation (10MB limit)")
         print("  ✓ Enhanced error handling and logging")
         print("  ✓ Processing time tracking")
         print("  ✓ Additional recommendations integration")
         print("  ✓ Input validation and security improvements")
-
     else:
         print("\n❌ Unable to complete performance comparison due to test failures")
 

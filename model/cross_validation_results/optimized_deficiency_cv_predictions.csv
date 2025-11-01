@@ -1,0 +1,2 @@
+true_label,prediction,confidence,inference_time
+healthy,Calcium Deficiency,1.0,0.4923262596130371

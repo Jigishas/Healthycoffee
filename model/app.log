@@ -1,0 +1,321 @@
+2025-10-25 14:50:58,749 - __main__ - ERROR - Failed to load improved disease model: 'ImprovedTorchClassifier' object has no attribute 'device'
+2025-10-25 14:50:58,750 - __main__ - WARNING - Failed to load improved disease model: 'ImprovedTorchClassifier' object has no attribute 'device'
+2025-10-25 14:50:59,720 - __main__ - ERROR - Failed to load improved deficiency model: 'ImprovedTorchClassifier' object has no attribute 'device'
+2025-10-25 14:50:59,720 - __main__ - WARNING - Failed to load improved deficiency model: 'ImprovedTorchClassifier' object has no attribute 'device'
+2025-10-25 14:51:00,792 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-25 14:51:00,797 - __main__ - INFO - Starting combined Flask server...
+2025-10-25 14:51:00,851 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.87:8000
+2025-10-25 14:51:00,851 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 14:51:13,588 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-25 14:51:13,760 - __main__ - INFO - Prediction completed in 0.1706s
+2025-10-25 14:51:13,762 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 14:51:13] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 14:51:24,069 - __main__ - INFO - File saved: uploads\leaf_hh.jpeg
+2025-10-25 14:51:24,338 - __main__ - INFO - Prediction completed in 0.2661s
+2025-10-25 14:51:24,340 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 14:51:24] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 14:51:27,841 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 14:51:27] "GET /health HTTP/1.1" 200 -
+2025-10-25 14:51:36,580 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 14:51:36] "GET /api/model-info HTTP/1.1" 200 -
+2025-10-25 14:51:45,163 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 14:51:45] "GET /api/performance HTTP/1.1" 200 -
+2025-10-25 14:51:53,901 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 14:51:54,087 - __main__ - INFO - Prediction completed in 0.1842s
+2025-10-25 14:51:54,089 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 14:51:54] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 14:51:56,812 - __main__ - INFO - File saved: uploads\image6.jpeg
+2025-10-25 14:51:57,593 - __main__ - INFO - Prediction completed in 0.7533s
+2025-10-25 14:51:57,596 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 14:51:57] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:05:25,522 - __main__ - ERROR - Failed to load improved disease model: 'ImprovedTorchClassifier' object has no attribute 'device'
+2025-10-25 15:05:25,523 - __main__ - WARNING - Failed to load improved disease model: 'ImprovedTorchClassifier' object has no attribute 'device'
+2025-10-25 15:05:26,442 - __main__ - ERROR - Failed to load improved deficiency model: 'ImprovedTorchClassifier' object has no attribute 'device'
+2025-10-25 15:05:26,442 - __main__ - WARNING - Failed to load improved deficiency model: 'ImprovedTorchClassifier' object has no attribute 'device'
+2025-10-25 15:05:26,989 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-25 15:05:26,994 - __main__ - INFO - Starting combined Flask server...
+2025-10-25 15:05:27,054 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.87:8000
+2025-10-25 15:05:27,055 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 15:06:02,468 - __main__ - INFO - File saved: uploads\test.jpg
+2025-10-25 15:06:02,751 - __main__ - INFO - Prediction completed in 0.2790s
+2025-10-25 15:06:02,753 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:06:02] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:06:29,266 - __main__ - INFO - File saved: uploads\leaf_r3.jpeg
+2025-10-25 15:06:29,504 - __main__ - INFO - Prediction completed in 0.2340s
+2025-10-25 15:06:29,507 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:06:29] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:06:53,474 - __main__ - INFO - File saved: uploads\leaf_r4.jpeg
+2025-10-25 15:06:53,731 - __main__ - INFO - Prediction completed in 0.2544s
+2025-10-25 15:06:53,733 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:06:53] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:07:26,286 - __main__ - INFO - File saved: uploads\leaf_r.jpeg
+2025-10-25 15:07:26,485 - __main__ - INFO - Prediction completed in 0.1968s
+2025-10-25 15:07:26,487 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:07:26] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:07:51,453 - __main__ - INFO - File saved: uploads\image6.jpeg
+2025-10-25 15:07:51,674 - __main__ - INFO - Prediction completed in 0.2183s
+2025-10-25 15:07:51,676 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:07:51] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:08:10,004 - __main__ - INFO - File saved: uploads\image5.jpeg
+2025-10-25 15:08:10,285 - __main__ - INFO - Prediction completed in 0.2754s
+2025-10-25 15:08:10,287 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:08:10] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:08:24,625 - __main__ - INFO - File saved: uploads\leaf_hh.jpeg
+2025-10-25 15:08:24,845 - __main__ - INFO - Prediction completed in 0.2173s
+2025-10-25 15:08:24,847 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:08:24] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:08:37,219 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-25 15:08:37,590 - __main__ - INFO - Prediction completed in 0.3668s
+2025-10-25 15:08:37,591 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:08:37] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:15:54,558 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-25 15:15:54,757 - __main__ - INFO - Prediction completed in 0.1951s
+2025-10-25 15:15:54,759 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:15:54] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:19:56,894 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:19:56,895 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:19:57,881 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:19:57,882 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:19:58,488 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-25 15:19:58,493 - __main__ - INFO - Starting combined Flask server...
+2025-10-25 15:19:58,609 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.87:8000
+2025-10-25 15:19:58,609 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 15:20:11,271 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-25 15:20:11,579 - __main__ - INFO - Prediction completed in 0.3061s
+2025-10-25 15:20:11,582 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:20:11] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:23:29,173 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:23:29,174 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:23:30,017 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:23:30,018 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:23:30,483 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-25 15:23:30,488 - __main__ - INFO - Starting combined Flask server...
+2025-10-25 15:23:30,541 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.87:8000
+2025-10-25 15:23:30,542 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 15:23:58,639 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-25 15:23:58,964 - __main__ - INFO - Prediction completed in 0.3227s
+2025-10-25 15:23:58,967 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:23:58] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:31:41,028 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:31:41,029 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:31:41,991 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:31:41,992 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:31:42,533 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-25 15:31:42,538 - __main__ - INFO - Starting combined Flask server...
+2025-10-25 15:31:42,602 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.87:8000
+2025-10-25 15:31:42,603 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 15:32:19,185 - __main__ - INFO - File saved: uploads\leaf_hh.jpeg
+2025-10-25 15:32:19,523 - __main__ - INFO - Prediction completed in 0.3338s
+2025-10-25 15:32:19,528 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:32:19] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:50:56,633 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:50:56,634 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:50:58,144 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:50:58,145 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:50:59,159 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-25 15:50:59,167 - __main__ - INFO - Starting combined Flask server...
+2025-10-25 15:50:59,280 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.87:8000
+2025-10-25 15:50:59,281 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 15:51:05,411 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-25 15:51:05,708 - __main__ - INFO - Prediction completed in 0.2949s
+2025-10-25 15:51:05,711 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:51:05] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:51:26,747 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 15:51:26,921 - __main__ - INFO - Prediction completed in 0.1731s
+2025-10-25 15:51:26,923 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:51:26] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:51:42,755 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 15:51:42,972 - __main__ - INFO - Prediction completed in 0.2160s
+2025-10-25 15:51:42,974 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:51:42] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:55:51,885 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-25 15:55:52,109 - __main__ - INFO - Prediction completed in 0.2213s
+2025-10-25 15:55:52,110 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:55:52] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:59:15,573 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 15:59:15,828 - __main__ - INFO - Prediction completed in 0.2532s
+2025-10-25 15:59:15,830 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:59:15] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:59:18,949 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 15:59:19,242 - __main__ - INFO - Prediction completed in 0.2869s
+2025-10-25 15:59:19,244 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:59:19] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:59:22,348 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 15:59:22,717 - __main__ - INFO - Prediction completed in 0.3248s
+2025-10-25 15:59:22,725 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:59:22] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:59:25,809 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 15:59:26,088 - __main__ - INFO - Prediction completed in 0.2769s
+2025-10-25 15:59:26,091 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:59:26] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:59:29,165 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 15:59:29,427 - __main__ - INFO - Prediction completed in 0.2602s
+2025-10-25 15:59:29,431 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:59:29] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:59:32,575 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 15:59:32,796 - __main__ - INFO - Prediction completed in 0.2197s
+2025-10-25 15:59:32,798 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 15:59:32] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 15:59:37,154 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:59:37,155 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-25 15:59:38,646 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:59:38,646 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-25 15:59:39,436 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-25 15:59:39,443 - __main__ - INFO - Starting combined Flask server...
+2025-10-25 15:59:39,512 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.87:8000
+2025-10-25 15:59:39,512 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-25 16:00:02,316 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:00:02] "GET /health HTTP/1.1" 200 -
+2025-10-25 16:00:10,924 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:00:10] "GET /api/model-info HTTP/1.1" 200 -
+2025-10-25 16:00:40,507 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-25 16:00:40,710 - __main__ - INFO - Prediction completed in 0.2009s
+2025-10-25 16:00:40,712 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:00:40] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:13:40,197 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-25 16:13:40,472 - __main__ - INFO - Prediction completed in 0.2723s
+2025-10-25 16:13:40,475 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:13:40] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:13:54,493 - __main__ - INFO - File saved: uploads\leaf_r3.jpeg
+2025-10-25 16:13:54,750 - __main__ - INFO - Prediction completed in 0.2556s
+2025-10-25 16:13:54,752 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:13:54] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:14:19,255 - __main__ - INFO - File saved: uploads\images_1.jpeg
+2025-10-25 16:14:19,446 - __main__ - INFO - Prediction completed in 0.1895s
+2025-10-25 16:14:19,448 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:14:19] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:14:39,636 - __main__ - INFO - File saved: uploads\images.jpeg
+2025-10-25 16:14:39,892 - __main__ - INFO - Prediction completed in 0.2538s
+2025-10-25 16:14:39,894 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:14:39] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:14:57,479 - __main__ - INFO - File saved: uploads\leaf_r.jpeg
+2025-10-25 16:14:57,686 - __main__ - INFO - Prediction completed in 0.2044s
+2025-10-25 16:14:57,688 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:14:57] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:15:15,750 - __main__ - INFO - File saved: uploads\leaf_r2.jpeg
+2025-10-25 16:15:16,027 - __main__ - INFO - Prediction completed in 0.2743s
+2025-10-25 16:15:16,031 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:15:16] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:15:30,234 - __main__ - INFO - File saved: uploads\leaf_r3.jpeg
+2025-10-25 16:15:30,501 - __main__ - INFO - Prediction completed in 0.2643s
+2025-10-25 16:15:30,504 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:15:30] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:15:41,490 - __main__ - INFO - File saved: uploads\leaf_r4.jpeg
+2025-10-25 16:15:41,688 - __main__ - INFO - Prediction completed in 0.1964s
+2025-10-25 16:15:41,690 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:15:41] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-25 16:16:07,357 - __main__ - INFO - File saved: uploads\image6.jpeg
+2025-10-25 16:16:07,583 - __main__ - INFO - Prediction completed in 0.2241s
+2025-10-25 16:16:07,586 - werkzeug - INFO - 127.0.0.1 - - [25/Oct/2025 16:16:07] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 17:13:29,352 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 17:13:29,363 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 17:13:31,030 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 17:13:31,035 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 17:13:32,170 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-28 17:13:32,178 - __main__ - INFO - Starting combined Flask server...
+2025-10-28 17:13:33,618 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.119:8000
+2025-10-28 17:13:33,621 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 17:13:48,470 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-28 17:13:49,163 - __main__ - INFO - Prediction completed in 0.6910s
+2025-10-28 17:13:49,168 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:13:49] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 17:53:24,660 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 17:53:24,665 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 17:53:26,990 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 17:53:26,991 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 17:53:28,149 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-28 17:53:28,157 - __main__ - INFO - Starting combined Flask server...
+2025-10-28 17:53:29,745 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.119:8000
+2025-10-28 17:53:29,746 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 17:53:44,789 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:53:44] "GET /health HTTP/1.1" 200 -
+2025-10-28 17:53:52,466 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:53:52] "GET /api/model-info HTTP/1.1" 200 -
+2025-10-28 17:57:20,387 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-28 17:57:21,052 - __main__ - INFO - Prediction completed in 0.6535s
+2025-10-28 17:57:21,061 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:57:21] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 17:57:24,247 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-28 17:57:24,777 - __main__ - INFO - Prediction completed in 0.5230s
+2025-10-28 17:57:24,836 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:57:24] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 17:57:27,986 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-28 17:57:28,230 - __main__ - INFO - Prediction completed in 0.2400s
+2025-10-28 17:57:28,232 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:57:28] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 17:57:31,317 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-28 17:57:31,514 - __main__ - INFO - Prediction completed in 0.1959s
+2025-10-28 17:57:31,520 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:57:31] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 17:57:34,605 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-28 17:57:34,829 - __main__ - INFO - Prediction completed in 0.2216s
+2025-10-28 17:57:34,831 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:57:34] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 17:57:37,907 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-10-28 17:57:38,193 - __main__ - INFO - Prediction completed in 0.2844s
+2025-10-28 17:57:38,198 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:57:38] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 17:58:23,591 - __main__ - INFO - File saved: uploads\test_sample.jpg
+2025-10-28 17:58:23,794 - __main__ - INFO - Prediction completed in 0.2010s
+2025-10-28 17:58:23,854 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 17:58:23] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 18:25:09,018 - __main__ - INFO - File saved: uploads\test_sample.jpg
+2025-10-28 18:25:09,767 - __main__ - INFO - Prediction completed in 0.7364s
+2025-10-28 18:25:09,776 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 18:25:09] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 18:36:36,678 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 18:36:36] "GET /health HTTP/1.1" 200 -
+2025-10-28 18:36:46,796 - __main__ - INFO - File saved: uploads\test_sample.jpg
+2025-10-28 18:36:47,110 - __main__ - INFO - Prediction completed in 0.3096s
+2025-10-28 18:36:47,114 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 18:36:47] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 23:42:03,181 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 23:42:03,182 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 23:42:04,724 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 23:42:04,725 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 23:42:05,438 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-28 23:42:05,481 - __main__ - INFO - Starting combined Flask server...
+2025-10-28 23:42:05,597 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.6.169:8000
+2025-10-28 23:42:05,598 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 23:43:15,653 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 23:43:15,654 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 23:43:17,332 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 23:43:17,333 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 23:43:18,248 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-28 23:43:18,254 - __main__ - INFO - Starting combined Flask server...
+2025-10-28 23:43:18,309 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.6.169:8000
+2025-10-28 23:43:18,310 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 23:43:53,588 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-28 23:43:54,268 - __main__ - INFO - Prediction completed in 0.6756s
+2025-10-28 23:43:54,271 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 23:43:54] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 23:44:35,575 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 23:44:35,575 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-10-28 23:44:37,273 - __main__ - ERROR - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 23:44:37,274 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'model_improvement\\fine_tuning\\improved_deficiency_model.pth'
+2025-10-28 23:44:38,222 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-10-28 23:44:38,226 - __main__ - INFO - Starting combined Flask server...
+2025-10-28 23:44:38,305 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.6.169:8000
+2025-10-28 23:44:38,306 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 23:45:00,632 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 23:45:00] "GET /health HTTP/1.1" 200 -
+2025-10-28 23:46:00,038 - __main__ - INFO - Successfully loaded improved disease model weights
+2025-10-28 23:46:01,338 - __main__ - INFO - Successfully loaded improved deficiency model weights
+2025-10-28 23:46:01,346 - __main__ - INFO - Models loaded - Disease: improved, Deficiency: improved
+2025-10-28 23:46:01,360 - __main__ - INFO - Starting combined Flask server...
+2025-10-28 23:46:01,440 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.6.169:8000
+2025-10-28 23:46:01,443 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 23:46:13,197 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 23:46:13] "GET /health HTTP/1.1" 200 -
+2025-10-28 23:47:04,062 - __main__ - INFO - File saved: uploads\leaf_hh.jpeg
+2025-10-28 23:47:04,328 - __main__ - INFO - disease prediction: Leaf rust (confidence: 0.4108, time: 0.2636s)
+2025-10-28 23:47:04,454 - __main__ - INFO - deficiency prediction: Phosphorus Deficiency (confidence: 1.0000, time: 0.1256s)
+2025-10-28 23:47:04,456 - __main__ - INFO - Prediction completed in 0.3906s
+2025-10-28 23:47:04,458 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 23:47:04] "POST /api/upload-image HTTP/1.1" 200 -
+2025-10-28 23:51:51,982 - __main__ - INFO - Successfully loaded improved disease model weights
+2025-10-28 23:51:52,666 - __main__ - INFO - Successfully loaded improved deficiency model weights
+2025-10-28 23:51:52,668 - __main__ - INFO - Models loaded - Disease: improved, Deficiency: improved
+2025-10-28 23:51:52,673 - __main__ - INFO - Starting combined Flask server...
+2025-10-28 23:51:52,737 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.6.169:8000
+2025-10-28 23:51:52,738 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-28 23:52:03,340 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-10-28 23:52:03,549 - __main__ - INFO - disease prediction: Leaf rust (confidence: 0.5319, time: 0.2084s)
+2025-10-28 23:52:03,628 - __main__ - INFO - deficiency prediction: Calcium Deficiency (confidence: 1.0000, time: 0.0786s)
+2025-10-28 23:52:03,630 - __main__ - INFO - Prediction completed in 0.2882s
+2025-10-28 23:52:03,632 - werkzeug - INFO - 127.0.0.1 - - [28/Oct/2025 23:52:03] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-01 21:47:44,748 - __main__ - INFO - Successfully loaded improved disease model weights
+2025-11-01 21:47:45,452 - __main__ - INFO - Successfully loaded improved deficiency model weights
+2025-11-01 21:47:45,453 - __main__ - INFO - Models loaded - Disease: improved, Deficiency: improved
+2025-11-01 21:47:45,457 - __main__ - INFO - Starting combined Flask server...
+2025-11-01 21:47:46,814 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.159:8000
+2025-11-01 21:47:46,815 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-01 21:48:10,184 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg

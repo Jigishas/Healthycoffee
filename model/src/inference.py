@@ -6,12 +6,17 @@ from pathlib import Path
 
 VAL_TRANSFORM = transforms.Compose([
     transforms.Resize((224, 224)),
-    transforms.ToTensor()
+    transforms.ToTensor(),
+    # Use ImageNet normalization - models were trained/initialized on ImageNet
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
 class TorchClassifier:
     def __init__(self, model_path, classes_path):
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model, self.classes = self.load_model_and_mapping(model_path, classes_path)
+        self.model.to(self.device)
+        self.model.eval()
 
     def load_model_and_mapping(self, weights_path, mapping_path):
         with open(mapping_path, "r", encoding="utf-8") as f:
@@ -19,14 +24,32 @@ class TorchClassifier:
         num_classes = len(mapping)
         model = models.efficientnet_b0(weights="IMAGENET1K_V1")
         model.classifier[1] = torch.nn.Linear(model.classifier[1].in_features, num_classes)
+        # Load state dict and handle common DataParallel 'module.' prefixes
         state_dict = torch.load(weights_path, map_location="cpu")
-        model.load_state_dict(state_dict)
+        # If the checkpoint contains a 'state_dict' key (common in some saves), use it
+        if isinstance(state_dict, dict) and 'state_dict' in state_dict:
+            state_dict = state_dict['state_dict']
+
+        # Strip 'module.' prefix if present
+        new_state = {}
+        for k, v in state_dict.items():
+            new_key = k
+            if k.startswith('module.'):
+                new_key = k[len('module.'):]
+            new_state[new_key] = v
+
+        try:
+            model.load_state_dict(new_state)
+        except Exception:
+            # fallback: attempt non-strict load to allow minor mismatches
+            model.load_state_dict(new_state, strict=False)
+
         model.eval()
         return model, mapping
 
     def predict(self, image_path):
         image = Image.open(image_path).convert("RGB")
-        input_tensor = VAL_TRANSFORM(image).unsqueeze(0)
+        input_tensor = VAL_TRANSFORM(image).unsqueeze(0).to(self.device)
         with torch.no_grad():
             outputs = self.model(input_tensor)
             probs = torch.nn.functional.softmax(outputs[0], dim=0)
@@ -35,6 +58,7 @@ class TorchClassifier:
         info = self.classes.get(idx, {"name": idx})
         return {
             "class": info.get("name", idx),
+            "class_index": int(predicted_idx.item()),
             "confidence": round(confidence.item(), 4),
             "description": info.get("description", ""),
             "recommendation": info.get("recommendation", "")
@@ -62,6 +86,7 @@ def run_inference(model, mapping, image_path, model_name=""):
     info = mapping.get(idx, {"name": idx})
     return {
         "model": model_name,
+        "class_index": int(predicted_idx.item()),
         "class": info.get("name", idx),
         "confidence": round(confidence.item(), 4),
         "description": info.get("description", ""),
