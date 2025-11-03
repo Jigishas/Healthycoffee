@@ -1,47 +1,47 @@
 {
   "0": {
     "name": "Healthy",
-    "description": "Leaf shows no visible nutrient deficiency symptoms.",
-    "recommendation": "Maintain balanced fertilization and good agronomic practices."
+    "description": "Leaf shows normal green coloration with no visible signs of nutrient stress.",
+    "recommendation": "Maintain current agronomic practices, ensure balanced fertilization and good field hygiene."
   },
   "1": {
-    "name": "Boron Deficiency",
-    "description": "Deformed or brittle young leaves, poor flowering and fruit set.",
-    "recommendation": "Apply boron-containing fertilizers such as borax in recommended doses."
+    "name": "boron-B",
+    "description": "Boron deficiency causes thick, brittle, or deformed leaves, often with cracked stems and poor flowering.",
+    "recommendation": "Apply boron-containing fertilizers (e.g., borax or Solubor) in small, carefully measured amounts to avoid toxicity."
   },
   "2": {
-    "name": "Calcium Deficiency",
-    "description": "Young leaves are distorted or hook-shaped, with necrotic tips.",
-    "recommendation": "Apply agricultural lime or gypsum to improve calcium levels."
+    "name": "calcium-Ca",
+    "description": "Calcium deficiency leads to distorted young leaves, tip burn, and weak cell walls.",
+    "recommendation": "Apply agricultural lime or gypsum to improve calcium availability and maintain proper soil pH."
   },
   "3": {
-    "name": "Iron Deficiency",
-    "description": "Interveinal chlorosis on young leaves while veins remain green.",
-    "recommendation": "Apply iron chelates or foliar sprays; ensure proper soil pH."
+    "name": "iron-Fe",
+    "description": "Iron deficiency causes interveinal chlorosis (yellowing between veins) on young leaves while veins remain green.",
+    "recommendation": "Apply foliar iron chelates (Fe-EDDHA or Fe-DTPA) and ensure soil pH is not too alkaline."
   },
   "4": {
-    "name": "Magnesium Deficiency",
-    "description": "Yellowing between veins on older leaves, veins remain green.",
-    "recommendation": "Apply magnesium sulfate (Epsom salts) or dolomitic lime."
+    "name": "magnesium-Mg",
+    "description": "Magnesium deficiency shows as interveinal chlorosis on older leaves, with green veins and yellow tissue.",
+    "recommendation": "Apply magnesium sulfate (Epsom salts) or dolomitic lime to replenish magnesium levels."
   },
   "5": {
-    "name": "Manganese Deficiency",
-    "description": "Interveinal chlorosis with small necrotic spots on young leaves.",
-    "recommendation": "Apply manganese sulfate or foliar sprays."
+    "name": "manganese-Mn",
+    "description": "Manganese deficiency causes interveinal chlorosis with small necrotic spots, usually on younger leaves.",
+    "recommendation": "Apply manganese sulfate or foliar Mn sprays, and avoid excessive liming that raises soil pH."
   },
   "6": {
-    "name": "Nitrogen Deficiency",
-    "description": "Older leaves turn pale yellow starting from the tip.",
-    "recommendation": "Apply nitrogen-rich fertilizers such as urea or CAN."
+    "name": "nitrogen-N",
+    "description": "Nitrogen deficiency results in uniform yellowing of older leaves, stunted growth, and reduced vigor.",
+    "recommendation": "Apply nitrogen fertilizers such as urea, ammonium nitrate, or organic manures in split doses."
   },
   "7": {
-    "name": "Phosphorus Deficiency",
-    "description": "Dark green foliage with purplish tinge, stunted growth.",
-    "recommendation": "Apply phosphorus fertilizers such as DAP or rock phosphate."
+    "name": "phosphorus-P",
+    "description": "Phosphorus deficiency causes dark green or purplish leaves, poor root growth, and delayed maturity.",
+    "recommendation": "Apply phosphorus fertilizers like triple superphosphate (TSP) or diammonium phosphate (DAP)."
   },
   "8": {
-    "name": "Potassium Deficiency",
-    "description": "Leaf edges turn brown and curl, plants more disease-prone.",
-    "recommendation": "Apply muriate of potash (MOP) or potassium sulfate."
+    "name": "potasium-K",
+    "description": "Potassium deficiency shows as leaf edge scorching, yellowing, and weak stems.",
+    "recommendation": "Apply muriate of potash (KCl) or sulfate of potash (K2SO4) to restore potassium levels."
   }
 }

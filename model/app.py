@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Combined Production Flask Application with Improved Models
+Combined Production Flask Application with Optimized Models
 
-This application deploys both improved and optimized models with enhanced performance monitoring
+This application deploys optimized models with enhanced performance monitoring
 and error handling for the coffee leaf disease and deficiency detection system.
 """
 
@@ -41,7 +41,6 @@ CORS(app)
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB limit
-IMPROVED_MODELS_DIR = Path('../model_improvement/fine_tuning')
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -70,100 +69,26 @@ def validate_image_file(file):
 
     return True, None
 
-class ImprovedTorchClassifier(TorchClassifier):
-    """Enhanced classifier with improved model loading and monitoring"""
+# Initialize classifiers with optimized models
+disease_classifier = OptimizedTorchClassifier(
+    'models/leaf_diseases/efficientnet_disease_balanced.pth',
+    'models/leaf_diseases/class_mapping_diseases.json',
+    confidence_threshold=0.3
+)
+disease_model_type = 'optimized'
 
-    def __init__(self, model_path, mapping_path, improved_model_path, model_type):
-        # Initialize with original model path for architecture
-        super().__init__(model_path, mapping_path)
-
-        # Load improved weights
-        try:
-            improved_state = torch.load(improved_model_path, map_location=self.device)
-            self.model.load_state_dict(improved_state)
-            logger.info(f"Successfully loaded improved {model_type} model weights")
-        except Exception as e:
-            logger.error(f"Failed to load improved {model_type} model: {e}")
-            raise
-
-        self.model_type = model_type
-        self.prediction_count = 0
-        self.confidence_sum = 0.0
-
-    def predict(self, image_path):
-        """Enhanced prediction with monitoring"""
-        start_time = time.time()
-        result = super().predict(image_path)
-        processing_time = time.time() - start_time
-
-        # Update monitoring stats
-        self.prediction_count += 1
-        self.confidence_sum += result['confidence']
-
-        # Log prediction details
-        logger.info(f"{self.model_type} prediction: {result['class']} "
-                   f"(confidence: {result['confidence']:.4f}, "
-                   f"time: {processing_time:.4f}s)")
-
-        # Add processing time to result
-        result['processing_time'] = processing_time
-        return result
-
-    def get_stats(self):
-        """Get prediction statistics"""
-        avg_confidence = self.confidence_sum / self.prediction_count if self.prediction_count > 0 else 0
-        return {
-            'total_predictions': self.prediction_count,
-            'average_confidence': avg_confidence,
-            'model_type': self.model_type
-        }
-
-# Initialize classifiers with improved models when available
-try:
-    # Try to load improved disease model
-    disease_classifier = ImprovedTorchClassifier(
-        'models/leaf_diseases/efficientnet_disease_balanced.pth',
-        'models/leaf_diseases/class_mapping_diseases.json',
-        str(IMPROVED_MODELS_DIR / 'improved_disease_model.pth'),
-        'disease'
-    )
-    disease_model_type = 'improved'
-
-except Exception as e:
-    logger.warning(f"Failed to load improved disease model: {e}")
-    # Fallback to optimized model
-    disease_classifier = OptimizedTorchClassifier(
-        'models/leaf_diseases/efficientnet_disease_balanced.pth',
-        'models/leaf_diseases/class_mapping_diseases.json',
-        confidence_threshold=0.3
-    )
-    disease_model_type = 'optimized'
-
-try:
-    # Try to load improved deficiency model
-    deficiency_classifier = ImprovedTorchClassifier(
-        'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-        'models/leaf_deficiencies/class_mapping_deficiencies.json',
-        str(IMPROVED_MODELS_DIR / 'improved_deficiency_model.pth'),
-        'deficiency'
-    )
-    deficiency_model_type = 'improved'
-
-except Exception as e:
-    logger.warning(f"Failed to load improved deficiency model: {e}")
-    # Fallback to optimized model
-    deficiency_classifier = OptimizedTorchClassifier(
-        'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-        'models/leaf_deficiencies/class_mapping_deficiencies.json',
-        confidence_threshold=0.3
-    )
-    deficiency_model_type = 'optimized'
+deficiency_classifier = OptimizedTorchClassifier(
+    'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
+    'models/leaf_deficiencies/class_mapping_deficiencies.json',
+    confidence_threshold=0.3
+)
+deficiency_model_type = 'optimized'
 
 logger.info(f"Models loaded - Disease: {disease_model_type}, Deficiency: {deficiency_model_type}")
 
 @app.route('/api/upload-image', methods=['POST'])
 def upload_image():
-    """Enhanced image upload endpoint with improved/optimized models"""
+    """Enhanced image upload endpoint with optimized models"""
     try:
         if 'image' not in request.files:
             logger.warning('No image file in request')
@@ -278,7 +203,7 @@ def model_info():
             'disease_classes': len(disease_classifier.classes),
             'deficiency_classes': len(deficiency_classifier.classes),
             'device': str(disease_classifier.device),
-            'improved_models': disease_model_type == 'improved' or deficiency_model_type == 'improved',
+            'optimized_models': disease_model_type == 'optimized' and deficiency_model_type == 'optimized',
             'model_stats': {
                 'disease': disease_stats,
                 'deficiency': deficiency_stats

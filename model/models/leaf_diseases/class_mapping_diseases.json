@@ -1,22 +1,27 @@
 {
   "0": {
     "name": "Cerscospora",
-    "description": "Small brown or grey spots with light centers, often enlarging and merging, caused by Cercospora coffeicola.",
-    "recommendation": "Remove infected leaves, maintain proper spacing, and apply protective fungicides. Ensure good drainage to prevent fungal growth. Use resistant varieties if available. Monitor regularly for early detection."
+    "description": "Cercospora leaf spot causes small brown or gray lesions with light centers and dark margins, leading to premature leaf drop.",
+    "recommendation": "Apply fungicides such as copper-based sprays or systemic fungicides (e.g., azoxystrobin), prune infected leaves, and improve air circulation."
   },
   "1": {
     "name": "Healthy",
-    "description": "Leaf shows no visible disease symptoms. Uniform green color and normal texture.",
-    "recommendation": "Maintain good agronomic practices, regular monitoring, and balanced fertilization. Continue preventive measures like proper pruning and weed control. Keep soil pH balanced and ensure adequate irrigation."
+    "description": "Leaf shows normal green coloration with no visible signs of disease.",
+    "recommendation": "Maintain good agronomic practices, balanced nutrition, and regular monitoring."
   },
   "2": {
     "name": "Leaf rust",
-    "description": "Orange or yellow powdery spots, usually on the underside of leaves, caused by Hemileia vastatrix.",
-    "recommendation": "Remove and destroy infected leaves, improve air circulation, and apply recommended fungicides. Plant rust-resistant varieties. Avoid overhead irrigation. Apply fungicides preventively during rainy seasons."
+    "description": "Coffee leaf rust (Hemileia vastatrix) produces orange powdery lesions on the underside of leaves, causing defoliation and yield loss.",
+    "recommendation": "Use resistant varieties, apply fungicides (e.g., triazoles or copper formulations), and maintain shade management to reduce humidity."
   },
   "3": {
     "name": "Phoma",
-    "description": "Dark brown to black lesions, often with yellow halos, caused by Phoma spp.",
-    "recommendation": "Prune affected branches, avoid overhead irrigation, and apply copper-based fungicides. Improve air circulation around plants. Use clean pruning tools. Apply fungicides as a preventive measure."
+    "description": "Phoma leaf spot causes dark brown to black lesions with concentric rings, often leading to leaf blight and dieback.",
+    "recommendation": "Remove infected plant material, apply protective fungicides, and avoid overhead irrigation."
+  },
+  "4": {
+    "name": "miner",
+    "description": "Leaf miner damage appears as serpentine tunnels within the leaf tissue, caused by larvae feeding inside leaves.",
+    "recommendation": "Use integrated pest management (IPM): introduce natural predators, apply neem-based biopesticides, or selective insecticides if infestation is severe."
   }
 }

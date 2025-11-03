@@ -323,3 +323,122 @@
 2025-11-01 21:48:10,731 - __main__ - INFO - deficiency prediction: Calcium Deficiency (confidence: 1.0000, time: 0.1041s)
 2025-11-01 21:48:10,733 - __main__ - INFO - Prediction completed in 0.5468s
 2025-11-01 21:48:10,736 - werkzeug - INFO - 127.0.0.1 - - [01/Nov/2025 21:48:10] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:19:55,103 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json'
+2025-11-03 16:23:17,929 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json'
+2025-11-03 16:25:09,118 - __main__ - ERROR - Failed to load improved disease model: [Errno 2] No such file or directory: '..\\model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-11-03 16:25:09,119 - __main__ - WARNING - Failed to load improved disease model: [Errno 2] No such file or directory: '..\\model_improvement\\fine_tuning\\improved_disease_model.pth'
+2025-11-03 16:25:09,761 - __main__ - WARNING - Failed to load improved deficiency model: [Errno 2] No such file or directory: 'models/leaf_deficiencies/class_mapping_deficiencies.json'
+2025-11-03 16:37:47,207 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-03 16:37:47,266 - __main__ - INFO - Starting combined Flask server...
+2025-11-03 16:37:47,334 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.123.96.224:8000
+2025-11-03 16:37:47,335 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-03 16:38:04,975 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-11-03 16:38:06,653 - __main__ - INFO - Prediction completed in 1.6748s
+2025-11-03 16:38:06,656 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:38:06] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:38:36,147 - __main__ - INFO - File saved: uploads\leaf_hh.jpeg
+2025-11-03 16:38:36,469 - __main__ - INFO - Prediction completed in 0.3195s
+2025-11-03 16:38:36,471 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:38:36] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:38:52,713 - __main__ - INFO - File saved: uploads\image5.jpeg
+2025-11-03 16:38:53,004 - __main__ - INFO - Prediction completed in 0.2885s
+2025-11-03 16:38:53,006 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:38:53] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:39:09,682 - __main__ - INFO - File saved: uploads\image6.jpeg
+2025-11-03 16:39:09,998 - __main__ - INFO - Prediction completed in 0.3127s
+2025-11-03 16:39:10,000 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:39:10] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:39:43,324 - __main__ - INFO - File saved: uploads\images_1.jpeg
+2025-11-03 16:39:43,653 - __main__ - INFO - Prediction completed in 0.3256s
+2025-11-03 16:39:43,655 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:39:43] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:40:57,182 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-03 16:40:57,466 - __main__ - INFO - Prediction completed in 0.2809s
+2025-11-03 16:40:57,468 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:40:57] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:41:43,560 - __main__ - INFO - File saved: uploads\leaf_r4.jpeg
+2025-11-03 16:41:43,875 - __main__ - INFO - Prediction completed in 0.3119s
+2025-11-03 16:41:43,876 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:41:43] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:42:42,517 - __main__ - INFO - File saved: uploads\coffe_r1.jpg
+2025-11-03 16:42:42,938 - __main__ - INFO - Prediction completed in 0.4179s
+2025-11-03 16:42:42,939 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:42:42] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:43:32,947 - __main__ - INFO - File saved: uploads\coffee_r2.jpg
+2025-11-03 16:43:33,272 - __main__ - INFO - Prediction completed in 0.3227s
+2025-11-03 16:43:33,275 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:43:33] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:44:35,531 - __main__ - INFO - File saved: uploads\coffee_r3.jpg
+2025-11-03 16:44:35,901 - __main__ - INFO - Prediction completed in 0.3664s
+2025-11-03 16:44:35,902 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:44:35] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:44:59,144 - __main__ - INFO - File saved: uploads\leaf_hh.jpeg
+2025-11-03 16:44:59,449 - __main__ - INFO - Prediction completed in 0.3016s
+2025-11-03 16:44:59,451 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:44:59] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:45:23,545 - __main__ - INFO - File saved: uploads\leaf_hh2.jpeg
+2025-11-03 16:45:24,052 - __main__ - INFO - Prediction completed in 0.5040s
+2025-11-03 16:45:24,056 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:45:24] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:59:14,073 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-03 16:59:14,133 - __main__ - INFO - Starting combined Flask server...
+2025-11-03 16:59:14,187 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.123.96.224:8000
+2025-11-03 16:59:14,187 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-03 16:59:38,278 - __main__ - INFO - File saved: uploads\images.jpeg
+2025-11-03 16:59:38,719 - __main__ - INFO - Prediction completed in 0.4016s
+2025-11-03 16:59:38,722 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:59:38] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 16:59:59,110 - __main__ - INFO - File saved: uploads\image6.jpeg
+2025-11-03 16:59:59,401 - __main__ - INFO - Prediction completed in 0.2883s
+2025-11-03 16:59:59,403 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 16:59:59] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:00:14,633 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-03 17:00:14,950 - __main__ - INFO - Prediction completed in 0.3149s
+2025-11-03 17:00:14,952 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:00:14] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:00:31,168 - __main__ - INFO - File saved: uploads\leaf_r3.jpeg
+2025-11-03 17:00:31,480 - __main__ - INFO - Prediction completed in 0.3081s
+2025-11-03 17:00:31,482 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:00:31] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:00:52,538 - __main__ - INFO - File saved: uploads\leaf_r.jpeg
+2025-11-03 17:00:52,900 - __main__ - INFO - Prediction completed in 0.3582s
+2025-11-03 17:00:52,902 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:00:52] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:01:09,133 - __main__ - INFO - File saved: uploads\image5.jpeg
+2025-11-03 17:01:09,445 - __main__ - INFO - Prediction completed in 0.3088s
+2025-11-03 17:01:09,447 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:01:09] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:01:31,137 - __main__ - INFO - File saved: uploads\image4.jpeg
+2025-11-03 17:01:31,429 - __main__ - INFO - Prediction completed in 0.2889s
+2025-11-03 17:01:31,431 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:01:31] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:01:48,144 - __main__ - INFO - File saved: uploads\images_1.jpeg
+2025-11-03 17:01:48,438 - __main__ - INFO - Prediction completed in 0.2915s
+2025-11-03 17:01:48,439 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:01:48] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:02:12,587 - __main__ - INFO - File saved: uploads\images.jpeg
+2025-11-03 17:02:12,861 - __main__ - INFO - Prediction completed in 0.2725s
+2025-11-03 17:02:12,863 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:02:12] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:14:02,216 - __main__ - INFO - File saved: uploads\coffee_r2.jpg
+2025-11-03 17:14:02,391 - __main__ - INFO - Prediction completed in 0.1735s
+2025-11-03 17:14:02,392 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:14:02] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:17:07,021 - __main__ - INFO - File saved: uploads\coffe_r1.jpg
+2025-11-03 17:17:07,217 - __main__ - INFO - Prediction completed in 0.1948s
+2025-11-03 17:17:07,219 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:17:07] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:17:17,885 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-03 17:17:18,047 - __main__ - INFO - Prediction completed in 0.1611s
+2025-11-03 17:17:18,048 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:17:18] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:20:37,175 - __main__ - INFO - File saved: uploads\capture.jpg
+2025-11-03 17:20:37,387 - __main__ - INFO - Prediction completed in 0.2096s
+2025-11-03 17:20:37,389 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:20:37] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:23:29,751 - __main__ - INFO - File saved: uploads\capture.jpg
+2025-11-03 17:23:29,969 - __main__ - INFO - Prediction completed in 0.2171s
+2025-11-03 17:23:29,971 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:23:29] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:27:27,800 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-03 17:27:27,804 - __main__ - INFO - Starting combined Flask server...
+2025-11-03 17:27:27,840 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.1.107:8000
+2025-11-03 17:27:27,841 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-03 17:32:08,675 - __main__ - INFO - File saved: uploads\capture.jpg
+2025-11-03 17:32:08,870 - __main__ - INFO - Prediction completed in 0.1930s
+2025-11-03 17:32:08,871 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:32:08] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:32:34,015 - __main__ - INFO - File saved: uploads\capture.jpg
+2025-11-03 17:32:34,202 - __main__ - INFO - Prediction completed in 0.1863s
+2025-11-03 17:32:34,203 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:32:34] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:34:06,725 - __main__ - INFO - File saved: uploads\capture.jpg
+2025-11-03 17:34:06,935 - __main__ - INFO - Prediction completed in 0.2085s
+2025-11-03 17:34:06,937 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:34:06] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:34:35,289 - __main__ - INFO - File saved: uploads\capture.jpg
+2025-11-03 17:34:35,492 - __main__ - INFO - Prediction completed in 0.2008s
+2025-11-03 17:34:35,494 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:34:35] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-03 17:36:07,542 - __main__ - INFO - File saved: uploads\capture.jpg
+2025-11-03 17:36:07,751 - __main__ - INFO - Prediction completed in 0.2059s
+2025-11-03 17:36:07,752 - werkzeug - INFO - 127.0.0.1 - - [03/Nov/2025 17:36:07] "POST /api/upload-image HTTP/1.1" 200 -
