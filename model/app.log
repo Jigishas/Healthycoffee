@@ -558,3 +558,29 @@
 2025-11-14 11:45:03,394 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
 2025-11-14 11:45:04,098 - __main__ - INFO - Prediction completed in 0.7018s
 2025-11-14 11:45:04,101 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 11:45:04] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 12:18:38,936 - __main__ - WARNING - File validation failed: Invalid file type. Only PNG, JPG, JPEG, and GIF are allowed
+2025-11-14 12:18:38,965 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 12:18:38] "[31m[1mPOST /api/upload-image HTTP/1.1[0m" 400 -
+2025-11-14 12:19:33,698 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 12:19:34,413 - __main__ - INFO - Prediction completed in 0.7105s
+2025-11-14 12:19:34,427 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 12:19:34] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 12:21:29,565 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-14 12:21:29,574 - __main__ - INFO - Starting combined Flask server...
+2025-11-14 12:21:29,645 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.229:8000
+2025-11-14 12:21:29,646 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-14 12:22:44,637 - __main__ - WARNING - File validation failed: Invalid file type. Only PNG, JPG, JPEG, and GIF are allowed
+2025-11-14 12:22:44,640 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 12:22:44] "[31m[1mPOST /api/upload-image HTTP/1.1[0m" 400 -
+2025-11-14 12:25:10,961 - __main__ - INFO - File saved: uploads\captured_image.jpg
+2025-11-14 12:25:11,272 - __main__ - INFO - Prediction completed in 0.3072s
+2025-11-14 12:25:11,275 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 12:25:11] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 12:38:51,701 - __main__ - INFO - File saved: uploads\captured_image.jpg
+2025-11-14 12:38:52,234 - __main__ - INFO - Prediction completed in 0.5225s
+2025-11-14 12:38:52,248 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 12:38:52] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 12:39:02,561 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 12:39:02,776 - __main__ - INFO - Prediction completed in 0.2023s
+2025-11-14 12:39:02,778 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 12:39:02] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 12:39:08,753 - __main__ - INFO - File saved: uploads\captured_image.jpg
+2025-11-14 12:39:08,992 - __main__ - INFO - Prediction completed in 0.2383s
+2025-11-14 12:39:08,999 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 12:39:08] "POST /api/upload-image HTTP/1.1" 200 -
