@@ -3,7 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '..
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-const BACKEND_URL = 'https://healthycoffee.onrender.com';
+const BACKEND_URL = import.meta.env.NODE_ENV === 'production' ? '' : 'https://healthycoffee.onrender.com';
 
 // eslint-disable-next-line no-unused-vars
 const CameraCapture = React.forwardRef((props, ref) => {

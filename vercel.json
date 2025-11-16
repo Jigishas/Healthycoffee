@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "https://healthycoffee.onrender.com/api/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/coffee/index.html"
     }
