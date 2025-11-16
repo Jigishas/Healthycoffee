@@ -528,7 +528,8 @@ class CoffeeDiseaseRecommender:
     def get_detailed_recommendations(self, disease_name, severity="medium", farm_conditions=None):
         """Generate comprehensive disease management recommendations"""
         if disease_name not in self.disease_recommendations:
-            return {"error": f"Disease '{disease_name}' not found in database"}
+            # Return uncertain recommendations if disease not found
+            return self.get_uncertain_recommendations()
 
         disease_data = self.disease_recommendations[disease_name]
 
@@ -701,6 +702,93 @@ class CoffeeDiseaseRecommender:
             }
         }
         return calendars.get(disease_name, {"message": "General farm health maintenance calendar recommended"})
+
+    def get_uncertain_recommendations(self):
+        """Generate recommendations when model prediction is uncertain"""
+        return {
+            "disease_name": "Uncertain Diagnosis",
+            "overview": "The model prediction confidence is low, indicating uncertainty in the diagnosis. This could be due to unclear symptoms, mixed conditions, or image quality issues.",
+            "current_severity": "unknown",
+            "symptoms": [
+                "Symptoms not clearly matching known disease patterns",
+                "Possible mixed or unclear visual indicators",
+                "Image quality may affect accurate diagnosis"
+            ],
+            "integrated_management": {
+                "cultural_practices": [
+                    "Maintain good field hygiene and sanitation",
+                    "Ensure proper plant spacing for air circulation",
+                    "Monitor plants closely for symptom development",
+                    "Keep detailed records of plant health observations",
+                    "Avoid stress factors like drought or nutrient imbalances"
+                ],
+                "chemical_control": [
+                    "Apply broad-spectrum preventive fungicides if disease risk is high",
+                    "Use contact fungicides for general protection",
+                    "Consider multi-site fungicides for resistance management",
+                    "Apply only if symptoms become clearer and more severe"
+                ],
+                "biological_control": [
+                    "Apply beneficial microbes to enhance plant immunity",
+                    "Use compost tea or other organic amendments",
+                    "Introduce mycorrhizal fungi for root health",
+                    "Apply plant growth-promoting rhizobacteria"
+                ],
+                "monitoring": [
+                    "Increase monitoring frequency to daily or every other day",
+                    "Take multiple photos from different angles",
+                    "Consult with local agricultural extension services",
+                    "Use multiple diagnostic methods if possible"
+                ]
+            },
+            "severity_specific_recommendations": {
+                "spray_frequency": "As needed based on symptom development",
+                "intervention_level": "Observation and monitoring",
+                "immediate_actions": [
+                    "Retake photos with better lighting and focus",
+                    "Consult agricultural experts for field diagnosis",
+                    "Monitor plant closely for 3-5 days",
+                    "Check for environmental stress factors"
+                ],
+                "long_term_strategies": [
+                    "Improve image quality for future diagnoses",
+                    "Establish baseline plant health monitoring",
+                    "Develop farm-specific disease management protocols",
+                    "Consider professional plant pathology consultation"
+                ]
+            },
+            "farm_specific_adaptations": {
+                "general_recommendations": [
+                    "Conduct comprehensive farm health assessment",
+                    "Implement integrated crop management practices",
+                    "Establish regular scouting and monitoring programs"
+                ]
+            },
+            "monitoring_schedule": {
+                "inspection_frequency": "Daily monitoring until diagnosis is clear",
+                "data_recording": "Document all observations with photos and notes",
+                "action_thresholds": "Consult experts before taking chemical action",
+                "weather_monitoring": "Track environmental conditions that may affect plant health"
+            },
+            "economic_considerations": {
+                "management_cost_usd_per_ha": 25,
+                "potential_yield_loss_percent": "Variable - depends on actual condition",
+                "return_on_investment": "High for accurate diagnosis and targeted treatment",
+                "economic_threshold": "Monitor closely - early intervention is cost-effective",
+                "cost_effective_strategies": [
+                    "Professional consultation for accurate diagnosis",
+                    "Preventive measures while monitoring",
+                    "Avoid unnecessary chemical applications"
+                ]
+            },
+            "additional_recommendations": [
+                "Consider laboratory testing for accurate pathogen identification",
+                "Use multiple diagnostic tools (visual, molecular, serological)",
+                "Consult local agricultural extension services",
+                "Join farmer networks for shared experience and knowledge",
+                "Keep detailed farm management records for future reference"
+            ]
+        }
 
 
 def get_additional_recommendations(disease_class, deficiency_class):
