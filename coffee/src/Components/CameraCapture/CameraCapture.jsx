@@ -2,7 +2,8 @@ import React, { useState, useRef } from 'react';
 
 const BACKEND_URL = 'https://healthycoffee.onrender.com';
 
-const CameraCapture = () => {
+// eslint-disable-next-line no-unused-vars
+const CameraCapture = React.forwardRef((props, ref) => {
   const [preview, setPreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -756,7 +757,8 @@ const CameraCapture = () => {
       )}
     </div>
   );
-};
+});
 
+CameraCapture.displayName = 'CameraCapture';
 
 export default CameraCapture;

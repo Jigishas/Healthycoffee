@@ -24,7 +24,7 @@ const ImageSlider = () => {
           key={idx}
           src={img}
           alt={`Coffee plantation ${idx + 1}`}
-          className={`absolute left-10 top-0 w-full h-46 object-cover rounded-2xl opacity-0 transition-all duration-1000 ${
+          className={`absolute left-10 top-0 w-full h-86 object-cover rounded-2xl opacity-0 transition-all duration-1000 ${
             current === idx ? 'opacity-100 scale-105' : 'scale-100'
           } hover:scale-110 cursor-pointer`}
         />
