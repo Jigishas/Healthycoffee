@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import html2pdf from 'html2pdf.js';
 
 const BACKEND_URL = 'https://healthycoffee.onrender.com';
 
@@ -30,15 +31,8 @@ const CameraCapture = React.forwardRef((props, ref) => {
 
   const exportAsPDF = async () => {
     if (!result) return;
-    
-    try {
-      // Create a new window for PDF content
-      const printWindow = window.open('', '_blank');
-      if (!printWindow) {
-        alert('Please allow pop-ups to generate PDF');
-        return;
-      }
 
+    try {
       // Get confidence levels
       const deficiencyConfidence = result.deficiency_prediction ? Math.round((result.deficiency_prediction.confidence || 0) * 100) : 0;
       const diseaseConfidence = result.disease_prediction ? Math.round((result.disease_prediction.confidence || 0) * 100) : 0;
@@ -50,40 +44,40 @@ const CameraCapture = React.forwardRef((props, ref) => {
         <head>
           <title>Leaf Analysis Report</title>
           <style>
-            body { 
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-              max-width: 800px; 
-              margin: 0 auto; 
-              padding: 40px; 
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              max-width: 800px;
+              margin: 0 auto;
+              padding: 40px;
               color: #333;
               line-height: 1.6;
             }
-            .header { 
-              text-align: center; 
-              border-bottom: 3px solid #2ecc71; 
-              padding-bottom: 20px; 
+            .header {
+              text-align: center;
+              border-bottom: 3px solid #2ecc71;
+              padding-bottom: 20px;
               margin-bottom: 30px;
             }
-            .header h1 { 
-              color: #2c3e50; 
-              margin: 0; 
+            .header h1 {
+              color: #2c3e50;
+              margin: 0;
               font-size: 32px;
             }
-            .header p { 
-              color: #7f8c8d; 
+            .header p {
+              color: #7f8c8d;
               font-size: 16px;
             }
-            .section { 
-              margin-bottom: 30px; 
-              background: #f8f9fa; 
-              padding: 25px; 
+            .section {
+              margin-bottom: 30px;
+              background: #f8f9fa;
+              padding: 25px;
               border-radius: 10px;
               border-left: 4px solid #3498db;
             }
-            .section h2 { 
-              color: #2c3e50; 
-              border-bottom: 2px solid #ecf0f1; 
-              padding-bottom: 10px; 
+            .section h2 {
+              color: #2c3e50;
+              border-bottom: 2px solid #ecf0f1;
+              padding-bottom: 10px;
               margin-top: 0;
             }
             .confidence-meter {
@@ -127,11 +121,11 @@ const CameraCapture = React.forwardRef((props, ref) => {
             .moderate { background: #f39c12; }
             .critical { background: #e74c3c; }
             .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-            .footer { 
-              text-align: center; 
-              margin-top: 40px; 
-              padding-top: 20px; 
-              border-top: 2px solid #ecf0f1; 
+            .footer {
+              text-align: center;
+              margin-top: 40px;
+              padding-top: 20px;
+              border-top: 2px solid #ecf0f1;
               color: #7f8c8d;
               font-size: 14px;
             }
@@ -185,7 +179,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
           ${result.recommendations?.disease_recommendations ? `
           <div class="section">
             <h2>🛡️ Disease Management Recommendations</h2>
-            
+
             ${result.recommendations.disease_recommendations.overview ? `
             <div class="recommendation-box">
               <strong>Overview:</strong> ${result.recommendations.disease_recommendations.overview}
@@ -239,7 +233,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
             <h3>⚡ Severity-Specific Actions</h3>
             <p><strong>Spray Frequency:</strong> ${result.recommendations.disease_recommendations.severity_specific_recommendations.spray_frequency}</p>
             <p><strong>Intervention Level:</strong> ${result.recommendations.disease_recommendations.severity_specific_recommendations.intervention_level}</p>
-            
+
             ${result.recommendations.disease_recommendations.severity_specific_recommendations.immediate_actions ? `
             <h4>Immediate Actions</h4>
             <ul>
@@ -270,7 +264,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
           ${result.recommendations?.deficiency_recommendations ? `
           <div class="section">
             <h2>🌱 Nutrition Management</h2>
-            
+
             ${result.recommendations.deficiency_recommendations.symptoms ? `
             <h3>📋 Symptoms</h3>
             <ul>
@@ -298,26 +292,31 @@ const CameraCapture = React.forwardRef((props, ref) => {
             <p>Generated by Leaf Analysis Studio | AI-Powered Plant Health Assessment</p>
             <p>For professional agricultural advice, consult with certified experts.</p>
           </div>
-
-          <div class="no-print" style="text-align: center; margin-top: 30px;">
-            <button onclick="window.print()" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
-              Print PDF
-            </button>
-          </div>
         </body>
         </html>
       `;
 
-      printWindow.document.write(pdfContent);
-      printWindow.document.close();
-      
-      // Auto-print after content loads
-      printWindow.onload = function() {
-        setTimeout(() => {
-          printWindow.print();
-          // Don't close immediately to allow user to see the print dialog
-        }, 500);
+      // Create a temporary element to hold the HTML content
+      const tempElement = document.createElement('div');
+      tempElement.innerHTML = pdfContent;
+      tempElement.style.position = 'absolute';
+      tempElement.style.left = '-9999px';
+      document.body.appendChild(tempElement);
+
+      // Configure html2pdf options
+      const options = {
+        margin: 1,
+        filename: 'leaf-analysis-report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
+
+      // Generate and download PDF
+      await html2pdf().set(options).from(tempElement).save();
+
+      // Clean up
+      document.body.removeChild(tempElement);
 
     } catch (err) {
       console.error('PDF generation error:', err);
