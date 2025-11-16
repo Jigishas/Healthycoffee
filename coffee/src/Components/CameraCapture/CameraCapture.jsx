@@ -59,77 +59,295 @@ const CameraCapture = React.forwardRef((props, ref) => {
     setPdfDownloadStatus(null);
 
     try {
-      const element = pdfExportRef.current;
-      if (!element) {
-        throw new Error('PDF content not found');
-      }
+      // Create a simple, clean HTML content for PDF
+      const deficiencyConfidence = result.deficiency_prediction ? Math.round((result.deficiency_prediction.confidence || 0) * 100) : 0;
+      const diseaseConfidence = result.disease_prediction ? Math.round((result.disease_prediction.confidence || 0) * 100) : 0;
 
-      // Show loading state
-      const originalOpacity = element.style.opacity;
-      element.style.opacity = '1';
+      const pdfContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Leaf Analysis Report</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 20px;
+              color: #333;
+              line-height: 1.6;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 2px solid #4CAF50;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            }
+            .header h1 {
+              color: #2E7D32;
+              margin: 0;
+              font-size: 28px;
+            }
+            .header p {
+              color: #666;
+              margin: 10px 0 0 0;
+            }
+            .section {
+              margin-bottom: 30px;
+              padding: 20px;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              background: #f9f9f9;
+            }
+            .section h2 {
+              color: #2E7D32;
+              margin: 0 0 15px 0;
+              font-size: 20px;
+              border-bottom: 1px solid #4CAF50;
+              padding-bottom: 5px;
+            }
+            .confidence {
+              background: white;
+              padding: 15px;
+              border-radius: 5px;
+              margin: 10px 0;
+              border-left: 4px solid #2196F3;
+            }
+            .recommendation {
+              background: #E8F5E8;
+              padding: 15px;
+              border-radius: 5px;
+              margin: 10px 0;
+              border-left: 4px solid #4CAF50;
+            }
+            .list-item {
+              margin: 8px 0;
+              padding-left: 20px;
+            }
+            .list-item:before {
+              content: "•";
+              color: #4CAF50;
+              font-weight: bold;
+              margin-left: -20px;
+              margin-right: 10px;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 40px;
+              padding-top: 20px;
+              border-top: 1px solid #ddd;
+              color: #666;
+              font-size: 12px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>🌿 Leaf Analysis Report</h1>
+            <p>Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+          </div>
 
-      // Create canvas with high quality
-      const canvas = await html2canvas(element, {
-        scale: 3, // Higher resolution
+          ${result.deficiency_prediction ? `
+          <div class="section">
+            <h2>🧪 Nutrient Deficiency Analysis</h2>
+            <div class="confidence">
+              <strong>Result:</strong> ${result.deficiency_prediction.class}<br>
+              <strong>Confidence:</strong> ${deficiencyConfidence}%
+            </div>
+            ${result.deficiency_prediction.explanation ? `
+              <div class="recommendation">
+                <strong>Explanation:</strong><br>
+                ${result.deficiency_prediction.explanation}
+              </div>
+            ` : ''}
+            ${result.deficiency_prediction.recommendation ? `
+              <div class="recommendation">
+                <strong>Recommendation:</strong><br>
+                ${result.deficiency_prediction.recommendation}
+              </div>
+            ` : ''}
+          </div>
+          ` : ''}
+
+          ${result.disease_prediction ? `
+          <div class="section">
+            <h2>🔬 Disease Detection Analysis</h2>
+            <div class="confidence">
+              <strong>Result:</strong> ${result.disease_prediction.class}<br>
+              <strong>Confidence:</strong> ${diseaseConfidence}%
+            </div>
+            ${result.disease_prediction.explanation ? `
+              <div class="recommendation">
+                <strong>Explanation:</strong><br>
+                ${result.disease_prediction.explanation}
+              </div>
+            ` : ''}
+            ${result.disease_prediction.recommendation ? `
+              <div class="recommendation">
+                <strong>Recommendation:</strong><br>
+                ${result.disease_prediction.recommendation}
+              </div>
+            ` : ''}
+          </div>
+          ` : ''}
+
+          ${result.recommendations?.disease_recommendations ? `
+          <div class="section">
+            <h2>🛡️ Disease Management Recommendations</h2>
+
+            ${result.recommendations.disease_recommendations.overview ? `
+              <div class="recommendation">
+                <strong>Overview:</strong><br>
+                ${result.recommendations.disease_recommendations.overview}
+              </div>
+            ` : ''}
+
+            ${result.recommendations.disease_recommendations.symptoms ? `
+              <div class="recommendation">
+                <strong>Symptoms:</strong>
+                ${result.recommendations.disease_recommendations.symptoms.map(symptom => `<div class="list-item">${symptom}</div>`).join('')}
+              </div>
+            ` : ''}
+
+            ${result.recommendations.disease_recommendations.integrated_management?.cultural_practices ? `
+              <div class="recommendation">
+                <strong>Cultural Practices:</strong>
+                ${result.recommendations.disease_recommendations.integrated_management.cultural_practices.map(practice => `<div class="list-item">${practice}</div>`).join('')}
+              </div>
+            ` : ''}
+
+            ${result.recommendations.disease_recommendations.integrated_management?.chemical_control ? `
+              <div class="recommendation">
+                <strong>Chemical Control:</strong>
+                ${result.recommendations.disease_recommendations.integrated_management.chemical_control.map(control => `<div class="list-item">${control}</div>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+          ` : ''}
+
+          ${result.recommendations?.deficiency_recommendations ? `
+          <div class="section">
+            <h2>🌱 Nutrition Management Recommendations</h2>
+
+            ${result.recommendations.deficiency_recommendations.basic ? `
+              <div class="recommendation">
+                <strong>Basic Recommendations:</strong>
+                ${result.recommendations.deficiency_recommendations.basic.map(rec => `<div class="list-item">${rec}</div>`).join('')}
+              </div>
+            ` : ''}
+
+            ${result.recommendations.deficiency_recommendations.management ? `
+              <div class="recommendation">
+                <strong>Management:</strong>
+                ${result.recommendations.deficiency_recommendations.management.map(manage => `<div class="list-item">${manage}</div>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+          ` : ''}
+
+          <div class="footer">
+            <p>Generated by Leaf Analysis Studio | AI-Powered Plant Health Assessment</p>
+            <p>For professional agricultural advice, consult with certified experts.</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Create a temporary element to hold the HTML content
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = pdfContent;
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.top = '-9999px';
+      tempDiv.style.width = '800px';
+      document.body.appendChild(tempDiv);
+
+      // Use html2canvas with simpler options
+      const canvas = await html2canvas(tempDiv, {
+        scale: 2,
         useCORS: true,
-        allowTaint: false,
+        allowTaint: true,
         backgroundColor: '#ffffff',
-        logging: false,
-        removeContainer: true,
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-        onclone: (clonedDoc) => {
-          // Ensure all content is visible for PDF
-          const clonedElement = clonedDoc.querySelector('[data-pdf-export]');
-          if (clonedElement) {
-            clonedElement.style.transform = 'none';
-            clonedElement.style.opacity = '1';
-            // Remove any interactive elements that might interfere
-            const buttons = clonedElement.querySelectorAll('button');
-            buttons.forEach(btn => {
-              btn.style.display = 'none';
-            });
-          }
-        }
+        width: 800,
+        height: tempDiv.scrollHeight
       });
 
-      // Create PDF
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
+      // Remove temporary element
+      document.body.removeChild(tempDiv);
+
+      // Create PDF with jsPDF
+      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
+
       let position = 0;
 
       // Add first page
-      pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
-      // Add additional pages if content is longer than one page
+      // Add additional pages if needed
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
 
-      // Save PDF
+      // Save the PDF
       pdf.save(`leaf-analysis-report-${new Date().toISOString().split('T')[0]}.pdf`);
 
-      // Restore original opacity
-      element.style.opacity = originalOpacity;
-
       setPdfDownloadStatus('success');
-      
+
     } catch (err) {
       console.error('PDF generation error:', err);
       setPdfDownloadStatus('failed');
-      
-      if (err.message.includes('security') || err.message.includes('tainted')) {
-        alert('PDF generation failed due to security restrictions. Please try the JSON export instead.');
-      } else {
-        alert('PDF generation failed. Please try again or use JSON export.');
+
+      // Fallback: try a simpler approach
+      try {
+        // Create a basic text-based PDF as fallback
+        const { jsPDF } = await import('jspdf');
+        const pdf = new jsPDF();
+
+        pdf.setFontSize(20);
+        pdf.text('Leaf Analysis Report', 20, 30);
+
+        pdf.setFontSize(12);
+        pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
+
+        let yPosition = 70;
+
+        if (result.deficiency_prediction) {
+          pdf.setFontSize(16);
+          pdf.text('Nutrient Deficiency Analysis', 20, yPosition);
+          yPosition += 20;
+
+          pdf.setFontSize(12);
+          pdf.text(`Result: ${result.deficiency_prediction.class}`, 20, yPosition);
+          yPosition += 15;
+          pdf.text(`Confidence: ${Math.round((result.deficiency_prediction.confidence || 0) * 100)}%`, 20, yPosition);
+          yPosition += 20;
+        }
+
+        if (result.disease_prediction) {
+          pdf.setFontSize(16);
+          pdf.text('Disease Detection Analysis', 20, yPosition);
+          yPosition += 20;
+
+          pdf.setFontSize(12);
+          pdf.text(`Result: ${result.disease_prediction.class}`, 20, yPosition);
+          yPosition += 15;
+          pdf.text(`Confidence: ${Math.round((result.disease_prediction.confidence || 0) * 100)}%`, 20, yPosition);
+          yPosition += 20;
+        }
+
+        pdf.save(`leaf-analysis-report-${new Date().toISOString().split('T')[0]}.pdf`);
+        setPdfDownloadStatus('success');
+      } catch (fallbackErr) {
+        console.error('Fallback PDF generation also failed:', fallbackErr);
+        alert('PDF generation failed. Please try the JSON export instead.');
       }
     } finally {
       setPdfGenerating(false);
@@ -208,7 +426,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
         setCameraActive(true);
         setCameraLoading(false);
       }
-    } catch (fallbackError) {
+    } catch {
       setError('Cannot access camera with any configuration. Please use gallery upload instead.');
     }
   };
