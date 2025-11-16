@@ -89,7 +89,7 @@ const Stat = () => {
 
             {/* Value with Counter Animation */}
             <motion.h2
-              className={`text-4xl md:text-5xl mb-3 font-bold ${stat.color}`}
+              className={`text-3xl md:text-4xl mb-3 font-bold ${stat.color}`}
               initial={{ scale: 0.8, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
@@ -100,7 +100,7 @@ const Stat = () => {
 
             {/* Label */}
             <motion.p
-              className={`font-semibold text-lg md:text-xl ${stat.color.replace('600', '700')}`}
+              className={`font-semibold text-base md:text-lg ${stat.color.replace('600', '700')}`}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}

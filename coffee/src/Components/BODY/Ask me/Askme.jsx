@@ -135,7 +135,7 @@ const Askme = () => {
         transition={{ duration: 0.6, delay: 0.2 }}
       >
         <motion.h1
-          className="text-4xl font-bold mb-2 text-shadow-lg"
+          className="text-3xl font-bold mb-2 text-shadow-lg"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
@@ -143,7 +143,7 @@ const Askme = () => {
           Coffee Plantation FAQs
         </motion.h1>
         <motion.p
-          className="text-lg opacity-90"
+          className="text-base opacity-90"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -159,7 +159,7 @@ const Askme = () => {
         transition={{ duration: 0.6, delay: 0.8 }}
       >
         <motion.h2
-          className="text-3xl font-semibold text-amber-800 mb-8 text-center"
+          className="text-2xl font-semibold text-amber-800 mb-8 text-center"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5, delay: 1 }}
@@ -204,7 +204,7 @@ const Askme = () => {
             >
               <Card className="bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-lg transition-all duration-300 border-amber-200">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-xl font-bold text-amber-800">{type.name}</CardTitle>
+                  <CardTitle className="text-lg font-bold text-amber-800">{type.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 text-center whitespace-pre-line">{type.desc}</p>

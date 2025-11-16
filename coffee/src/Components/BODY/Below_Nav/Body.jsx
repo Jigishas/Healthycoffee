@@ -94,7 +94,7 @@ function Body() {
                 />
 
                 <motion.h1
-                  className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 md:mb-8 relative z-10 leading-tight"
+                  className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 md:mb-8 relative z-10 leading-tight"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 1, delay: 0.8 }}
@@ -110,7 +110,7 @@ function Body() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 1, delay: 1 }}
                 >
-                  <h3 className="text-xl md:text-3xl lg:text-4xl text-white leading-relaxed font-medium drop-shadow-2xl max-w-3xl mx-auto">
+                  <h3 className="text-lg md:text-xl lg:text-2xl text-white leading-relaxed font-medium drop-shadow-2xl max-w-3xl mx-auto">
                     Coffee is one of the leading exports in Kenya. It is grown in many parts of the country and farmers profit from it a lot.
                   </h3>
 
@@ -172,7 +172,7 @@ function Body() {
             </motion.div>
 
             <motion.h1
-              className="text-4xl md:text-6xl font-black text-amber-800 mb-8 md:mb-12 relative text-center"
+              className="text-3xl md:text-4xl font-black text-amber-800 mb-8 md:mb-12 relative text-center"
               initial={{ scale: 0.9, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -207,7 +207,7 @@ function Body() {
                 />
 
                 <blockquote className="relative bg-white/90 backdrop-blur-sm p-6 md:p-12 rounded-2xl border border-amber-300/50 shadow-xl">
-                  <h3 className="text-xl md:text-3xl lg:text-4xl italic text-amber-900 leading-relaxed font-light text-center">
+                  <h3 className="text-lg md:text-xl lg:text-2xl italic text-amber-900 leading-relaxed font-light text-center">
                     "You cannot roast in quality that was never grown in the plant. A healthy coffee plant is the first and most important ingredient in the cup."
                   </h3>
                 </blockquote>
@@ -238,10 +238,10 @@ function Body() {
                   />
                 </div>
                 <div className="text-center">
-                  <h5 className="text-2xl md:text-3xl font-bold text-amber-800 group-hover:text-amber-600 transition-colors duration-300">
+                  <h5 className="text-xl md:text-2xl font-bold text-amber-800 group-hover:text-amber-600 transition-colors duration-300">
                     James Hernandez
                   </h5>
-                  <p className="text-amber-600/80 text-lg md:text-xl font-light">Coffee Expert & Agriculturist</p>
+                  <p className="text-amber-600/80 text-base md:text-lg font-light">Coffee Expert & Agriculturist</p>
                 </div>
               </motion.div>
             </div>

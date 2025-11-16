@@ -32,7 +32,7 @@ function Navbar() {
               <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full blur opacity-30"></div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-lg font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent">
                 CoffeeAI
               </h1>
               <p className="text-xs text-amber-600">Plant Health Intelligence</p>
