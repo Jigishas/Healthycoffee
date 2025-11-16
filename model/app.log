@@ -677,3 +677,24 @@
  * Running on http://127.0.0.1:8000
  * Running on http://10.2.2.246:8000
 2025-11-16 13:08:44,168 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 15:22:09,155 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-16 15:22:09,165 - __main__ - INFO - Starting combined Flask server...
+2025-11-16 15:22:09,282 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.246:8000
+2025-11-16 15:22:09,284 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 15:22:40,097 - werkzeug - INFO - 127.0.0.1 - - [16/Nov/2025 15:22:40] "GET /health HTTP/1.1" 200 -
+2025-11-16 17:42:11,615 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-16 17:42:11,621 - __main__ - INFO - Starting combined Flask server...
+2025-11-16 17:42:11,693 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.246:8000
+2025-11-16 17:42:11,694 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-16 17:42:47,624 - werkzeug - INFO - 127.0.0.1 - - [16/Nov/2025 17:42:47] "GET /health HTTP/1.1" 200 -
+2025-11-16 17:43:22,027 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-16 17:43:23,046 - __main__ - INFO - Prediction completed in 1.0115s
+2025-11-16 17:43:23,056 - werkzeug - INFO - 127.0.0.1 - - [16/Nov/2025 17:43:23] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-16 17:44:43,952 - werkzeug - INFO - 127.0.0.1 - - [16/Nov/2025 17:44:43] "[33mGET / HTTP/1.1[0m" 404 -
+2025-11-16 17:44:44,317 - werkzeug - INFO - 127.0.0.1 - - [16/Nov/2025 17:44:44] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

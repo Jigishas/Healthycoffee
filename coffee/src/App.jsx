@@ -9,6 +9,7 @@ import Stat from './Components/BODY/Stat/Stat'
 import Belowimg from './Components/BODY/imageSlider/Belowimg'
 import Askme from './Components/BODY/Ask me/Askme'
 import CameraCapture from './Components/CameraCapture/CameraCapture'
+import Upload from './Components/Uploads/Upload'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Stat />
       <Askme />
       <CameraCapture />
+      <Upload />
       
            
       <Whatsapp />

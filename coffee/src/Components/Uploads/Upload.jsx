@@ -1,6 +1,6 @@
  import React, { useState, useRef } from 'react';
 
-const BACKEND_URL = 'http://127.0.0.1:8000';
+const BACKEND_URL = 'https://healthycoffee.onrender.com';
 
 const Upload = () => {
   const [selectedFile, setSelectedFile] = useState(null);
