@@ -464,19 +464,29 @@ const CameraCapture = React.forwardRef((props, ref) => {
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        
-        // Wait for video to be ready
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current.play().then(() => {
-            setCameraActive(true);
-            setCameraLoading(false);
-          }).catch(playError => {
-            console.error('Video play error:', playError);
-            setCameraLoading(false);
-            setError('Failed to start camera preview. The camera might be in use by another application.');
-          });
-        };
-        
+
+        // Set camera active immediately to show the video element
+        setCameraActive(true);
+
+        // Try to play the video
+        videoRef.current.play().then(() => {
+          console.log('Camera preview started successfully');
+          setCameraLoading(false);
+        }).catch(playError => {
+          console.error('Video play error:', playError);
+          setCameraLoading(false);
+          setError('Failed to start camera preview. The camera might be in use by another application.');
+        });
+
+        // Fallback: if play doesn't work, try again after a short delay
+        setTimeout(() => {
+          if (videoRef.current && videoRef.current.paused) {
+            videoRef.current.play().catch(err => {
+              console.error('Fallback play failed:', err);
+            });
+          }
+        }, 100);
+
         videoRef.current.onerror = () => {
           setCameraLoading(false);
           setError('Camera hardware error occurred. Please try again.');
@@ -485,7 +495,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
     } catch (err) {
       console.error('Camera access error:', err);
       setCameraLoading(false);
-      
+
       // Comprehensive error handling
       switch(err.name) {
         case 'NotAllowedError':
