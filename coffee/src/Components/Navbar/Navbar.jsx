@@ -51,8 +51,17 @@ function Navbar() {
                 type="text"
                 placeholder="Search coffee insights..."
                 className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-amber-200 rounded-full text-gray-700 placeholder-amber-400 focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition-all duration-300 shadow-lg hover:shadow-xl"
+                onClick={(e) => e.target.focus()}
               />
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-amber-500 group-hover:text-amber-600 transition-colors duration-300" />
+              <button
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-amber-500 group-hover:text-amber-600 transition-colors duration-300 cursor-pointer"
+                onClick={() => {
+                  const input = document.querySelector('input[placeholder="Search coffee insights..."]');
+                  if (input) input.focus();
+                }}
+              >
+                <Search />
+              </button>
               <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 to-orange-400/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           </motion.div>

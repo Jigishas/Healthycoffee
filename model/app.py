@@ -112,10 +112,44 @@ def upload_image():
             # Get predictions with timing
             start_time = time.time()
 
-            disease_result = disease_classifier.predict(filepath)
-            deficiency_result = deficiency_classifier.predict(filepath)
+            # Run predictions in parallel for faster response
+            import threading
+            results = {}
+            errors = {}
+
+            def predict_disease():
+                try:
+                    results['disease'] = disease_classifier.predict(filepath)
+                except Exception as e:
+                    errors['disease'] = str(e)
+
+            def predict_deficiency():
+                try:
+                    results['deficiency'] = deficiency_classifier.predict(filepath)
+                except Exception as e:
+                    errors['deficiency'] = str(e)
+
+            # Start threads
+            disease_thread = threading.Thread(target=predict_disease)
+            deficiency_thread = threading.Thread(target=predict_deficiency)
+
+            disease_thread.start()
+            deficiency_thread.start()
+
+            # Wait for both to complete
+            disease_thread.join()
+            deficiency_thread.join()
 
             total_time = time.time() - start_time
+
+            # Check for errors
+            if 'disease' in errors:
+                raise Exception(f"Disease prediction failed: {errors['disease']}")
+            if 'deficiency' in errors:
+                raise Exception(f"Deficiency prediction failed: {errors['deficiency']}")
+
+            disease_result = results['disease']
+            deficiency_result = results['deficiency']
 
             # Get additional recommendations
             recommendations = get_additional_recommendations(
