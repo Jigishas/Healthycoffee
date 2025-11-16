@@ -24,24 +24,14 @@ const ImageSlider = () => {
           key={idx}
           src={img}
           alt={`Coffee plantation ${idx + 1}`}
-          className={`absolute left-10 top-0 w-full h-24 object-cover rounded-2xl opacity-0 transition-all duration-1000 ${
+          className={`absolute left-10 top-0 w-full h-46 object-cover rounded-2xl opacity-0 transition-all duration-1000 ${
             current === idx ? 'opacity-100 scale-105' : 'scale-100'
           } hover:scale-110 cursor-pointer`}
         />
       ))}
 
-      {/* Navigation dots */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {images.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrent(idx)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              current === idx ? 'bg-coffee-orange scale-125' : 'bg-gray-300 hover:bg-coffee-brown'
-            }`}
-          />
-        ))}
-      </div>
+    
+     
     </div>
   );
 };

@@ -93,60 +93,8 @@ const Belowimg = () => {
                   key={item.label}
                   className="flex flex-col items-center gap-3 p-4 bg-gradient-to-br from-white to-amber-50 rounded-xl shadow-lg border border-amber-200/50"
                   whileHover={{ scale: 1.1, y: -5 }}
-                  transition={{ duration: 0.3 }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 1.2 + index * 0.2 }}
-                  viewport={{ once: true }}
-                >
-                  <motion.div
-                    animate={{ rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }}
-                  >
-                    <item.icon className={`w-8 h-8 ${item.color}`} />
-                  </motion.div>
-                  <span className="text-sm font-semibold text-amber-700 text-center">
-                    {item.label}
-                  </span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* Floating Elements */}
-      <motion.div
-        className="absolute top-20 right-10 w-4 h-4 bg-amber-400 rounded-full opacity-60"
-        animate={{
-          y: [0, -20, 0],
-          opacity: [0.6, 1, 0.6]
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      <motion.div
-        className="absolute bottom-32 left-16 w-6 h-6 bg-emerald-400 rounded-full opacity-40"
-        animate={{
-          y: [0, -25, 0],
-          opacity: [0.4, 0.8, 0.4]
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1
-        }}
-      />
-    </motion.div>
-  );
-};
-
-export default Belowimg;
-=======
                   transition={{ duration: 0.6, delay: 1.2 + index * 0.2 }}
                   viewport={{ once: true }}
                 >
