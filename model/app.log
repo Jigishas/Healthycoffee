@@ -584,3 +584,79 @@
 2025-11-14 12:39:08,753 - __main__ - INFO - File saved: uploads\captured_image.jpg
 2025-11-14 12:39:08,992 - __main__ - INFO - Prediction completed in 0.2383s
 2025-11-14 12:39:08,999 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 12:39:08] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 15:07:14,994 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-14 15:07:14,999 - __main__ - INFO - Starting combined Flask server...
+2025-11-14 15:07:15,078 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.229:8000
+2025-11-14 15:07:15,079 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-14 15:07:26,181 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 15:07:27,547 - __main__ - INFO - Prediction completed in 1.3576s
+2025-11-14 15:07:27,562 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 15:07:27] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 15:07:59,951 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 15:08:00,166 - __main__ - INFO - Prediction completed in 0.2124s
+2025-11-14 15:08:00,168 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 15:08:00] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 15:34:07,183 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 15:34:08,304 - __main__ - INFO - Prediction completed in 1.0873s
+2025-11-14 15:34:08,331 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 15:34:08] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 15:41:36,287 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 15:41:36,586 - __main__ - INFO - Prediction completed in 0.2967s
+2025-11-14 15:41:36,594 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 15:41:36] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 15:41:52,643 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 15:41:52,926 - __main__ - INFO - Prediction completed in 0.2787s
+2025-11-14 15:41:52,932 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 15:41:52] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 18:46:27,363 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-14 18:46:27,372 - __main__ - INFO - Starting combined Flask server...
+2025-11-14 18:46:27,479 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.229:8000
+2025-11-14 18:46:27,480 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-14 18:48:24,665 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 18:48:25,627 - __main__ - INFO - Prediction completed in 0.9585s
+2025-11-14 18:48:25,636 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 18:48:25] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 18:48:35,957 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 18:48:36,384 - __main__ - INFO - Prediction completed in 0.4218s
+2025-11-14 18:48:36,386 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 18:48:36] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 18:56:20,806 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 18:56:21,365 - __main__ - INFO - Prediction completed in 0.5392s
+2025-11-14 18:56:21,371 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 18:56:21] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 18:58:15,139 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 18:58:16,274 - __main__ - INFO - Prediction completed in 1.1299s
+2025-11-14 18:58:16,299 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 18:58:16] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 18:58:31,094 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 18:58:31,551 - __main__ - INFO - Prediction completed in 0.4527s
+2025-11-14 18:58:31,559 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 18:58:31] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 19:26:46,408 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 19:26:46,677 - __main__ - INFO - Prediction completed in 0.2670s
+2025-11-14 19:26:46,679 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 19:26:46] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 19:59:55,486 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-14 19:59:55,489 - __main__ - INFO - Starting combined Flask server...
+2025-11-14 19:59:56,818 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.229:8000
+2025-11-14 19:59:56,819 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-14 20:00:28,713 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 20:00:29,214 - __main__ - INFO - Prediction completed in 0.4985s
+2025-11-14 20:00:29,220 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 20:00:29] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 20:31:32,051 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 20:31:33,083 - __main__ - INFO - Prediction completed in 1.0173s
+2025-11-14 20:31:33,096 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 20:31:33] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-14 20:34:47,615 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-14 20:34:47,919 - __main__ - INFO - Prediction completed in 0.2991s
+2025-11-14 20:34:47,921 - werkzeug - INFO - 127.0.0.1 - - [14/Nov/2025 20:34:47] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-15 08:56:37,433 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-15 08:56:37,440 - __main__ - INFO - Starting combined Flask server...
+2025-11-15 08:56:38,835 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.229:8000
+2025-11-15 08:56:38,836 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-15 09:07:52,862 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-15 09:07:56,486 - __main__ - INFO - Prediction completed in 3.6057s
+2025-11-15 09:07:56,583 - werkzeug - INFO - 127.0.0.1 - - [15/Nov/2025 09:07:56] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-15 09:22:08,481 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-15 09:22:09,782 - __main__ - INFO - Prediction completed in 1.2661s
+2025-11-15 09:22:09,789 - werkzeug - INFO - 127.0.0.1 - - [15/Nov/2025 09:22:09] "POST /api/upload-image HTTP/1.1" 200 -
