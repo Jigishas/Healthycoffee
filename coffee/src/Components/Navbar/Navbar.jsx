@@ -1,11 +1,47 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
-import { Search, Menu } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Menu, X, Camera, Image, ChevronDown } from 'lucide-react';
 import logo from '../../assets/coffee.webp';
 
 function Navbar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const scrollToCameraSection = () => {
+    const cameraSection = document.querySelector('[data-camera-section]');
+    if (cameraSection) {
+      cameraSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  const triggerCameraCapture = () => {
+    // Try to find and click the camera button in CameraCapture component
+    const cameraButton = document.querySelector('button[onclick*="openCamera"]') ||
+                        document.querySelector('button:has(.text-2xl):has(.📷)');
+    if (cameraButton) {
+      cameraButton.click();
+    } else {
+      // Fallback: scroll to camera section
+      scrollToCameraSection();
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  const triggerGalleryUpload = () => {
+    // Try to find and click the gallery button in CameraCapture component
+    const galleryButton = document.querySelector('button[onclick*="openGallery"]') ||
+                         document.querySelector('button:has(.text-2xl):has(.🖼️)');
+    if (galleryButton) {
+      galleryButton.click();
+    } else {
+      // Fallback: scroll to camera section
+      scrollToCameraSection();
+    }
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
@@ -89,12 +125,88 @@ function Navbar() {
 
           {/* Mobile Menu Button */}
           <motion.button
-            className="md:hidden p-2 rounded-lg bg-amber-100 hover:bg-amber-200 transition-colors duration-300"
+            className="md:hidden p-2 rounded-lg bg-amber-100 hover:bg-amber-200 transition-colors duration-300 relative"
             whileTap={{ scale: 0.95 }}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <Menu className="h-6 w-6 text-amber-700" />
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6 text-amber-700" />
+            ) : (
+              <Menu className="h-6 w-6 text-amber-700" />
+            )}
           </motion.button>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden mt-4 bg-white/95 backdrop-blur-sm rounded-xl border border-amber-200 shadow-xl overflow-hidden"
+            >
+              <div className="py-2">
+                {/* Camera Shortcuts */}
+                <div className="px-4 py-3 border-b border-amber-100">
+                  <h3 className="text-sm font-semibold text-amber-800 mb-3 flex items-center gap-2">
+                    <Camera className="h-4 w-4" />
+                    Quick Capture
+                  </h3>
+                  <div className="space-y-2">
+                    <motion.button
+                      onClick={triggerCameraCapture}
+                      className="w-full flex items-center gap-3 px-3 py-2 text-left text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">📷</span>
+                      </div>
+                      <div>
+                        <div className="font-medium">Open Camera</div>
+                        <div className="text-xs text-amber-600">Take photo directly</div>
+                      </div>
+                    </motion.button>
+
+                    <motion.button
+                      onClick={triggerGalleryUpload}
+                      className="w-full flex items-center gap-3 px-3 py-2 text-left text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">🖼️</span>
+                      </div>
+                      <div>
+                        <div className="font-medium">From Gallery</div>
+                        <div className="text-xs text-amber-600">Select existing photo</div>
+                      </div>
+                    </motion.button>
+                  </div>
+                </div>
+
+                {/* Navigation Links */}
+                <div className="px-4 py-3">
+                  <h3 className="text-sm font-semibold text-amber-800 mb-3">Navigation</h3>
+                  {['Home', 'About', 'Services', 'Contact'].map((item) => (
+                    <motion.a
+                      key={item}
+                      href="#"
+                      className="block px-3 py-2 text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item}
+                    </motion.a>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Animated Background Elements */}

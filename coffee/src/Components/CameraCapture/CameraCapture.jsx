@@ -16,6 +16,8 @@ const CameraCapture = React.forwardRef((props, ref) => {
   const [cameraLoading, setCameraLoading] = useState(false);
   const [isHttps, setIsHttps] = useState(false);
   const [imageZoomed, setImageZoomed] = useState(false);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+  const [pdfDownloadStatus, setPdfDownloadStatus] = useState(null);
 
   // Export functions
   const exportAsJSON = () => {
@@ -32,106 +34,226 @@ const CameraCapture = React.forwardRef((props, ref) => {
   const exportAsPDF = async () => {
     if (!result) return;
 
+    setPdfGenerating(true);
+    setPdfDownloadStatus(null);
+
     try {
       // Get confidence levels
       const deficiencyConfidence = result.deficiency_prediction ? Math.round((result.deficiency_prediction.confidence || 0) * 100) : 0;
       const diseaseConfidence = result.disease_prediction ? Math.round((result.disease_prediction.confidence || 0) * 100) : 0;
 
-      // Create PDF content
+      // Create PDF content with enhanced modern styling
       const pdfContent = `
         <!DOCTYPE html>
         <html>
         <head>
           <title>Leaf Analysis Report</title>
           <style>
+            * {
+              box-sizing: border-box;
+            }
             body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              max-width: 800px;
+              font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              max-width: 850px;
               margin: 0 auto;
-              padding: 40px;
-              color: #333;
-              line-height: 1.6;
+              padding: 50px;
+              color: #1a202c;
+              line-height: 1.7;
+              background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
             }
             .header {
               text-align: center;
-              border-bottom: 3px solid #2ecc71;
-              padding-bottom: 20px;
-              margin-bottom: 30px;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              padding: 40px 30px;
+              border-radius: 20px;
+              margin-bottom: 40px;
+              box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
             }
             .header h1 {
-              color: #2c3e50;
               margin: 0;
-              font-size: 32px;
+              font-size: 36px;
+              font-weight: 700;
+              text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             .header p {
-              color: #7f8c8d;
-              font-size: 16px;
+              margin: 10px 0 0 0;
+              font-size: 18px;
+              opacity: 0.9;
             }
             .section {
-              margin-bottom: 30px;
-              background: #f8f9fa;
-              padding: 25px;
-              border-radius: 10px;
-              border-left: 4px solid #3498db;
+              margin-bottom: 35px;
+              background: white;
+              padding: 35px;
+              border-radius: 16px;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+              border: 1px solid #e2e8f0;
+              transition: transform 0.2s ease;
+            }
+            .section:hover {
+              transform: translateY(-2px);
             }
             .section h2 {
-              color: #2c3e50;
-              border-bottom: 2px solid #ecf0f1;
-              padding-bottom: 10px;
-              margin-top: 0;
+              color: #2d3748;
+              font-size: 24px;
+              font-weight: 600;
+              margin: 0 0 20px 0;
+              display: flex;
+              align-items: center;
+              gap: 12px;
             }
             .confidence-meter {
-              background: #ecf0f1;
-              border-radius: 20px;
-              padding: 15px;
-              margin: 15px 0;
+              background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+              border-radius: 16px;
+              padding: 20px;
+              margin: 20px 0;
+              border: 2px solid #e2e8f0;
             }
             .confidence-level {
-              background: linear-gradient(90deg, #e74c3c, #f39c12, #2ecc71);
-              height: 8px;
-              border-radius: 4px;
-              margin: 10px 0;
+              background: linear-gradient(90deg, #fc8181, #f6ad55, #68d391);
+              height: 12px;
+              border-radius: 6px;
+              margin: 15px 0;
               position: relative;
+              box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
             }
             .confidence-marker {
               position: absolute;
-              top: -4px;
-              width: 16px;
-              height: 16px;
-              background: #2c3e50;
+              top: -6px;
+              width: 20px;
+              height: 20px;
+              background: #2d3748;
               border-radius: 50%;
               transform: translateX(-50%);
+              box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             }
-            .recommendation-box {
-              background: white;
-              border-radius: 8px;
-              padding: 15px;
-              margin: 10px 0;
-              border-left: 4px solid #3498db;
+            .recommendation-card {
+              background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+              border-radius: 12px;
+              padding: 20px;
+              margin: 15px 0;
+              border-left: 4px solid #3b82f6;
+              box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+            }
+            .recommendation-card h4 {
+              margin: 0 0 10px 0;
+              color: #1e40af;
+              font-size: 18px;
+              font-weight: 600;
             }
             .status-badge {
-              display: inline-block;
-              padding: 8px 16px;
-              border-radius: 20px;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              padding: 10px 20px;
+              border-radius: 25px;
               color: white;
-              font-weight: bold;
-              margin: 5px 0;
+              font-weight: 600;
+              font-size: 14px;
+              margin: 10px 0;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             }
-            .healthy { background: #27ae60; }
-            .moderate { background: #f39c12; }
-            .critical { background: #e74c3c; }
-            .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+            .healthy { background: linear-gradient(135deg, #10b981, #059669); }
+            .moderate { background: linear-gradient(135deg, #f59e0b, #d97706); }
+            .critical { background: linear-gradient(135deg, #ef4444, #dc2626); }
+            .grid-2 {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 25px;
+              margin: 20px 0;
+            }
+            .management-card {
+              background: white;
+              border-radius: 12px;
+              padding: 20px;
+              border: 2px solid #e2e8f0;
+              transition: all 0.3s ease;
+            }
+            .management-card:hover {
+              border-color: #3b82f6;
+              box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+            }
+            .management-card h5 {
+              margin: 0 0 15px 0;
+              color: #1e40af;
+              font-size: 16px;
+              font-weight: 600;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            .list-item {
+              display: flex;
+              align-items: flex-start;
+              gap: 12px;
+              padding: 8px 0;
+              color: #4a5568;
+            }
+            .list-item-icon {
+              color: #3b82f6;
+              font-weight: bold;
+              flex-shrink: 0;
+              margin-top: 2px;
+            }
+            .economic-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+              gap: 20px;
+              margin: 20px 0;
+            }
+            .economic-item {
+              text-align: center;
+              background: white;
+              padding: 20px;
+              border-radius: 12px;
+              border: 2px solid #e2e8f0;
+              transition: all 0.3s ease;
+            }
+            .economic-item:hover {
+              border-color: #10b981;
+              box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+            }
+            .economic-value {
+              font-size: 24px;
+              font-weight: 700;
+              color: #065f46;
+              margin-bottom: 5px;
+            }
+            .economic-label {
+              font-size: 12px;
+              color: #6b7280;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
             .footer {
               text-align: center;
-              margin-top: 40px;
-              padding-top: 20px;
-              border-top: 2px solid #ecf0f1;
-              color: #7f8c8d;
+              margin-top: 50px;
+              padding-top: 30px;
+              border-top: 2px solid #e2e8f0;
+              color: #6b7280;
               font-size: 14px;
             }
+            .raw-response {
+              background: #1a202c;
+              color: #e2e8f0;
+              padding: 25px;
+              border-radius: 12px;
+              font-family: 'Monaco', 'Menlo', monospace;
+              font-size: 12px;
+              margin: 20px 0;
+              white-space: pre-wrap;
+              overflow-x: auto;
+              border: 1px solid #4a5568;
+            }
             @media print {
-              body { padding: 20px; }
-              .no-print { display: none; }
+              body {
+                padding: 30px;
+                background: white;
+              }
+              .section {
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+              }
             }
           </style>
         </head>
@@ -139,7 +261,13 @@ const CameraCapture = React.forwardRef((props, ref) => {
           <div class="header">
             <h1>🌿 Leaf Analysis Report</h1>
             <p>AI-Powered Plant Health Assessment</p>
-            <p><strong>Generated:</strong> ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+            <p><strong>Generated:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+          </div>
+
+          <!-- Raw API Response -->
+          <div class="section">
+            <h2>📊 Raw Analysis Response</h2>
+            <div class="raw-response">${JSON.stringify(result, null, 2)}</div>
           </div>
 
           ${result.deficiency_prediction ? `
@@ -154,8 +282,8 @@ const CameraCapture = React.forwardRef((props, ref) => {
                 <div class="confidence-marker" style="left: ${deficiencyConfidence}%;"></div>
               </div>
             </div>
-            ${result.deficiency_prediction.explanation ? `<p><strong>Explanation:</strong> ${result.deficiency_prediction.explanation}</p>` : ''}
-            ${result.deficiency_prediction.recommendation ? `<p><strong>Recommendation:</strong> ${result.deficiency_prediction.recommendation}</p>` : ''}
+            ${result.deficiency_prediction.explanation ? `<div class="recommendation-card"><p><strong>Explanation:</strong> ${result.deficiency_prediction.explanation}</p></div>` : ''}
+            ${result.deficiency_prediction.recommendation ? `<div class="recommendation-card"><p><strong>Recommendation:</strong> ${result.deficiency_prediction.recommendation}</p></div>` : ''}
           </div>
           ` : ''}
 
@@ -171,8 +299,8 @@ const CameraCapture = React.forwardRef((props, ref) => {
                 <div class="confidence-marker" style="left: ${diseaseConfidence}%;"></div>
               </div>
             </div>
-            ${result.disease_prediction.explanation ? `<p><strong>Explanation:</strong> ${result.disease_prediction.explanation}</p>` : ''}
-            ${result.disease_prediction.recommendation ? `<p><strong>Recommendation:</strong> ${result.disease_prediction.recommendation}</p>` : ''}
+            ${result.disease_prediction.explanation ? `<div class="recommendation-card"><p><strong>Explanation:</strong> ${result.disease_prediction.explanation}</p></div>` : ''}
+            ${result.disease_prediction.recommendation ? `<div class="recommendation-card"><p><strong>Recommendation:</strong> ${result.disease_prediction.recommendation}</p></div>` : ''}
           </div>
           ` : ''}
 
@@ -181,81 +309,92 @@ const CameraCapture = React.forwardRef((props, ref) => {
             <h2>🛡️ Disease Management Recommendations</h2>
 
             ${result.recommendations.disease_recommendations.overview ? `
-            <div class="recommendation-box">
-              <strong>Overview:</strong> ${result.recommendations.disease_recommendations.overview}
+            <div class="recommendation-card">
+              <h4>Overview</h4>
+              <p>${result.recommendations.disease_recommendations.overview}</p>
             </div>
             ` : ''}
 
             ${result.recommendations.disease_recommendations.symptoms ? `
-            <h3>📋 Symptoms</h3>
-            <ul>
-              ${result.recommendations.disease_recommendations.symptoms.map(symptom => `<li>${symptom}</li>`).join('')}
-            </ul>
+            <div class="recommendation-card">
+              <h4>📋 Symptoms</h4>
+              ${result.recommendations.disease_recommendations.symptoms.map(symptom => `<div class="list-item"><span class="list-item-icon">🔍</span><span>${symptom}</span></div>`).join('')}
+            </div>
             ` : ''}
 
             ${result.recommendations.disease_recommendations.integrated_management ? `
             <div class="grid-2">
               ${result.recommendations.disease_recommendations.integrated_management.cultural_practices ? `
-              <div>
-                <h3>🌱 Cultural Practices</h3>
-                <ul>
-                  ${result.recommendations.disease_recommendations.integrated_management.cultural_practices.map(practice => `<li>${practice}</li>`).join('')}
-                </ul>
+              <div class="management-card">
+                <h5>🌱 Cultural Practices</h5>
+                ${result.recommendations.disease_recommendations.integrated_management.cultural_practices.map(practice => `<div class="list-item"><span class="list-item-icon">•</span><span>${practice}</span></div>`).join('')}
               </div>
               ` : ''}
 
               ${result.recommendations.disease_recommendations.integrated_management.chemical_control ? `
-              <div>
-                <h3>🧪 Chemical Control</h3>
-                <ul>
-                  ${result.recommendations.disease_recommendations.integrated_management.chemical_control.map(control => `<li>${control}</li>`).join('')}
-                </ul>
+              <div class="management-card">
+                <h5>🧪 Chemical Control</h5>
+                ${result.recommendations.disease_recommendations.integrated_management.chemical_control.map(control => `<div class="list-item"><span class="list-item-icon">•</span><span>${control}</span></div>`).join('')}
               </div>
               ` : ''}
             </div>
 
             ${result.recommendations.disease_recommendations.integrated_management.biological_control ? `
-            <h3>🐞 Biological Control</h3>
-            <ul>
-              ${result.recommendations.disease_recommendations.integrated_management.biological_control.map(control => `<li>${control}</li>`).join('')}
-            </ul>
+            <div class="management-card">
+              <h5>🐞 Biological Control</h5>
+              ${result.recommendations.disease_recommendations.integrated_management.biological_control.map(control => `<div class="list-item"><span class="list-item-icon">•</span><span>${control}</span></div>`).join('')}
+            </div>
             ` : ''}
 
             ${result.recommendations.disease_recommendations.integrated_management.monitoring ? `
-            <h3>👀 Monitoring</h3>
-            <ul>
-              ${result.recommendations.disease_recommendations.integrated_management.monitoring.map(monitor => `<li>${monitor}</li>`).join('')}
-            </ul>
+            <div class="management-card">
+              <h5>👀 Monitoring</h5>
+              ${result.recommendations.disease_recommendations.integrated_management.monitoring.map(monitor => `<div class="list-item"><span class="list-item-icon">•</span><span>${monitor}</span></div>`).join('')}
+            </div>
             ` : ''}
             ` : ''}
 
             ${result.recommendations.disease_recommendations.severity_specific_recommendations ? `
-            <h3>⚡ Severity-Specific Actions</h3>
-            <p><strong>Spray Frequency:</strong> ${result.recommendations.disease_recommendations.severity_specific_recommendations.spray_frequency}</p>
-            <p><strong>Intervention Level:</strong> ${result.recommendations.disease_recommendations.severity_specific_recommendations.intervention_level}</p>
+            <div class="recommendation-card">
+              <h4>⚡ Severity-Specific Actions</h4>
+              <div class="grid-2">
+                <div><strong>Spray Frequency:</strong> ${result.recommendations.disease_recommendations.severity_specific_recommendations.spray_frequency}</div>
+                <div><strong>Intervention Level:</strong> ${result.recommendations.disease_recommendations.severity_specific_recommendations.intervention_level}</div>
+              </div>
 
-            ${result.recommendations.disease_recommendations.severity_specific_recommendations.immediate_actions ? `
-            <h4>Immediate Actions</h4>
-            <ul>
-              ${result.recommendations.disease_recommendations.severity_specific_recommendations.immediate_actions.map(action => `<li>${action}</li>`).join('')}
-            </ul>
-            ` : ''}
+              ${result.recommendations.disease_recommendations.severity_specific_recommendations.immediate_actions ? `
+              <h5 style="color: #dc2626; margin-top: 15px;">🚨 Immediate Actions</h5>
+              ${result.recommendations.disease_recommendations.severity_specific_recommendations.immediate_actions.map(action => `<div class="list-item"><span class="list-item-icon">⚠️</span><span>${action}</span></div>`).join('')}
+              ` : ''}
 
-            ${result.recommendations.disease_recommendations.severity_specific_recommendations.long_term_strategies ? `
-            <h4>Long-term Strategies</h4>
-            <ul>
-              ${result.recommendations.disease_recommendations.severity_specific_recommendations.long_term_strategies.map(strategy => `<li>${strategy}</li>`).join('')}
-            </ul>
-            ` : ''}
+              ${result.recommendations.disease_recommendations.severity_specific_recommendations.long_term_strategies ? `
+              <h5 style="color: #059669; margin-top: 15px;">📈 Long-term Strategies</h5>
+              ${result.recommendations.disease_recommendations.severity_specific_recommendations.long_term_strategies.map(strategy => `<div class="list-item"><span class="list-item-icon">📊</span><span>${strategy}</span></div>`).join('')}
+              ` : ''}
+            </div>
             ` : ''}
 
             ${result.recommendations.disease_recommendations.economic_considerations ? `
-            <h3>💰 Economic Considerations</h3>
-            <div class="grid-2">
-              <div><strong>Management Cost:</strong> $${result.recommendations.disease_recommendations.economic_considerations.management_cost_usd_per_ha}/ha</div>
-              <div><strong>Yield Loss:</strong> ${result.recommendations.disease_recommendations.economic_considerations.potential_yield_loss_percent}%</div>
-              <div><strong>ROI:</strong> ${result.recommendations.disease_recommendations.economic_considerations.return_on_investment}</div>
-              <div><strong>Economic Threshold:</strong> ${result.recommendations.disease_recommendations.economic_considerations.economic_threshold}</div>
+            <div class="recommendation-card">
+              <h4>💰 Economic Considerations</h4>
+              <div class="economic-grid">
+                <div class="economic-item">
+                  <div class="economic-value">$${result.recommendations.disease_recommendations.economic_considerations.management_cost_usd_per_ha}</div>
+                  <div class="economic-label">Cost/ha</div>
+                </div>
+                <div class="economic-item">
+                  <div class="economic-value">${result.recommendations.disease_recommendations.economic_considerations.potential_yield_loss_percent}%</div>
+                  <div class="economic-label">Yield Loss</div>
+                </div>
+                <div class="economic-item">
+                  <div class="economic-value">${result.recommendations.disease_recommendations.economic_considerations.return_on_investment}</div>
+                  <div class="economic-label">ROI</div>
+                </div>
+                <div class="economic-item">
+                  <div class="economic-value">${result.recommendations.disease_recommendations.economic_considerations.economic_threshold}</div>
+                  <div class="economic-label">Threshold</div>
+                </div>
+              </div>
             </div>
             ` : ''}
           </div>
@@ -266,24 +405,24 @@ const CameraCapture = React.forwardRef((props, ref) => {
             <h2>🌱 Nutrition Management</h2>
 
             ${result.recommendations.deficiency_recommendations.symptoms ? `
-            <h3>📋 Symptoms</h3>
-            <ul>
-              ${result.recommendations.deficiency_recommendations.symptoms.map(symptom => `<li>${symptom}</li>`).join('')}
-            </ul>
+            <div class="recommendation-card">
+              <h4>🔍 Symptoms</h4>
+              ${result.recommendations.deficiency_recommendations.symptoms.map(symptom => `<div class="list-item"><span class="list-item-icon">•</span><span>${symptom}</span></div>`).join('')}
+            </div>
             ` : ''}
 
             ${result.recommendations.deficiency_recommendations.basic ? `
-            <h3>💡 Basic Recommendations</h3>
-            <ul>
-              ${result.recommendations.deficiency_recommendations.basic.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
+            <div class="recommendation-card">
+              <h4>💡 Basic Recommendations</h4>
+              ${result.recommendations.deficiency_recommendations.basic.map(rec => `<div class="list-item"><span class="list-item-icon">•</span><span>${rec}</span></div>`).join('')}
+            </div>
             ` : ''}
 
             ${result.recommendations.deficiency_recommendations.management ? `
-            <h3>⚡ Advanced Management</h3>
-            <ul>
-              ${result.recommendations.deficiency_recommendations.management.map(manage => `<li>${manage}</li>`).join('')}
-            </ul>
+            <div class="recommendation-card">
+              <h4>⚡ Advanced Management</h4>
+              ${result.recommendations.deficiency_recommendations.management.map(manage => `<div class="list-item"><span class="list-item-icon">•</span><span>${manage}</span></div>`).join('')}
+            </div>
             ` : ''}
           </div>
           ` : ''}
@@ -301,15 +440,27 @@ const CameraCapture = React.forwardRef((props, ref) => {
       tempElement.innerHTML = pdfContent;
       tempElement.style.position = 'absolute';
       tempElement.style.left = '-9999px';
+      tempElement.style.top = '-9999px';
+      tempElement.style.zIndex = '-1';
       document.body.appendChild(tempElement);
 
       // Configure html2pdf options
       const options = {
-        margin: 1,
+        margin: [0.5, 0.5, 0.5, 0.5],
         filename: 'leaf-analysis-report.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff'
+        },
+        jsPDF: {
+          unit: 'in',
+          format: 'a4',
+          orientation: 'portrait',
+          compress: true
+        }
       };
 
       // Generate and download PDF
@@ -318,8 +469,13 @@ const CameraCapture = React.forwardRef((props, ref) => {
       // Clean up
       document.body.removeChild(tempElement);
 
+      setPdfDownloadStatus('success');
+      setPdfGenerating(false);
+
     } catch (err) {
       console.error('PDF generation error:', err);
+      setPdfDownloadStatus('failed');
+      setPdfGenerating(false);
       alert('Error generating PDF. Please try again or use JSON export.');
     }
   };
@@ -400,34 +556,24 @@ const CameraCapture = React.forwardRef((props, ref) => {
         stream.getTracks().forEach(track => track.stop());
       }
 
+      // Simplified constraints for maximum compatibility
       const constraints = {
-        video: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: 'environment'
-        }
+        video: true
       };
 
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(mediaStream);
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        videoRef.current.play()
-          .then(() => {
-            setCameraActive(true);
-            setCameraLoading(false);
-          })
-          .catch(err => {
-            console.error('Error playing video:', err);
-            setCameraLoading(false);
-            setError('Failed to start camera preview. Please try again.');
-          });
+        await videoRef.current.play();
+        setCameraActive(true);
+        setCameraLoading(false);
       }
     } catch (err) {
       console.error('Camera access error:', err);
       setCameraLoading(false);
-      
+
       if (err.name === 'NotAllowedError') {
         setError('Camera access was denied. Please allow camera permissions and try again.');
       } else if (err.name === 'NotFoundError') {
@@ -436,10 +582,6 @@ const CameraCapture = React.forwardRef((props, ref) => {
         setError('Camera not supported in this browser.');
       } else {
         setError('Failed to access camera. Please try again or use gallery upload.');
-      }
-      
-      if (cameraInputRef.current) {
-        cameraInputRef.current.click();
       }
     }
   };
@@ -592,7 +734,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
   );
 
   return (
-    <div ref={componentRef} className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div ref={componentRef} data-camera-section className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <Card className="p-8 mb-8 text-center">
         <div className="flex items-center justify-center gap-4 mb-4">
@@ -817,21 +959,58 @@ const CameraCapture = React.forwardRef((props, ref) => {
                 <h2 className="text-3xl font-bold text-slate-800 mb-2">Analysis Results</h2>
                 <p className="text-slate-600">Comprehensive health assessment of your leaf sample</p>
               </div>
-              <div className="flex gap-3">
-                <button 
-                  onClick={exportAsJSON}
-                  className="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl transition-all duration-300 flex items-center gap-2"
-                >
-                  <span>📄</span>
-                  JSON
-                </button>
-                <button 
-                  onClick={exportAsPDF}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-5 py-2.5 rounded-xl transition-all duration-300 flex items-center gap-2"
-                >
-                  <span>📊</span>
-                  PDF Report
-                </button>
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-3">
+                  <button
+                    onClick={exportAsJSON}
+                    className="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl transition-all duration-300 flex items-center gap-2"
+                  >
+                    <span>📄</span>
+                    JSON
+                  </button>
+                  <button
+                    onClick={exportAsPDF}
+                    disabled={pdfGenerating}
+                    className={`px-5 py-2.5 rounded-xl transition-all duration-300 flex items-center gap-2 ${
+                      pdfGenerating
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white'
+                    }`}
+                  >
+                    {pdfGenerating ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <span>📊</span>
+                        PDF Report
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* PDF Status Messages */}
+                {pdfDownloadStatus && (
+                  <div className={`text-sm px-3 py-2 rounded-lg flex items-center gap-2 ${
+                    pdfDownloadStatus === 'success'
+                      ? 'bg-green-100 text-green-800 border border-green-200'
+                      : 'bg-red-100 text-red-800 border border-red-200'
+                  }`}>
+                    {pdfDownloadStatus === 'success' ? (
+                      <>
+                        <span>✅</span>
+                        PDF report downloaded successfully!
+                      </>
+                    ) : (
+                      <>
+                        <span>❌</span>
+                        PDF generation failed. Please try again.
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
