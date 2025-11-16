@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 const BACKEND_URL = 'https://healthycoffee.onrender.com';
 
@@ -12,12 +13,43 @@ const CameraCapture = React.forwardRef((props, ref) => {
   const [cameraActive, setCameraActive] = useState(false);
   const [stream, setStream] = useState(null);
   const [cameraLoading, setCameraLoading] = useState(false);
+  const [isHttps, setIsHttps] = useState(false);
+  const [imageZoomed, setImageZoomed] = useState(false);
+
+  // Export functions
+  const exportAsJSON = () => {
+    if (!result) return;
+    const dataStr = JSON.stringify(result, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'leaf-analysis-results.json';
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const exportAsPDF = async () => {
+    if (!result) return;
+    // For PDF export, we'll need to install a library like jsPDF
+    // For now, show a placeholder
+    alert('PDF export feature coming soon! Use JSON export for now.');
+  };
+
+  // Zoom functionality
+  const toggleZoom = () => {
+    setImageZoomed(!imageZoomed);
+  };
 
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const componentRef = useRef(null);
+
+  // Check if running on HTTPS
+  useEffect(() => {
+    setIsHttps(window.location.protocol === 'https:');
+  }, []);
 
   // Upload to backend with progress
   const uploadToBackend = async (file) => {
@@ -68,7 +100,19 @@ const CameraCapture = React.forwardRef((props, ref) => {
     setCameraLoading(true);
     setError(null);
 
+    // Check if HTTPS is required for camera access
+    if (!isHttps && window.location.hostname !== 'localhost') {
+      setCameraLoading(false);
+      setError('Camera access requires HTTPS. Please ensure you are using a secure connection (https://) or localhost.');
+      return;
+    }
+
     try {
+      // Check if mediaDevices is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera not supported on this device/browser');
+      }
+
       // First try with environment camera for mobile
       let constraints = { video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } } };
       let stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -83,7 +127,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
           }).catch(err => {
             console.error('Play error:', err);
             setCameraLoading(false);
-            setError('Failed to start camera preview');
+            setError('Failed to start camera preview. Please check camera permissions.');
           });
         };
       } else {
@@ -107,7 +151,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
             }).catch(err => {
               console.error('Play error:', err);
               setCameraLoading(false);
-              setError('Failed to start camera preview');
+              setError('Failed to start camera preview. Please check camera permissions.');
             });
           };
         } else {
@@ -131,7 +175,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
               }).catch(err => {
                 console.error('Play error:', err);
                 setCameraLoading(false);
-                setError('Failed to start camera preview');
+                setError('Failed to start camera preview. Please check camera permissions.');
               });
             };
           } else {
@@ -380,7 +424,9 @@ const CameraCapture = React.forwardRef((props, ref) => {
               <img
                 src={preview}
                 alt="Captured leaf"
-                className="max-w-full h-auto max-h-80 rounded-xl shadow-lg border-2 border-slate-200"
+                className={`max-w-full h-auto max-h-80 rounded-xl shadow-lg border-2 border-slate-200 transition-transform duration-300 ${imageZoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in'}`}
+                onClick={toggleZoom}
+                style={{ transformOrigin: 'center' }}
               />
             </div>
           </div>
@@ -742,8 +788,24 @@ const CameraCapture = React.forwardRef((props, ref) => {
 
 
 
-          {/* Action Button */}
-          <div className="text-center">
+          {/* Export and Action Buttons */}
+          <div className="text-center space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={exportAsJSON}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+              >
+                <span className="text-lg">📄</span>
+                Export as JSON
+              </button>
+              <button
+                onClick={exportAsPDF}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+              >
+                <span className="text-lg">📊</span>
+                Export as PDF
+              </button>
+            </div>
             <button
               onClick={resetCapture}
               className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 hover:from-emerald-700 hover:via-teal-700 hover:to-green-700 text-white font-bold py-4 px-8 rounded-xl shadow-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-sm flex items-center justify-center gap-3 mx-auto"
