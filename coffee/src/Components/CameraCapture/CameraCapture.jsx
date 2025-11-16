@@ -468,15 +468,18 @@ const CameraCapture = React.forwardRef((props, ref) => {
         // Set camera active immediately to show the video element
         setCameraActive(true);
 
-        // Try to play the video
-        videoRef.current.play().then(() => {
-          console.log('Camera preview started successfully');
-          setCameraLoading(false);
-        }).catch(playError => {
-          console.error('Video play error:', playError);
-          setCameraLoading(false);
-          setError('Failed to start camera preview. The camera might be in use by another application.');
-        });
+        // Handle metadata loading and play
+        videoRef.current.onloadedmetadata = () => {
+          // Try to play the video once metadata is loaded
+          videoRef.current.play().then(() => {
+            console.log('Camera preview started successfully');
+            setCameraLoading(false);
+          }).catch(playError => {
+            console.error('Video play error:', playError);
+            setCameraLoading(false);
+            setError('Failed to start camera preview. The camera might be in use by another application.');
+          });
+        };
 
         // Fallback: if play doesn't work, try again after a short delay
         setTimeout(() => {
