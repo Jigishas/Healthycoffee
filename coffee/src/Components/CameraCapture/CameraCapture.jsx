@@ -215,8 +215,8 @@ const CameraCapture = React.forwardRef((props, ref) => {
   };
 
   return (
-    <div ref={componentRef} className="max-w-4xl mx-auto p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl shadow-xl border border-blue-200/50">
-      <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">Leaf Analysis Studio</h2>
+    <div ref={componentRef} className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl shadow-xl border border-blue-200/50">
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">Leaf Analysis Studio</h2>
 
       {/* Camera Loading State */}
       {cameraLoading && !preview && !loading && (
