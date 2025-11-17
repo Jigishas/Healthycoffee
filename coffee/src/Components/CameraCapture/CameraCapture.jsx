@@ -447,6 +447,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
       // Stop any existing stream first
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
+        setStream(null);
       }
 
       // Enhanced constraints for better mobile compatibility
@@ -459,41 +460,52 @@ const CameraCapture = React.forwardRef((props, ref) => {
         }
       };
 
+      console.log('Requesting camera access with constraints:', constraints);
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('Camera access granted, stream tracks:', mediaStream.getTracks().length);
+
       setStream(mediaStream);
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
 
-        // Set camera active immediately to show the video element
-        setCameraActive(true);
+        // Wait for video to be ready before setting active
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('Video loading timeout'));
+          }, 10000); // 10 second timeout
 
-        // Handle metadata loading and play
-        videoRef.current.onloadedmetadata = () => {
-          // Try to play the video once metadata is loaded
-          videoRef.current.play().then(() => {
-            console.log('Camera preview started successfully');
-            setCameraLoading(false);
-          }).catch(playError => {
-            console.error('Video play error:', playError);
-            setCameraLoading(false);
-            setError('Failed to start camera preview. The camera might be in use by another application.');
-          });
-        };
+          videoRef.current.onloadedmetadata = () => {
+            clearTimeout(timeout);
+            console.log('Video metadata loaded, dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+            resolve();
+          };
 
-        // Fallback: if play doesn't work, try again after a short delay
-        setTimeout(() => {
-          if (videoRef.current && videoRef.current.paused) {
-            videoRef.current.play().catch(err => {
-              console.error('Fallback play failed:', err);
-            });
-          }
-        }, 100);
+          videoRef.current.onerror = () => {
+            clearTimeout(timeout);
+            reject(new Error('Video loading error'));
+          };
+        });
 
-        videoRef.current.onerror = () => {
+        // Now try to play the video
+        try {
+          await videoRef.current.play();
+          console.log('Camera preview started successfully');
+          setCameraActive(true);
           setCameraLoading(false);
-          setError('Camera hardware error occurred. Please try again.');
-        };
+        } catch (playError) {
+          console.error('Video play error:', playError);
+          setCameraLoading(false);
+          setError('Failed to start camera preview. The camera might be in use by another application.');
+          // Clean up stream on play failure
+          if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+            setStream(null);
+          }
+        }
+      } else {
+        setCameraLoading(false);
+        setError('Video element not available');
       }
     } catch (err) {
       console.error('Camera access error:', err);
