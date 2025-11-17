@@ -21,7 +21,7 @@ function App() {
       <Stat />
       <Askme />
       <CameraCapture />
-      <Upload />
+      
       
            
       <Whatsapp />
