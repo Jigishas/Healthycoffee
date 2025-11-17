@@ -21,6 +21,7 @@ from PIL import Image
 
 from src.inference import TorchClassifier
 from src.recommendations import get_additional_recommendations
+from src.explanations import get_explanation, get_recommendation
 from optimize_model import OptimizedTorchClassifier
 
 # Configure logging
@@ -157,13 +158,33 @@ def upload_image():
                 deficiency_class=deficiency_result['class_index']
             )
 
+            # Get explanations and recommendations
+            disease_explanation = get_explanation(disease_result['class'], 'en')
+            disease_recommendation = get_recommendation(disease_result['class'], 'en')
+            deficiency_explanation = get_explanation(deficiency_result['class'], 'en')
+            deficiency_recommendation = get_recommendation(deficiency_result['class'], 'en')
+
             # Clean up uploaded file
             os.remove(filepath)
 
             response_data = {
-                'disease_prediction': disease_result,
-                'deficiency_prediction': deficiency_result,
+                'disease_prediction': {
+                    **disease_result,
+                    'explanation': disease_explanation,
+                    'recommendation': disease_recommendation
+                },
+                'deficiency_prediction': {
+                    **deficiency_result,
+                    'explanation': deficiency_explanation,
+                    'recommendation': deficiency_recommendation
+                },
                 'recommendations': recommendations,
+                'translated_recommendations': {
+                    'disease_explanation': disease_explanation,
+                    'disease_recommendation': disease_recommendation,
+                    'deficiency_explanation': deficiency_explanation,
+                    'deficiency_recommendation': deficiency_recommendation
+                },
                 'processing_time': round(total_time, 4),
                 'model_version': f'{disease_model_type}_{deficiency_model_type}_v1.0',
                 'status': 'success'

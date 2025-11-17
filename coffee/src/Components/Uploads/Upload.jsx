@@ -165,6 +165,36 @@ const Upload = () => {
             </div>
           )}
 
+          {results.translated_recommendations && (
+            <div className="result-section translated">
+              <h3>Translated Recommendations</h3>
+              {results.translated_recommendations.disease_explanation && (
+                <div>
+                  <h4>Disease Explanation</h4>
+                  <p>{results.translated_recommendations.disease_explanation}</p>
+                </div>
+              )}
+              {results.translated_recommendations.disease_recommendation && (
+                <div>
+                  <h4>Disease Recommendation</h4>
+                  <p>{results.translated_recommendations.disease_recommendation}</p>
+                </div>
+              )}
+              {results.translated_recommendations.deficiency_explanation && (
+                <div>
+                  <h4>Deficiency Explanation</h4>
+                  <p>{results.translated_recommendations.deficiency_explanation}</p>
+                </div>
+              )}
+              {results.translated_recommendations.deficiency_recommendation && (
+                <div>
+                  <h4>Deficiency Recommendation</h4>
+                  <p>{results.translated_recommendations.deficiency_recommendation}</p>
+                </div>
+              )}
+            </div>
+          )}
+
           {results.recommendations && results.recommendations.disease_recommendations && (
             <div className="result-section additional">
               <h3>Disease Recommendations</h3>
