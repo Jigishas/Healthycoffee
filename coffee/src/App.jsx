@@ -15,15 +15,24 @@ function App() {
   return (
     <>
       <Navbar />
-      <Body />
-      <ImageSlider />
-      <Belowimg />
-      <Stat />
-      <Askme />
-      <CameraCapture />
-      
-      
-           
+      <div id="home">
+        <Body />
+      </div>
+      <div id="gallery">
+        <ImageSlider />
+      </div>
+      <div id="features">
+        <Belowimg />
+      </div>
+      <div id="stats">
+        <Stat />
+      </div>
+      <div id="askme">
+        <Askme />
+      </div>
+      <div id="camera">
+        <CameraCapture />
+      </div>
       <Whatsapp />
       <Footer />
     </>

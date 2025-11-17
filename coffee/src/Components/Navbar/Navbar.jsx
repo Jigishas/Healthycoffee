@@ -75,34 +75,28 @@ function Navbar() {
             </div>
           </motion.div>
 
-          {/* Search Bar */}
-          <motion.div
-            className="flex-1 max-w-md mx-8"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <div className="relative group">
-              <input
-                type="text"
-                placeholder="Search coffee insights..."
-                className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-amber-200 rounded-full text-gray-700 placeholder-amber-400 focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition-all duration-300 shadow-lg hover:shadow-xl"
-                onClick={(e) => e.target.focus()}
-              />
-              <button
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-amber-500 group-hover:text-amber-600 transition-colors duration-300 cursor-pointer"
-                onClick={() => {
-                  const input = document.querySelector('input[placeholder="Search coffee insights..."]');
-                  if (input) input.focus();
-                }}
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center space-x-8">
+            {[
+              { name: 'Home', id: 'home' },
+              { name: 'Gallery', id: 'gallery' },
+              { name: 'Features', id: 'features' },
+              { name: 'Stats', id: 'stats' },
+              { name: 'Ask Me', id: 'askme' },
+              { name: 'Camera', id: 'camera' }
+            ].map((item) => (
+              <motion.a
+                key={item.name}
+                href={`#${item.id}`}
+                className="text-amber-700 hover:text-amber-900 font-medium transition-colors duration-300 relative group"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Search />
-              </button>
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 to-orange-400/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-          </motion.div>
-
-        
+                {item.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-500 to-orange-500 group-hover:w-full transition-all duration-300"></span>
+              </motion.a>
+            ))}
+          </div>
 
           {/* Mobile Menu Button */}
           <motion.button
@@ -171,16 +165,23 @@ function Navbar() {
                 {/* Navigation Links */}
                 <div className="px-4 py-3">
                   <h3 className="text-sm font-semibold text-amber-800 mb-3">Navigation</h3>
-                  {['Home', 'About', 'Services', 'Contact'].map((item) => (
+                  {[
+                    { name: 'Home', id: 'home' },
+                    { name: 'Gallery', id: 'gallery' },
+                    { name: 'Features', id: 'features' },
+                    { name: 'Stats', id: 'stats' },
+                    { name: 'Ask Me', id: 'askme' },
+                    { name: 'Camera', id: 'camera' }
+                  ].map((item) => (
                     <motion.a
-                      key={item}
-                      href="#"
+                      key={item.name}
+                      href={`#${item.id}`}
                       className="block px-3 py-2 text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      {item}
+                      {item.name}
                     </motion.a>
                   ))}
                 </div>
