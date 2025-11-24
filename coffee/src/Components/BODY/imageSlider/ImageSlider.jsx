@@ -18,20 +18,12 @@ const ImageSlider = () => {
   }, []);
 
   return (
-    <div className="w-full mx-auto mt-10 mb-4 overflow-hidden rounded-2xl shadow-2xl bg-white flex justify-center items-center relative h-96 pt-24 animate-fade-in">
-      {images.map((img, idx) => (
-        <img
-          key={idx}
-          src={img}
-          alt={`Coffee plantation ${idx + 1}`}
-          className={`absolute left-10 top-0 w-full h-86 object-cover rounded-2xl opacity-0 transition-all duration-1000 ${
-            current === idx ? 'opacity-100 scale-105' : 'scale-100'
-          } hover:scale-110 cursor-pointer`}
-        />
-      ))}
-
-    
-     
+    <div className="w-full mx-auto mt-10 mb-4 overflow-hidden rounded-2xl shadow-2xl bg-white relative h-80">
+      <img
+        src={images[current]}
+        alt={`Coffee plantation ${current + 1}`}
+        className="w-full h-full object-cover rounded-2xl transition-opacity duration-700"
+      />
     </div>
   );
 };
