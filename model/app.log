@@ -698,3 +698,477 @@
 2025-11-16 17:43:23,056 - werkzeug - INFO - 127.0.0.1 - - [16/Nov/2025 17:43:23] "POST /api/upload-image HTTP/1.1" 200 -
 2025-11-16 17:44:43,952 - werkzeug - INFO - 127.0.0.1 - - [16/Nov/2025 17:44:43] "[33mGET / HTTP/1.1[0m" 404 -
 2025-11-16 17:44:44,317 - werkzeug - INFO - 127.0.0.1 - - [16/Nov/2025 17:44:44] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-11-17 20:50:31,532 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-17 20:50:31,540 - __main__ - INFO - Starting combined Flask server...
+2025-11-17 20:50:31,633 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.6.68:8000
+2025-11-17 20:50:31,634 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-17 20:51:00,888 - werkzeug - INFO - 127.0.0.1 - - [17/Nov/2025 20:51:00] "GET /health HTTP/1.1" 200 -
+2025-11-17 20:51:13,412 - werkzeug - INFO - 127.0.0.1 - - [17/Nov/2025 20:51:13] "GET /api/model-info HTTP/1.1" 200 -
+2025-11-17 20:52:20,129 - __main__ - INFO - File saved: uploads\test_image.jpg
+2025-11-17 20:52:20,975 - __main__ - INFO - Prediction completed in 0.8443s
+2025-11-17 20:52:20,977 - werkzeug - INFO - 127.0.0.1 - - [17/Nov/2025 20:52:20] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-17 21:19:18,554 - werkzeug - INFO - 127.0.0.1 - - [17/Nov/2025 21:19:18] "[33mGET / HTTP/1.1[0m" 404 -
+2025-11-17 21:19:28,439 - werkzeug - INFO - 127.0.0.1 - - [17/Nov/2025 21:19:28] "[31m[1mGET /api/upload-image HTTP/1.1[0m" 405 -
+2025-11-17 21:19:54,785 - werkzeug - INFO - 127.0.0.1 - - [17/Nov/2025 21:19:54] "GET /health HTTP/1.1" 200 -
+2025-11-17 21:20:05,547 - __main__ - WARNING - File validation failed: Invalid file type. Only PNG, JPG, JPEG, and GIF are allowed
+2025-11-17 21:20:05,549 - werkzeug - INFO - 127.0.0.1 - - [17/Nov/2025 21:20:05] "[31m[1mPOST /api/upload-image HTTP/1.1[0m" 400 -
+2025-11-17 21:30:13,618 - __main__ - INFO - Models loaded - Disease: optimized, Deficiency: optimized
+2025-11-17 21:30:13,624 - __main__ - INFO - Starting combined Flask server...
+2025-11-17 21:30:13,704 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.6.68:8000
+2025-11-17 21:30:13,705 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-18 13:33:16,247 - app - INFO - Interactive learning system initialized with optimized models
+2025-11-18 14:29:35,889 - __main__ - INFO - Interactive learning system initialized with optimized models
+2025-11-18 14:29:35,899 - __main__ - INFO - Starting combined Flask server...
+2025-11-18 14:29:35,965 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.221:8000
+2025-11-18 14:29:35,966 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-18 14:29:36,230 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:29:38,597 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:29:38,602 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:29:38] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:29:41,169 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:29:42,494 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:29:42,496 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:29:42] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:29:44,915 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:29:45,959 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:29:45,961 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:29:45] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:29:48,395 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:29:49,915 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:29:49,919 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:29:49] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:35:57,177 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:35:57] "GET /health HTTP/1.1" 200 -
+2025-11-18 14:36:01,857 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:36:03,057 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:03,059 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:03] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:05,584 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:36:06,839 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:06,841 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:06] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:09,264 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:36:10,302 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:10,304 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:10] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:12,683 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:36:13,530 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:13,532 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:13] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:15,965 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:36:17,086 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:17,088 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:17] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:19,450 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:36:20,347 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:20,348 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:20] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:22,781 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:36:23,802 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:23,804 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:23] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:26,177 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:36:27,541 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:27,544 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:27] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:30,072 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:36:30,436 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:36:31,679 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:31,682 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:31] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:31,854 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:31,859 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:31] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:34,312 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:36:34,448 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:36:36,577 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:36,580 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:36] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:36,958 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:36,960 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:36] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:38,659 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:36:39,395 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:36:39,406 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:39,409 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:39] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:40,432 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:40,434 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:40] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:42,913 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:36:44,095 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:44,097 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:44] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:46,520 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:36:48,146 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:48,151 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:48] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:50,717 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:36:51,905 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:51,907 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:51] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:54,350 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:36:55,422 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:55,424 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:55] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:36:57,784 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:36:59,674 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:36:59,676 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:36:59] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:02,136 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:37:05,804 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:05,806 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:05] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:08,273 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:37:09,377 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:09,382 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:09] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:32,997 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:37:34,487 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:34,492 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:34] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:36,949 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:37:38,297 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:38,299 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:38] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:40,681 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:37:41,629 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:41,631 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:41] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:43,947 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:37:45,720 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:45,730 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:45] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:48,587 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:37:49,924 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:49,935 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:49] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:52,385 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:37:53,538 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:53,540 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:53] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:56,003 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:37:57,121 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:37:57,124 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:37:57] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:37:59,485 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:38:00,633 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:00,636 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:00] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:02,977 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:38:03,827 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:03,829 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:03] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:06,176 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:38:07,093 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:07,095 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:07] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:17,232 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:38:18,368 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:18,370 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:18] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:20,984 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:38:21,965 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:21,967 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:21] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:24,343 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:38:25,510 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:25,513 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:25] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:27,877 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:38:28,798 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:28,800 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:28] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:31,229 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:38:32,315 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:32,327 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:32] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:34,701 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:38:35,814 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:35,817 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:35] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:38,799 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:38:39,837 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:39,839 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:39] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:42,260 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:38:43,241 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:43,243 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:43] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:45,781 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:38:48,493 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:48,507 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:48] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:38:51,247 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:38:53,255 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:38:53,257 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:38:53] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:29,495 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:39:30,670 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:30,673 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:30] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:33,252 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:39:34,404 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:34,411 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:34] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:36,826 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:39:37,701 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:37,705 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:37] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:40,067 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:39:41,451 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:41,454 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:41] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:44,518 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:39:45,409 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:45,411 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:45] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:47,759 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:39:48,595 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:48,597 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:48] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:50,955 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:39:51,822 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:51,825 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:51] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:54,131 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:39:54,986 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:54,988 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:54] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:39:57,322 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:39:58,138 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:39:58,140 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:39:58] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:40:00,504 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:40:01,466 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:40:01,468 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:40:01] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:41:35,139 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:41:36,183 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:41:36,185 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:41:36] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:41:38,629 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:41:39,623 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:41:39,626 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:41:39] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:41:42,079 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:41:43,231 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:41:43,234 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:41:43] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:41:45,630 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:41:46,655 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:41:46,658 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:41:46] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:41:49,241 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:41:50,723 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:41:50,726 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:41:50] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:41:53,196 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:41:54,656 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:41:54,658 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:41:54] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:41:57,213 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:41:58,420 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:41:58,422 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:41:58] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:00,776 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:42:02,623 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:02,626 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:02] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:05,185 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:42:08,123 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:08,126 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:08] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:11,109 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:42:12,404 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:12,406 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:12] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:34,930 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:42:36,084 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:36,086 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:36] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:38,559 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:42:39,363 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:39,365 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:39] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:41,708 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:42:43,110 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:43,112 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:43] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:45,418 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:42:46,359 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:46,361 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:46] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:48,715 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:42:49,654 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:49,657 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:49] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:51,994 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:42:52,969 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:52,972 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:52] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:55,359 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:42:56,382 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:56,385 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:56] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:42:58,731 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:42:59,704 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:42:59,706 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:42:59] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:43:02,021 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:43:02,826 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:43:02,829 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:43:02] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:43:05,182 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:43:06,119 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:43:06,121 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:43:06] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:27,071 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:49:28,065 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:28,067 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:28] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:30,620 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:49:31,528 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:31,530 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:31] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:33,940 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:49:34,809 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:34,812 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:34] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:37,164 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:49:37,951 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:37,953 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:37] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:40,297 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:49:41,110 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:41,159 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:41] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:43,561 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:49:44,550 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:44,552 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:44] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:46,961 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:49:47,892 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:47,894 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:47] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:50,211 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:49:51,086 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:51,089 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:51] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:53,538 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:49:54,329 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:54,330 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:54] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:49:56,667 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:49:57,515 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:49:57,517 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:49:57] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:50:43,042 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:50:44,157 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:50:44,160 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:50:44] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:50:46,690 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:50:48,065 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:50:48,067 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:50:48] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:50:50,508 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:50:51,509 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:50:51,511 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:50:51] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:50:53,854 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:50:55,321 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:50:55,323 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:50:55] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:50:57,730 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:50:59,073 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:50:59,075 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:50:59] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:51:01,543 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:51:02,622 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:51:02,624 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:51:02] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:51:05,042 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:51:06,266 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:51:06,268 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:51:06] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:51:08,685 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:51:09,827 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:51:09,829 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:51:09] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:51:12,198 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:51:13,202 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:51:13,205 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:51:13] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:51:15,608 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:51:17,017 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:51:17,019 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:51:17] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:30,989 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:52:32,131 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:52:32,133 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:52:32] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:34,715 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:52:35,829 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:52:35,830 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:52:35] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:38,201 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:52:39,235 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:52:39,237 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:52:39] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:41,563 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:52:42,631 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:52:42,633 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:52:42] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:45,110 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:52:46,099 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:52:46,101 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:52:46] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:48,429 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:52:49,757 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:52:49,760 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:52:49] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:52,152 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:52:53,261 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:52:53,263 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:52:53] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:55,696 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:52:56,813 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:52:56,815 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:52:56] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:52:59,264 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:53:00,447 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:53:00,450 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:53:00] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:53:02,867 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:53:04,611 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:53:04,616 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:53:04] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:15,758 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 14:54:16,918 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:16,920 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:16] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:19,733 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 14:54:20,735 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:20,737 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:20] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:23,150 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 14:54:24,108 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:24,111 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:24] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:26,512 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 14:54:27,844 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:27,846 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:27] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:30,183 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 14:54:31,255 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:31,257 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:31] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:33,632 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 14:54:34,493 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:34,496 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:34] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:36,881 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 14:54:37,880 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:37,883 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:37] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:40,241 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 14:54:41,255 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:41,257 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:41] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:43,583 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 14:54:44,534 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:44,536 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:44] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 14:54:46,899 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 14:54:48,430 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 14:54:48,432 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 14:54:48] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:09,416 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 15:19:11,355 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:11,362 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:11] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:13,948 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 15:19:15,186 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:15,244 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:15] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:17,660 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 15:19:19,796 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:19,803 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:19] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:22,468 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 15:19:23,690 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:23,693 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:23] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:26,265 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 15:19:28,581 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:28,584 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:28] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:31,124 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 15:19:32,332 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:32,335 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:32] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:34,849 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 15:19:36,174 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:36,195 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:36] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:38,680 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 15:19:40,089 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:40,093 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:40] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:42,567 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 15:19:43,633 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:43,635 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:43] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 15:19:46,138 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 15:19:47,482 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 15:19:47,485 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 15:19:47] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:29,732 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 16:07:30,644 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:30,648 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:30] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:33,092 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 16:07:33,961 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:33,964 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:33] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:36,356 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 16:07:37,263 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:37,267 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:37] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:39,751 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 16:07:40,593 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:40,650 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:40] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:43,022 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 16:07:44,067 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:44,069 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:44] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:46,523 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 16:07:47,461 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:47,463 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:47] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:49,912 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 16:07:50,965 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:50,969 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:50] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:53,369 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 16:07:54,277 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:54,279 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:54] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:56,631 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 16:07:57,539 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:07:57,541 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:07:57] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:07:59,970 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 16:08:00,874 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:08:00,877 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:08:00] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:11:26,862 - __main__ - INFO - File saved: uploads\author.jpg
+2025-11-18 16:11:31,361 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:11:31,375 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:11:31] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:11:34,657 - __main__ - INFO - File saved: uploads\image1.jpg
+2025-11-18 16:12:03,519 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:12:03,523 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:12:03] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:12:16,367 - __main__ - INFO - File saved: uploads\image2.jpg
+2025-11-18 16:12:28,673 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:12:28,715 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:12:28] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:12:32,092 - __main__ - INFO - File saved: uploads\image3.jpg
+2025-11-18 16:12:36,063 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:12:36,080 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:12:36] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:12:39,580 - __main__ - INFO - File saved: uploads\image4.jpg
+2025-11-18 16:12:42,396 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:12:42,403 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:12:42] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:12:45,341 - __main__ - INFO - File saved: uploads\image5.jpg
+2025-11-18 16:12:46,989 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:12:46,991 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:12:46] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:12:49,465 - __main__ - INFO - File saved: uploads\image6.jpg
+2025-11-18 16:12:50,639 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:12:50,641 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:12:50] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:12:53,137 - __main__ - INFO - File saved: uploads\image7.jpg
+2025-11-18 16:12:54,609 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:12:54,612 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:12:54] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:12:57,125 - __main__ - INFO - File saved: uploads\image8.jpg
+2025-11-18 16:12:58,758 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:12:58,764 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:12:58] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:13:01,450 - __main__ - INFO - File saved: uploads\IMG-20250825-WA0181.jpg
+2025-11-18 16:13:03,438 - __main__ - ERROR - Interactive diagnosis error: 'class'
+2025-11-18 16:13:03,440 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:13:03] "[35m[1mPOST /api/interactive-diagnose HTTP/1.1[0m" 500 -
+2025-11-18 16:16:36,873 - __main__ - INFO - File saved: uploads\jose_LE_upscale_ultra_x4_size_of_changes_0_intensity_90.jpg
+2025-11-18 16:16:40,626 - __main__ - INFO - Prediction completed in 3.7038s
+2025-11-18 16:16:40,648 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:16:40] "POST /api/upload-image HTTP/1.1" 200 -
+2025-11-18 16:17:10,718 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
+2025-11-18 16:17:11,190 - __main__ - INFO - Prediction completed in 0.4676s
+2025-11-18 16:17:11,204 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:17:11] "POST /api/upload-image HTTP/1.1" 200 -

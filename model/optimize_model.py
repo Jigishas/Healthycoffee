@@ -75,6 +75,18 @@ class OptimizedTorchClassifier:
             "class_index": idx
         }
 
+    def get_feature_embedding(self, image_path):
+        """Extract feature embedding from penultimate layer for similarity matching"""
+        image = Image.open(image_path).convert("RGB")
+        input_tensor = self.transform(image).unsqueeze(0).to(self.device)
+
+        with torch.no_grad():
+            # Get features from the layer before classifier
+            features = self.model.features(input_tensor)
+            features = self.model.avgpool(features)
+            features = torch.flatten(features, 1)
+            return features.cpu().numpy().flatten()
+
 def benchmark_models():
     """Benchmark optimized model performance"""
     print("Benchmarking optimized model performance...")

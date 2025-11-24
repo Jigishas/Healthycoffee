@@ -123,7 +123,7 @@ const Askme = () => {
 
   return (
     <motion.div
-      className="max-w-4xl mx-auto my-16 p-8 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-2xl"
+      className="max-w-4xl mx-auto my-16 p-8 bg-white rounded-2xl shadow-2xl"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}

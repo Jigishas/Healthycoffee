@@ -45,7 +45,7 @@ const Stat = () => {
 
   return (
     <motion.div
-      className="flex justify-center items-center gap-6 md:gap-8 py-16 md:py-24 px-4 md:px-8 bg-gradient-to-br from-slate-50 via-white to-amber-50 relative overflow-hidden"
+      className="flex justify-center items-center gap-6 md:gap-8 py-16 md:py-24 px-4 md:px-8 bg-white relative overflow-hidden"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}

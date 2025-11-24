@@ -39,7 +39,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative bg-gradient-to-br from-amber-900 via-amber-800 to-[#452a1a] text-white py-16 px-4 mt-20 overflow-hidden">
+    <footer className="relative bg-slate-900 text-white py-16 px-4 mt-20 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 text-6xl">☕</div>

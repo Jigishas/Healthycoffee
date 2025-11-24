@@ -630,18 +630,26 @@ const CameraCapture = React.forwardRef((props, ref) => {
   }, [stream]);
 
   // Modern Glass Card Component
-  const GlassCard = ({ children, className = '', hover = true }) => (
-    <div className={`
-      bg-white/80 backdrop-blur-xl 
-      rounded-3xl border border-white/50 
-      shadow-2xl shadow-blue-500/10
-      transition-all duration-500
-      ${hover ? 'hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-105' : ''}
-      ${className}
-    `}>
-      {children}
-    </div>
-  );
+  const GlassCard = ({ children, className = '', hover = true, variant = 'default' }) => {
+    const variants = {
+      default: 'bg-white/90 backdrop-blur-xl border-white/60 shadow-slate-900/10',
+      primary: 'bg-gradient-to-br from-slate-50/95 to-white/90 backdrop-blur-xl border-slate-200/60 shadow-slate-900/15',
+      accent: 'bg-gradient-to-br from-emerald-50/95 via-slate-50/90 to-white/95 backdrop-blur-xl border-emerald-200/60 shadow-emerald-900/10'
+    };
+
+    return (
+      <div className={`
+        rounded-3xl border
+        shadow-2xl
+        transition-all duration-500 ease-out
+        ${variants[variant]}
+        ${hover ? 'hover:shadow-2xl hover:shadow-slate-900/20 hover:scale-[1.02] hover:-translate-y-1' : ''}
+        ${className}
+      `}>
+        {children}
+      </div>
+    );
+  };
 
   // Confidence Radio Component with modern design
   const ConfidenceRadio = ({ confidence, label, color }) => {
@@ -879,73 +887,293 @@ const CameraCapture = React.forwardRef((props, ref) => {
         </div>
       )}
 
-      {/* Capture Options */}
+      {/* Enhanced Capture Options - Split into Three Aesthetic Sections */}
       {!preview && !loading && !cameraActive && !cameraLoading && (
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Enhanced Instructions */}
-          <GlassCard className="p-8">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-xl text-white">💡</span>
-              </div>
-              <h3 className="text-2xl font-bold text-slate-800">Capture Guidelines</h3>
-            </div>
-            <div className="space-y-4">
-              {[
-                { icon: '☀️', text: 'Good natural lighting', desc: 'Avoid shadows and direct sunlight' },
-                { icon: '🎯', text: 'Center the leaf in frame', desc: 'Fill 70-80% of the frame with the leaf' },
-                { icon: '📏', text: '6-12 inches distance', desc: 'Maintain optimal focus distance' },
-                { icon: '🤚', text: 'Keep camera steady', desc: 'Use both hands or a stable surface' },
-                { icon: '🌿', text: 'Clear background preferred', desc: 'Solid color background works best' },
-                { icon: '📱', text: 'High resolution image', desc: 'Use maximum camera resolution' }
-              ].map((item, index) => (
-                <div key={index} className="flex items-start gap-4 p-4 rounded-xl bg-white/50 backdrop-blur-sm transition-all hover:bg-white/80 group">
-                  <span className="text-2xl group-hover:scale-110 transition-transform duration-300">{item.icon}</span>
-                  <div>
-                    <div className="font-semibold text-slate-800 text-lg">{item.text}</div>
-                    <div className="text-slate-600 text-sm">{item.desc}</div>
-                  </div>
+        <div className="space-y-16">
+          {/* Section 1: Capture Guidelines with Interactive Tooltips */}
+          <GlassCard variant="primary" className="p-12 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-400/5 via-orange-400/5 to-yellow-400/5"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-center gap-6 mb-10">
+                <div className="w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-amber-500/40 animate-pulse">
+                  <span className="text-4xl text-white">💡</span>
                 </div>
-              ))}
+                <div className="text-center">
+                  <h3 className="text-4xl font-black text-slate-800 mb-3 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                    Capture Guidelines
+                  </h3>
+                  <p className="text-slate-600 text-xl font-medium">Master these tips for optimal leaf analysis results</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[
+                  {
+                    icon: '☀️',
+                    text: 'Optimal Lighting',
+                    desc: 'Natural daylight, avoid direct sunlight',
+                    details: 'Position your leaf in bright, indirect light. Direct sunlight can create harsh shadows and glare that interfere with AI analysis. Early morning or late afternoon light works best.',
+                    color: 'amber'
+                  },
+                  {
+                    icon: '🎯',
+                    text: 'Perfect Framing',
+                    desc: 'Center leaf, fill 70-80% of frame',
+                    details: 'Position the leaf so it occupies most of the frame but leaves some space around the edges. This helps the AI focus on the leaf while providing context for analysis.',
+                    color: 'emerald'
+                  },
+                  {
+                    icon: '📏',
+                    text: 'Ideal Distance',
+                    desc: '6-12 inches from camera lens',
+                    details: 'Too close and details blur, too far and the leaf appears too small. The sweet spot ensures crisp details while capturing the entire leaf structure.',
+                    color: 'blue'
+                  },
+                  {
+                    icon: '🤚',
+                    text: 'Steady Hands',
+                    desc: 'Minimize camera shake and movement',
+                    details: 'Use both hands to hold your device steady. Rest your elbows on a stable surface if possible. Even slight movement can blur critical leaf details.',
+                    color: 'purple'
+                  },
+                  {
+                    icon: '🌿',
+                    text: 'Clean Background',
+                    desc: 'Solid color, minimal distractions',
+                    details: 'A plain background helps the AI distinguish the leaf from surroundings. Avoid busy patterns, other plants, or cluttered environments.',
+                    color: 'teal'
+                  },
+                  {
+                    icon: '📱',
+                    text: 'High Resolution',
+                    desc: 'Maximum camera quality settings',
+                    details: 'Higher resolution provides more detail for accurate analysis. Ensure your camera app is set to the highest quality and resolution available.',
+                    color: 'rose'
+                  }
+                ].map((item, index) => (
+                  <div key={index} className="group relative">
+                    <div className="flex items-start gap-5 p-8 rounded-3xl bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm transition-all duration-500 hover:from-white/90 hover:to-white/70 hover:scale-105 hover:shadow-2xl hover:shadow-slate-900/20 border border-slate-200/60 hover:border-slate-300/80 cursor-pointer transform hover:-translate-y-2">
+                      <div className={`w-14 h-14 bg-gradient-to-r from-${item.color}-400 to-${item.color}-500 rounded-2xl flex items-center justify-center shadow-xl shadow-${item.color}-500/30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300`}>
+                        <span className="text-2xl text-white group-hover:scale-110 transition-transform">{item.icon}</span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold text-slate-800 text-xl mb-2 group-hover:text-slate-900 transition-colors">{item.text}</div>
+                        <div className="text-slate-600 text-base leading-relaxed group-hover:text-slate-700 transition-colors">{item.desc}</div>
+                      </div>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-slate-400 text-sm">Click for details</span>
+                      </div>
+                    </div>
+
+                    {/* Expanded Tooltip/Details */}
+                    <div className="absolute top-full left-0 right-0 mt-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto z-20">
+                      <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-slate-200/60">
+                        <div className="flex items-start gap-4">
+                          <span className="text-3xl">{item.icon}</span>
+                          <div>
+                            <div className="font-bold text-slate-800 text-lg mb-2">{item.text}</div>
+                            <div className="text-slate-600 leading-relaxed">{item.details}</div>
+                          </div>
+                        </div>
+                        <div className="absolute -top-2 left-8 w-4 h-4 bg-white/95 border-l border-t border-slate-200/60 transform rotate-45"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </GlassCard>
 
-          {/* Enhanced Method Selection */}
-          <GlassCard className="p-8">
-            <h3 className="text-2xl font-bold text-slate-800 mb-8 text-center">Select Capture Method</h3>
-            <div className="space-y-6">
-              <ModernButton
-                onClick={openCamera}
-                variant="primary"
-                icon="📷"
-                className="w-full text-lg py-5"
-                disabled={!cameraAvailable}
-              >
-                <div className="text-left flex-1">
-                  <div className="font-bold">Open Camera</div>
-                  <div className="text-sm opacity-90 font-normal">Take photo directly</div>
+          {/* Section 2: Capture Methods with Enhanced Features */}
+          <GlassCard variant="accent" className="p-12 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/5 via-teal-400/5 to-cyan-400/5"></div>
+            <div className="relative z-10">
+              <div className="text-center mb-12">
+                <h3 className="text-4xl font-black text-slate-800 mb-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  Choose Your Capture Method
+                </h3>
+                <p className="text-slate-600 text-xl font-medium max-w-2xl mx-auto">Select the best approach for capturing your leaf sample</p>
+              </div>
+
+              {/* Device Compatibility Status */}
+              <div className="flex justify-center mb-10">
+                <div className="flex items-center gap-6 bg-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 border border-slate-200/60">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${cameraAvailable ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`}></div>
+                    <span className="text-slate-700 font-medium">Camera: {cameraAvailable ? 'Available' : 'Unavailable'}</span>
+                  </div>
+                  <div className="w-px h-6 bg-slate-300"></div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span className="text-slate-700 font-medium">Gallery: Available</span>
+                  </div>
+                  <div className="w-px h-6 bg-slate-300"></div>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${isHttps || window.location.hostname === 'localhost' ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`}></div>
+                    <span className="text-slate-700 font-medium">HTTPS: {isHttps || window.location.hostname === 'localhost' ? 'Secure' : 'Insecure'}</span>
+                  </div>
                 </div>
-              </ModernButton>
-              
-              <ModernButton
-                onClick={openGallery}
-                variant="secondary"
-                icon="🖼️"
-                className="w-full text-lg py-5"
-              >
-                <div className="text-left flex-1">
-                  <div className="font-bold">From Gallery</div>
-                  <div className="text-sm opacity-90 font-normal">Select existing photo</div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+                <div className="group">
+                  <div className="text-center mb-6">
+                    <div className="w-20 h-20 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/40 mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-4xl text-white">📷</span>
+                    </div>
+                    <ModernButton
+                      onClick={openCamera}
+                      variant="primary"
+                      icon="📷"
+                      className="w-full text-xl py-8 px-10 mb-6 transform hover:scale-105 transition-all duration-300"
+                      disabled={!cameraAvailable}
+                    >
+                      <div>
+                        <div className="font-black text-xl mb-2">📷 Live Camera Capture</div>
+                        <div className="text-base opacity-90 font-medium">Real-time preview & instant capture</div>
+                      </div>
+                    </ModernButton>
+                    <div className="bg-emerald-50/80 rounded-2xl p-6 border border-emerald-200/60 backdrop-blur-sm">
+                      <div className="text-emerald-800 font-semibold mb-3">✨ Best For:</div>
+                      <ul className="text-emerald-700 text-sm space-y-2">
+                        <li>• Fresh leaf samples</li>
+                        <li>• Immediate analysis needs</li>
+                        <li>• Controlled lighting conditions</li>
+                        <li>• High-quality real-time capture</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </ModernButton>
+
+                <div className="group">
+                  <div className="text-center mb-6">
+                    <div className="w-20 h-20 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/40 mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-4xl text-white">🖼️</span>
+                    </div>
+                    <ModernButton
+                      onClick={openGallery}
+                      variant="secondary"
+                      icon="🖼️"
+                      className="w-full text-xl py-8 px-10 mb-6 transform hover:scale-105 transition-all duration-300"
+                    >
+                      <div>
+                        <div className="font-black text-xl mb-2">🖼️ Gallery Selection</div>
+                        <div className="text-base opacity-90 font-medium">Choose from existing photos</div>
+                      </div>
+                    </ModernButton>
+                    <div className="bg-blue-50/80 rounded-2xl p-6 border border-blue-200/60 backdrop-blur-sm">
+                      <div className="text-blue-800 font-semibold mb-3">📁 Perfect For:</div>
+                      <ul className="text-blue-700 text-sm space-y-2">
+                        <li>• Previously captured samples</li>
+                        <li>• Batch processing needs</li>
+                        <li>• Historical comparisons</li>
+                        <li>• Offline accessibility</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {!cameraAvailable && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-                  <p className="text-amber-800 text-sm font-medium">
-                    📱 Camera not available. Please use gallery upload or check camera permissions.
+                <div className="bg-gradient-to-r from-amber-50/80 to-orange-50/80 border border-amber-200/60 rounded-3xl p-8 text-center mt-10 backdrop-blur-sm max-w-2xl mx-auto">
+                  <div className="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-amber-500/30">
+                    <span className="text-3xl text-white">📱</span>
+                  </div>
+                  <h4 className="text-amber-800 text-2xl font-bold mb-4">Camera Access Limited</h4>
+                  <p className="text-amber-700 text-lg leading-relaxed mb-6">
+                    Your device camera is currently unavailable. This could be due to browser permissions, hardware limitations, or security settings.
                   </p>
+                  <div className="bg-white/60 rounded-2xl p-6 border border-amber-200/40">
+                    <div className="text-amber-800 font-semibold mb-3">🔧 Quick Fixes:</div>
+                    <ul className="text-amber-700 text-sm space-y-2 text-left">
+                      <li>• Check camera permissions in browser settings</li>
+                      <li>• Ensure no other apps are using the camera</li>
+                      <li>• Try refreshing the page</li>
+                      <li>• Use gallery upload as an alternative</li>
+                    </ul>
+                  </div>
                 </div>
               )}
+            </div>
+          </GlassCard>
+
+          {/* Section 3: Pro Tips & Advanced Options */}
+          <GlassCard className="p-12 bg-gradient-to-br from-violet-50/95 via-purple-50/90 to-indigo-50/95 border-violet-200/60">
+            <div className="text-center mb-12">
+              <div className="w-20 h-20 bg-gradient-to-r from-violet-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-violet-500/40 mx-auto mb-6">
+                <span className="text-4xl text-white">🚀</span>
+              </div>
+              <h3 className="text-4xl font-black text-slate-800 mb-4 bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                Pro Tips & Advanced Features
+              </h3>
+              <p className="text-slate-600 text-xl font-medium max-w-3xl mx-auto">Unlock the full potential of leaf analysis with expert techniques</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="bg-white/80 rounded-3xl p-8 border border-violet-200/60 backdrop-blur-sm hover:bg-white/90 hover:scale-105 transition-all duration-300 group">
+                <div className="w-14 h-14 bg-gradient-to-r from-violet-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/30 mb-6 group-hover:scale-110 transition-transform">
+                  <span className="text-2xl text-white">🔍</span>
+                </div>
+                <h4 className="font-bold text-slate-800 text-xl mb-4">Multiple Angles</h4>
+                <p className="text-slate-600 leading-relaxed mb-4">Capture both sides of the leaf for comprehensive analysis. Different angles can reveal hidden symptoms and provide more accurate results.</p>
+                <div className="text-violet-600 font-medium text-sm">Advanced Technique</div>
+              </div>
+
+              <div className="bg-white/80 rounded-3xl p-8 border border-violet-200/60 backdrop-blur-sm hover:bg-white/90 hover:scale-105 transition-all duration-300 group">
+                <div className="w-14 h-14 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mb-6 group-hover:scale-110 transition-transform">
+                  <span className="text-2xl text-white">📊</span>
+                </div>
+                <h4 className="font-bold text-slate-800 text-xl mb-4">Batch Processing</h4>
+                <p className="text-slate-600 leading-relaxed mb-4">Analyze multiple leaves at once for field studies or large-scale assessments. Perfect for agricultural research and monitoring.</p>
+                <div className="text-emerald-600 font-medium text-sm">Research Feature</div>
+              </div>
+
+              <div className="bg-white/80 rounded-3xl p-8 border border-violet-200/60 backdrop-blur-sm hover:bg-white/90 hover:scale-105 transition-all duration-300 group">
+                <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 mb-6 group-hover:scale-110 transition-transform">
+                  <span className="text-2xl text-white">💾</span>
+                </div>
+                <h4 className="font-bold text-slate-800 text-xl mb-4">Export & Share</h4>
+                <p className="text-slate-600 leading-relaxed mb-4">Save detailed reports as PDF or JSON. Share findings with colleagues or integrate with other agricultural management systems.</p>
+                <div className="text-blue-600 font-medium text-sm">Professional Tool</div>
+              </div>
+            </div>
+
+            {/* Quick Stats/Progress Indicator */}
+            <div className="mt-12 bg-white/60 rounded-3xl p-8 border border-slate-200/60 backdrop-blur-sm">
+              <div className="text-center mb-6">
+                <h4 className="text-2xl font-bold text-slate-800 mb-2">Your Analysis Readiness</h4>
+                <p className="text-slate-600">How prepared are you for optimal leaf analysis?</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mx-auto mb-3">
+                    <span className="text-2xl text-white">✅</span>
+                  </div>
+                  <div className="font-bold text-slate-800 text-lg">100%</div>
+                  <div className="text-slate-600 text-sm">Guidelines Read</div>
+                </div>
+                <div className="text-center">
+                  <div className={`w-16 h-16 bg-gradient-to-r ${cameraAvailable ? 'from-emerald-400 to-teal-500' : 'from-amber-400 to-orange-500'} rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mx-auto mb-3`}>
+                    <span className="text-2xl text-white">{cameraAvailable ? '📷' : '⚠️'}</span>
+                  </div>
+                  <div className="font-bold text-slate-800 text-lg">{cameraAvailable ? 'Ready' : 'Limited'}</div>
+                  <div className="text-slate-600 text-sm">Camera Access</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 mx-auto mb-3">
+                    <span className="text-2xl text-white">🖼️</span>
+                  </div>
+                  <div className="font-bold text-slate-800 text-lg">Ready</div>
+                  <div className="text-slate-600 text-sm">Gallery Access</div>
+                </div>
+                <div className="text-center">
+                  <div className={`w-16 h-16 bg-gradient-to-r ${isHttps || window.location.hostname === 'localhost' ? 'from-emerald-400 to-teal-500' : 'from-amber-400 to-orange-500'} rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mx-auto mb-3`}>
+                    <span className="text-2xl text-white">{isHttps || window.location.hostname === 'localhost' ? '🔒' : '🔓'}</span>
+                  </div>
+                  <div className="font-bold text-slate-800 text-lg">{isHttps || window.location.hostname === 'localhost' ? 'Secure' : 'Check'}</div>
+                  <div className="text-slate-600 text-sm">Connection</div>
+                </div>
+              </div>
             </div>
           </GlassCard>
         </div>

@@ -110,9 +110,9 @@ function Body() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 1, delay: 1 }}
                 >
-                  <h3 className="text-lg md:text-xl lg:text-2xl text-white leading-relaxed font-medium drop-shadow-2xl max-w-3xl mx-auto">
-                    Coffee is one of the leading exports in Kenya. It is grown in many parts of the country and farmers profit from it a lot.
-                  </h3>
+                  <h3 className="text-lg md:text-xl lg:text-2xl text-white leading-relaxed font-medium drop-shadow-2xl max-w-3xl mx-auto pl-1 blur-left-card">
+  Coffee is one of the leading exports in Kenya. It is grown in many parts of the country and farmers profit from it a lot.
+</h3>
 
                   {/* Animated Underline */}
                   <motion.div
@@ -150,7 +150,7 @@ function Body() {
 
       {/* Quote Section */}
       <motion.div
-        className="relative bg-gradient-to-br from-slate-50 via-white to-amber-50 py-16 md:py-24 px-8"
+        className="relative bg-white py-16 md:py-24 px-8"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
@@ -158,7 +158,7 @@ function Body() {
       >
         <div className="max-w-6xl mx-auto">
           <motion.div
-            className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-8 md:p-16 rounded-3xl border border-amber-200/50 shadow-2xl"
+            className="bg-slate-50 p-8 md:p-16 rounded-3xl border border-slate-200/50 shadow-xl"
             whileHover={{ y: -5 }}
             transition={{ duration: 0.3 }}
           >
@@ -171,25 +171,25 @@ function Body() {
               <Quote />
             </motion.div>
 
-            <motion.h1
-              className="text-3xl md:text-4xl font-black text-amber-800 mb-8 md:mb-12 relative text-center"
-              initial={{ scale: 0.9, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <span className="bg-gradient-to-r from-amber-600 to-amber-400 bg-clip-text text-transparent">
-                Coffee Plant Wisdom
-              </span>
-              {/* Animated Underline */}
-              <motion.div
-                className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-32 md:w-40 h-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full"
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                transition={{ duration: 1, delay: 0.5 }}
+              <motion.h1
+                className="text-3xl md:text-4xl font-black text-slate-800 mb-8 md:mb-12 relative text-center"
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
                 viewport={{ once: true }}
-              />
-            </motion.h1>
+              >
+                <span className="text-slate-900">
+                  Coffee Plant Wisdom
+                </span>
+                {/* Animated Underline */}
+                <motion.div
+                  className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-32 md:w-40 h-1 bg-slate-400 rounded-full"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  transition={{ duration: 1, delay: 0.5 }}
+                  viewport={{ once: true }}
+                />
+              </motion.h1>
 
             <div className="space-y-8 md:space-y-12">
               <motion.div
@@ -206,8 +206,8 @@ function Body() {
                   transition={{ duration: 3, repeat: Infinity }}
                 />
 
-                <blockquote className="relative bg-white/90 backdrop-blur-sm p-6 md:p-12 rounded-2xl border border-amber-300/50 shadow-xl">
-                  <h3 className="text-lg md:text-xl lg:text-2xl italic text-amber-900 leading-relaxed font-light text-center">
+                <blockquote className="relative bg-white p-6 md:p-12 rounded-2xl border border-slate-200 shadow-lg">
+                  <h3 className="text-lg md:text-xl lg:text-2xl italic text-slate-700 leading-relaxed font-light text-center">
                     "You cannot roast in quality that was never grown in the plant. A healthy coffee plant is the first and most important ingredient in the cup."
                   </h3>
                 </blockquote>
@@ -215,7 +215,7 @@ function Body() {
 
               {/* Author Section */}
               <motion.div
-                className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 p-6 md:p-8 bg-white/80 rounded-2xl border border-amber-200/50 hover:border-amber-400/50 transition-all duration-300 group shadow-lg max-w-2xl mx-auto"
+                className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 p-6 md:p-8 bg-white rounded-2xl border border-slate-200 hover:border-slate-300 transition-all duration-300 group shadow-lg max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
@@ -225,23 +225,23 @@ function Body() {
                 <div className="relative">
                   {/* Animated Ring */}
                   <motion.div
-                    className="absolute -inset-3 border-3 border-amber-500 rounded-full"
+                    className="absolute -inset-3 border-3 border-slate-400 rounded-full"
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
                   <motion.img
                     src={author}
                     alt="James Hernandez"
-                    className="w-24 md:w-32 h-24 md:h-32 rounded-full border-3 border-amber-500 shadow-xl"
+                    className="w-24 md:w-32 h-24 md:h-32 rounded-full border-3 border-slate-400 shadow-xl"
                     whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.3 }}
                   />
                 </div>
                 <div className="text-center">
-                  <h5 className="text-xl md:text-2xl font-bold text-amber-800 group-hover:text-amber-600 transition-colors duration-300">
+                  <h5 className="text-xl md:text-2xl font-bold text-slate-800 group-hover:text-slate-600 transition-colors duration-300">
                     James Hernandez
                   </h5>
-                  <p className="text-amber-600/80 text-base md:text-lg font-light">Coffee Expert & Agriculturist</p>
+                  <p className="text-slate-600 text-base md:text-lg font-light">Coffee Expert & Agriculturist</p>
                 </div>
               </motion.div>
             </div>

@@ -6,7 +6,7 @@ import { Leaf, Heart, Shield } from 'lucide-react';
 const Belowimg = () => {
   return (
     <motion.div
-      className="py-16 md:py-24 px-8 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden"
+      className="py-16 md:py-24 px-8 bg-white relative overflow-hidden"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ duration: 1 }}

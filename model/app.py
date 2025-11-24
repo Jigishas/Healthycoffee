@@ -19,7 +19,7 @@ from pathlib import Path
 import torch
 from PIL import Image
 
-from src.inference import TorchClassifier
+from src.inference import TorchClassifier, InteractiveCoffeeDiagnosis
 from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation
 from optimize_model import OptimizedTorchClassifier
@@ -70,22 +70,30 @@ def validate_image_file(file):
 
     return True, None
 
-# Initialize classifiers with optimized models
+# Initialize interactive learning system
+interactive_system = InteractiveCoffeeDiagnosis(
+    'models/leaf_diseases/efficientnet_disease_balanced.pth',
+    'models/leaf_diseases/class_mapping_diseases.json',
+    'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
+    'models/leaf_deficiencies/class_mapping_deficiencies.json'
+)
+
+# Keep legacy classifiers for backward compatibility
 disease_classifier = OptimizedTorchClassifier(
     'models/leaf_diseases/efficientnet_disease_balanced.pth',
     'models/leaf_diseases/class_mapping_diseases.json',
     confidence_threshold=0.3
 )
-disease_model_type = 'optimized'
+disease_model_type = 'interactive_optimized'
 
 deficiency_classifier = OptimizedTorchClassifier(
     'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
     'models/leaf_deficiencies/class_mapping_deficiencies.json',
     confidence_threshold=0.3
 )
-deficiency_model_type = 'optimized'
+deficiency_model_type = 'interactive_optimized'
 
-logger.info(f"Models loaded - Disease: {disease_model_type}, Deficiency: {deficiency_model_type}")
+logger.info(f"Interactive learning system initialized with optimized models")
 
 @app.route('/api/upload-image', methods=['POST'])
 def upload_image():
@@ -294,6 +302,135 @@ def performance():
         })
     except Exception as e:
         logger.error(f'Performance metrics error: {e}')
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/interactive-diagnose', methods=['POST'])
+def interactive_diagnose():
+    """Interactive diagnosis endpoint with learning capabilities"""
+    try:
+        if 'image' not in request.files:
+            logger.warning('No image file in request')
+            return jsonify({'error': 'No image file provided'}), 400
+
+        file = request.files['image']
+
+        # Validate file
+        is_valid, error_msg = validate_image_file(file)
+        if not is_valid:
+            logger.warning(f'File validation failed: {error_msg}')
+            return jsonify({'error': error_msg}), 400
+
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        try:
+            file.save(filepath)
+            logger.info(f'File saved: {filepath}')
+
+            # Get interactive diagnosis
+            start_time = time.time()
+            try:
+                diagnosis_result = interactive_system.diagnose(filepath)
+            except Exception as e:
+                logger.error(f'Interactive diagnosis failed: {str(e)}')
+                # Fallback to legacy classifiers
+                disease_result = disease_classifier.predict(filepath)
+                deficiency_result = deficiency_classifier.predict(filepath)
+
+                diagnosis_result = {
+                    'disease_prediction': {
+                        **disease_result,
+                        'similar_previous_cases': 0,
+                        'certainty_level': 'Unknown'
+                    },
+                    'deficiency_prediction': {
+                        **deficiency_result,
+                        'similar_previous_cases': 0,
+                        'certainty_level': 'Unknown'
+                    },
+                    'learning_stats': {
+                        'disease_memory_size': 0,
+                        'deficiency_memory_size': 0,
+                        'disease_calibration_classes': 0,
+                        'deficiency_calibration_classes': 0
+                    },
+                    'status': 'fallback_used'
+                }
+            total_time = time.time() - start_time
+
+            # Add processing time to response
+            diagnosis_result['processing_time'] = round(total_time, 4)
+            diagnosis_result['model_version'] = 'interactive_learning_v1.0'
+
+            # Clean up uploaded file
+            os.remove(filepath)
+
+            logger.info(f'Interactive diagnosis completed in {total_time:.4f}s')
+            return jsonify(diagnosis_result)
+
+        except Exception as e:
+            logger.error(f'Interactive diagnosis error: {str(e)}')
+            # Clean up on error
+            if os.path.exists(filepath):
+                os.remove(filepath)
+            return jsonify({'error': f'Interactive diagnosis failed: {str(e)}'}), 500
+
+    except Exception as e:
+        logger.error(f'Unexpected error: {str(e)}')
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/feedback', methods=['POST'])
+def provide_feedback():
+    """Endpoint for users to provide feedback on predictions"""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'No feedback data provided'}), 400
+
+        image_path = data.get('image_path')
+        disease_feedback = data.get('disease_feedback')
+        deficiency_feedback = data.get('deficiency_feedback')
+
+        if not image_path:
+            return jsonify({'error': 'Image path is required for feedback'}), 400
+
+        # Provide feedback to the interactive system
+        feedback_result = interactive_system.provide_feedback(
+            image_path,
+            disease_feedback=disease_feedback,
+            deficiency_feedback=deficiency_feedback
+        )
+
+        logger.info(f'Feedback incorporated: {feedback_result}')
+        return jsonify(feedback_result)
+
+    except Exception as e:
+        logger.error(f'Feedback error: {str(e)}')
+        return jsonify({'error': f'Feedback processing failed: {str(e)}'}), 500
+
+@app.route('/api/learning-stats', methods=['GET'])
+def learning_stats():
+    """Get statistics about the interactive learning system"""
+    try:
+        # Get current learning statistics
+        stats = {
+            'disease_memory_size': len(interactive_system.disease_memory.memory),
+            'deficiency_memory_size': len(interactive_system.deficiency_memory.memory),
+            'disease_calibration_classes': len(interactive_system.disease_calibrator.calibration_map),
+            'deficiency_calibration_classes': len(interactive_system.deficiency_calibrator.calibration_map),
+            'disease_feature_classes': len(interactive_system.disease_classifier.feature_memory),
+            'deficiency_feature_classes': len(interactive_system.deficiency_classifier.feature_memory),
+            'timestamp': time.time()
+        }
+
+        return jsonify({
+            'learning_statistics': stats,
+            'status': 'success'
+        })
+
+    except Exception as e:
+        logger.error(f'Learning stats error: {str(e)}')
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

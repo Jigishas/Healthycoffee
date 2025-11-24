@@ -10,32 +10,36 @@ import Belowimg from './Components/BODY/imageSlider/Belowimg'
 import Askme from './Components/BODY/Ask me/Askme'
 import CameraCapture from './Components/CameraCapture/CameraCapture'
 import Upload from './Components/Uploads/Upload'
+import PWAInstallPrompt from './Components/PWAInstallPrompt'
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50">
       <Navbar />
-      <div id="home">
-        <Body />
-      </div>
-      <div id="gallery">
-        <ImageSlider />
-      </div>
-      <div id="features">
-        <Belowimg />
-      </div>
-      <div id="stats">
-        <Stat />
-      </div>
-      <div id="askme">
-        <Askme />
-      </div>
-      <div id="camera">
-        <CameraCapture />
-      </div>
+      <main className="relative">
+        <div id="home">
+          <Body />
+        </div>
+        <div id="gallery">
+          <ImageSlider />
+        </div>
+        <div id="features">
+          <Belowimg />
+        </div>
+        <div id="stats">
+          <Stat />
+        </div>
+        <div id="askme">
+          <Askme />
+        </div>
+        <div id="camera">
+          <CameraCapture />
+        </div>
+      </main>
       <Whatsapp />
       <Footer />
-    </>
+      <PWAInstallPrompt />
+    </div>
   )
 }
 
