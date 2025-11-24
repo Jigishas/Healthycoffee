@@ -792,11 +792,13 @@ const CameraCapture = React.forwardRef((props, ref) => {
       `
     };
 
+    const variantClass = variant === 'primary' ? 'cta-button' : variant === 'ghost' ? 'cta-ghost' : '';
+
     return (
       <button
         onClick={onClick}
         disabled={disabled || loading}
-        className={`${baseClasses} ${variants[variant]} ${className} flex items-center justify-center gap-3`}
+        className={`${baseClasses} ${variants[variant]} ${variantClass} ${className} flex items-center justify-center gap-3`}
       >
         {loading && (
           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

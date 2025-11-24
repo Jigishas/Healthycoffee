@@ -89,7 +89,7 @@ const Upload = () => {
       />
       <div className="flex justify-center mb-6">
         <button
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-md flex items-center gap-2"
+          className={`cta-button ${loading ? 'opacity-60 cursor-wait' : ''}`}
           onClick={openFilePicker}
           disabled={loading}
         >
@@ -121,7 +121,7 @@ const Upload = () => {
 
           <div className="flex justify-center">
             <button
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-md flex items-center gap-2"
+              className={`cta-button ${loading ? 'opacity-60 cursor-wait' : ''}`}
               onClick={handleUpload}
               disabled={loading}
             >
