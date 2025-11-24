@@ -68,15 +68,15 @@ const Footer = () => {
               Empowering farmers with AI-driven insights for healthier coffee plants and sustainable cultivation practices.
             </p>
             <div className="flex gap-4">
-              <div className="w-12 h-12 bg-amber-800/50 rounded-lg flex items-center justify-center cursor-pointer hover:bg-amber-700/60 transition-all duration-300 hover:scale-110 border border-amber-600/30">
+              <button className="cta-ghost w-12 h-12 flex items-center justify-center" aria-label="Facebook">
                 <span className="text-xl">📘</span>
-              </div>
-              <div className="w-12 h-12 bg-amber-800/50 rounded-lg flex items-center justify-center cursor-pointer hover:bg-amber-700/60 transition-all duration-300 hover:scale-110 border border-amber-600/30">
+              </button>
+              <button className="cta-ghost w-12 h-12 flex items-center justify-center" aria-label="Twitter">
                 <span className="text-xl">🐦</span>
-              </div>
-              <div className="w-12 h-12 bg-amber-800/50 rounded-lg flex items-center justify-center cursor-pointer hover:bg-amber-700/60 transition-all duration-300 hover:scale-110 border border-amber-600/30">
+              </button>
+              <button className="cta-ghost w-12 h-12 flex items-center justify-center" aria-label="Instagram">
                 <span className="text-xl">📷</span>
-              </div>
+              </button>
             </div>
           </div>
 
@@ -117,7 +117,7 @@ const Footer = () => {
                 <input
                   type="email"
                   placeholder="Enter your email address"
-                  className="w-full px-4 py-4 text-base bg-amber-900/40 border border-amber-600/50 rounded-xl text-white placeholder-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all duration-300 backdrop-blur-sm"
+                  className="input w-full px-4 py-4 text-base bg-amber-900/40 rounded-xl text-white placeholder-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all duration-300 backdrop-blur-sm"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   disabled={subscribed}
@@ -129,7 +129,7 @@ const Footer = () => {
               </div>
               
               <button
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-amber-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group"
+                className={`w-full cta-button ${subscribed ? 'opacity-60 cursor-not-allowed' : ''}`}
                 type="submit"
                 disabled={subscribed}
               >
@@ -141,7 +141,7 @@ const Footer = () => {
                     </>
                   ) : (
                     <>
-                      <span className="text-lg group-hover:scale-110 transition-transform duration-300">📧</span>
+                      <span className="text-lg">📧</span>
                       Subscribe Now
                     </>
                   )}
