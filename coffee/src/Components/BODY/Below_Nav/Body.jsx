@@ -7,10 +7,10 @@ import author from '../../../assets/author.jpg';
 
 function Body() {
   return (
-    <div className="relative overflow-hidden pt-20">
+    <div className="relative overflow-hidden">
       {/* Hero Section with Background Image */}
       <motion.div
-        className="relative w-full h-screen flex justify-center"
+        className="relative w-full min-h-[70vh] flex justify-center items-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
@@ -25,48 +25,8 @@ function Body() {
             transition={{ duration: 2, ease: "easeOut" }}
           />
 
-          {/* Enhanced Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-emerald-900/30 to-amber-900/40"></div>
-
-          {/* Animated Floating Elements */}
-          <motion.div
-            className="absolute top-20 right-20 w-6 h-6 bg-amber-400 rounded-full"
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0.6, 1, 0.6]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div
-            className="absolute bottom-40 left-32 w-8 h-8 bg-emerald-500 rounded-full"
-            animate={{
-              y: [0, -25, 0],
-              opacity: [0.4, 0.8, 0.4]
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1
-            }}
-          />
-          <motion.div
-            className="absolute top-1/2 right-44 w-4 h-4 bg-orange-400 rounded-full"
-            animate={{
-              y: [0, -15, 0],
-              opacity: [0.7, 1, 0.7]
-            }}
-            transition={{
-              duration: 3.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.5
-            }}
-          />
+          {/* Subtle Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-emerald-900/18 to-amber-900/22" />
         </div>
 
         {/* Main Content - Hero Section */}

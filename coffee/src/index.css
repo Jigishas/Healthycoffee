@@ -18,6 +18,7 @@
 :root {
   --background: 248 250 252; /* Very light slate */
   --foreground: 15 23 42; /* Dark slate */
+  --navbar-height: 72px;
   --card: 255 255 255; /* Pure white */
   --card-foreground: 15 23 42;
   --popover: 255 255 255;
@@ -159,6 +160,11 @@
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* App container ensures content isn't hidden behind fixed navbar */
+.app-container {
+  padding-top: var(--navbar-height);
 }
 
 /* Custom scrollbar */

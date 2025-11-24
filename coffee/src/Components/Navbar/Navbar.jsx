@@ -47,24 +47,25 @@ function Navbar() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
+      style={{ height: 'var(--navbar-height)' }}
       className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-slate-200/60 shadow-lg"
     >
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-full">
+        <div className="flex items-center justify-between h-full">
           {/* Logo Section */}
           <motion.div
-            className="flex items-center space-x-3"
+            className="flex items-center space-x-3 h-full"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.2 }}
           >
             <div className="relative">
-              <motion.img
-                src={logo}
-                alt="Coffee Logo"
-                className="h-12 w-12 rounded-full object-cover shadow-lg border-2 border-amber-300"
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
-              />
+                <motion.img
+                  src={logo}
+                  alt="Coffee Logo"
+                  className="h-10 w-10 rounded-full object-cover shadow-lg border-2 border-amber-300"
+                  whileHover={{ rotate: 20 }}
+                  transition={{ duration: 0.6 }}
+                />
               <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full blur opacity-30"></div>
             </div>
             <div className="hidden sm:block">

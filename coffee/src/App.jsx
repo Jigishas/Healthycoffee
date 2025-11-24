@@ -14,7 +14,7 @@ import PWAInstallPrompt from './Components/PWAInstallPrompt'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50">
+    <div className="app-container min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50">
       <Navbar />
       <main className="relative">
         <div id="home">
