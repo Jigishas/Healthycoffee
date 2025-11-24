@@ -44,13 +44,7 @@ const Stat = () => {
   ];
 
   return (
-    <motion.div
-      className="flex justify-center items-center gap-6 md:gap-8 py-16 md:py-24 px-4 md:px-8 bg-white relative overflow-hidden"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      viewport={{ once: true }}
-    >
+    <div className="flex justify-center items-center gap-6 md:gap-8 py-16 md:py-24 px-4 md:px-8 bg-white relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 left-10 w-16 h-16 border-2 border-amber-400 rounded-full"></div>
@@ -60,14 +54,9 @@ const Stat = () => {
 
       <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8 max-w-7xl w-full">
         {stats.map((stat, index) => (
-          <motion.div
+          <div
             key={stat.label}
-            className={`text-center bg-gradient-to-br ${stat.bgColor} border-2 ${stat.borderColor} rounded-3xl p-6 md:p-8 w-64 md:w-72 min-h-56 md:min-h-64 shadow-xl transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl ${stat.hoverColor} relative overflow-hidden group cursor-pointer`}
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.05 }}
+            className={`text-center bg-gradient-to-br ${stat.bgColor} border-2 ${stat.borderColor} rounded-3xl p-6 md:p-8 w-64 md:w-72 min-h-56 md:min-h-64 shadow-xl transition-all duration-300 hover:-translate-y-2 ${stat.hoverColor} relative overflow-hidden group cursor-default`}
           >
             {/* Animated Top Border */}
             <motion.div
@@ -79,85 +68,27 @@ const Stat = () => {
             />
 
             {/* Icon with Animation */}
-            <motion.div
-              className="flex justify-center mb-4"
-              animate={{ rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }}
-            >
+            <div className="flex justify-center mb-4">
               <stat.icon className={`w-12 h-12 md:w-16 md:h-16 ${stat.color}`} />
-            </motion.div>
+            </div>
 
             {/* Value with Counter Animation */}
-            <motion.h2
-              className={`text-3xl md:text-4xl mb-3 font-bold ${stat.color}`}
-              initial={{ scale: 0.8, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-              viewport={{ once: true }}
-            >
-              {stat.value}
-            </motion.h2>
+            <h2 className={`text-3xl md:text-4xl mb-3 font-bold ${stat.color}`}>{stat.value}</h2>
 
             {/* Label */}
-            <motion.p
-              className={`font-semibold text-base md:text-lg ${stat.color.replace('600', '700')}`}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
-              viewport={{ once: true }}
-            >
-              {stat.label}
-            </motion.p>
+            <p className={`font-semibold text-base md:text-lg ${stat.color.replace('600', '700')}`}>{stat.label}</p>
 
             {/* Hover Effect Overlay */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"
-              initial={false}
-            />
-
-            {/* Floating Particles */}
-            <motion.div
-              className="absolute top-4 right-4 w-2 h-2 bg-amber-400 rounded-full opacity-60"
-              animate={{
-                y: [0, -10, 0],
-                opacity: [0.6, 1, 0.6]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: index * 0.3
-              }}
-            />
-            <motion.div
-              className="absolute bottom-4 left-4 w-1.5 h-1.5 bg-emerald-400 rounded-full opacity-40"
-              animate={{
-                y: [0, -8, 0],
-                opacity: [0.4, 0.8, 0.4]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: index * 0.4 + 1
-              }}
-            />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-300 rounded-3xl" />
           </motion.div>
         ))}
       </div>
 
       {/* Trending Up Indicator */}
-      <motion.div
-        className="absolute bottom-8 right-8 text-amber-600"
-        initial={{ opacity: 0, scale: 0 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 1.5 }}
-        viewport={{ once: true }}
-        animate={{ y: [0, -5, 0] }}
-      >
+      <div className="absolute bottom-8 right-8 text-amber-600">
         <TrendingUp className="w-8 h-8" />
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
