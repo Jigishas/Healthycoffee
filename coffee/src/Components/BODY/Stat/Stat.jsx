@@ -80,7 +80,7 @@ const Stat = () => {
 
             {/* Hover Effect Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-300 rounded-3xl" />
-          </motion.div>
+          </div>
         ))}
       </div>
 
