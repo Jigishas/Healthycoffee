@@ -23,10 +23,6 @@ const Upload = () => {
     setResults(null);
   };
 
-  const openFilePicker = () => {
-    if (fileInputRef.current) fileInputRef.current.click();
-  };
-
   const handleUpload = async () => {
     if (!selectedFile) {
       setStatus('Please select an image to upload.');
