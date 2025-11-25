@@ -78,11 +78,13 @@ const Upload = () => {
       <p className="text-center text-sm text-slate-600 mb-6">Use a clear, well-lit photo of the leaf for best results.</p>
 
       <input
+        id="file-input"
         type="file"
         accept="image/*"
         style={{ display: 'none' }}
         ref={fileInputRef}
         onChange={handleFileChange}
+        aria-label="Choose an image to upload"
       />
       <div className="flex justify-center mb-6">
         <label htmlFor="file-input" className={`cta-button text-sm ${loading ? 'opacity-60 cursor-wait' : ''} inline-flex items-center gap-2`}>
@@ -92,18 +94,7 @@ const Upload = () => {
           </svg>
           <span>Choose image</span>
         </label>
-        <input
-          id="file-input"
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          aria-label="Choose an image to upload"
-        />
       </div>
-  <h2 className="text-xl md:text-2xl font-bold text-center mb-3 text-slate-800">Upload leaf image</h2>
-  <p className="text-center text-sm text-slate-600 mb-4">Use a clear, well-lit photo.</p>
 
       {preview && (
         <div className="space-y-6">
@@ -217,8 +208,8 @@ const Upload = () => {
               {results.recommendations.disease_recommendations.symptoms && results.recommendations.disease_recommendations.symptoms.length > 0 && (
                 <div>
                   <p><strong>Symptoms:</strong></p>
-                  <button>
-                    className={`cta-button text-sm ${loading ? 'opacity-60 cursor-wait' : ''}`}
+                  <ul>
+                    {results.recommendations.disease_recommendations.symptoms.map((symptom, index) => (
                       <li key={index}>{symptom}</li>
                     ))}
                   </ul>
