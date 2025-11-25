@@ -859,8 +859,10 @@ const CameraCapture = React.forwardRef((props, ref) => {
                 autoPlay
                 playsInline
                 muted
-                className="max-w-full h-auto max-h-96 rounded-2xl shadow-2xl bg-black border-4 border-white/50"
-                style={{ transform: 'scaleX(-1)' }}
+                className="max-w-full h-auto max-h-96 rounded-2xl shadow-2xl bg-black border-4 border-white/50 media-preview"
+                style={{ transform: 'scaleX(-1)', objectFit: 'cover' }}
+                role="img"
+                aria-label="Live camera preview of leaf"
               />
             </div>
             <div className="text-center mt-6">
@@ -870,7 +872,7 @@ const CameraCapture = React.forwardRef((props, ref) => {
             </div>
           </GlassCard>
 
-          <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-5 justify-center items-center controls-bar">
             <ModernButton
               onClick={capturePhoto}
               variant="primary"
