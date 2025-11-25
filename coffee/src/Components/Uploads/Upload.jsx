@@ -77,8 +77,9 @@ const Upload = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl shadow-xl border border-blue-200/50">
-      <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">Upload Your Coffee Image</h2>
+    <div className="max-w-4xl mx-auto p-8 bg-white rounded-2xl shadow-xl border border-slate-100">
+      <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 text-slate-800">Upload Your Leaf Image</h2>
+      <p className="text-center text-sm text-slate-600 mb-6">Use a clear, well-lit photo of the leaf for best results.</p>
 
       <input
         type="file"
@@ -88,14 +89,19 @@ const Upload = () => {
         onChange={handleFileChange}
       />
       <div className="flex justify-center mb-6">
-        <button
-          className={`cta-button ${loading ? 'opacity-60 cursor-wait' : ''}`}
-          onClick={openFilePicker}
-          disabled={loading}
-        >
+        <label htmlFor="file-input" className={`cta-button ${loading ? 'opacity-60 cursor-wait' : ''} inline-flex items-center gap-3`}>
           <span className="text-lg">📁</span>
           Choose Image
-        </button>
+        </label>
+        <input
+          id="file-input"
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          aria-label="Choose an image to upload"
+        />
       </div>
 
       {preview && (
@@ -119,14 +125,22 @@ const Upload = () => {
             rows={3}
           />
 
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-4">
             <button
               className={`cta-button ${loading ? 'opacity-60 cursor-wait' : ''}`}
               onClick={handleUpload}
               disabled={loading}
+              aria-live="polite"
             >
               <span className="text-lg">📤</span>
-              {loading ? 'Sending...' : 'Send'}
+              {loading ? 'Sending...' : 'Analyze'}
+            </button>
+            <button
+              className="cta-ghost"
+              onClick={() => { setSelectedFile(null); setPreview(''); setStatus(''); setResults(null); }}
+              disabled={loading}
+            >
+              Remove
             </button>
           </div>
         </div>
