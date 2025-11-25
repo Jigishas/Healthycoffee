@@ -206,19 +206,22 @@ const Upload = () => {
               <h3>Disease Recommendations</h3>
               {results.recommendations.disease_recommendations.overview && <p><strong>Overview:</strong> {results.recommendations.disease_recommendations.overview}</p>}
               {results.recommendations.disease_recommendations.symptoms && results.recommendations.disease_recommendations.symptoms.length > 0 && (
-                <div>
-                  <p><strong>Symptoms:</strong></p>
-                  <ul>
-                    {results.recommendations.disease_recommendations.symptoms.map((symptom, index) => (
-                      <li key={index}>{symptom}</li>
-                    ))}
-                  </ul>
-                </div>
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                      <path d="M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M8 7l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M21 21H3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+                <>
+                  <div>
+                    <p><strong>Symptoms:</strong></p>
+                    <ul>
+                      {results.recommendations.disease_recommendations.symptoms.map((symptom, index) => (
+                        <li key={index}>{symptom}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <path d="M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M8 7l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M21 21H3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </>
+              )}
               {results.recommendations.disease_recommendations.integrated_management && (
                 <div>
                   <h4>Integrated Management</h4>
