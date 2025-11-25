@@ -217,7 +217,7 @@ const Upload = () => {
               {results.recommendations.disease_recommendations.symptoms && results.recommendations.disease_recommendations.symptoms.length > 0 && (
                 <div>
                   <p><strong>Symptoms:</strong></p>
-                  <button
+                  <button>
                     className={`cta-button text-sm ${loading ? 'opacity-60 cursor-wait' : ''}`}
                       <li key={index}>{symptom}</li>
                     ))}
