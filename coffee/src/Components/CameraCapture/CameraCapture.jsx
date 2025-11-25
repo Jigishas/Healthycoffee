@@ -815,16 +815,16 @@ const CameraCapture = React.forwardRef((props, ref) => {
       <GlassCard className="p-10 mb-10 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/5 via-blue-400/5 to-purple-400/5"></div>
         <div className="relative z-10">
-          <div className="flex items-center justify-center gap-5 mb-6">
+            <div className="flex items-center justify-center gap-5 mb-6">
             <div className="w-16 h-16 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-emerald-500/30 animate-pulse">
               <span className="text-3xl text-white">🌿</span>
             </div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-black bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent">
               Leaf Analysis Studio
             </h1>
           </div>
-          <p className="text-slate-600 text-xl max-w-3xl mx-auto leading-relaxed font-medium">
-            Advanced AI-powered analysis for comprehensive plant health assessment and precision disease detection
+          <p className="text-slate-600 text-base max-w-3xl mx-auto leading-relaxed font-medium">
+            AI leaf health & disease detection
           </p>
         </div>
       </GlassCard>
@@ -838,8 +838,8 @@ const CameraCapture = React.forwardRef((props, ref) => {
               <div className="w-24 h-24 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
             </div>
             <div>
-              <h3 className="text-3xl font-bold text-slate-800 mb-3">Initializing Camera</h3>
-              <p className="text-slate-600 text-lg">Accessing your device camera...</p>
+              <h3 className="text-2xl font-bold text-slate-800 mb-3">Initializing camera</h3>
+              <p className="text-slate-600 text-base">Accessing camera...</p>
             </div>
           </div>
         </GlassCard>
@@ -849,9 +849,9 @@ const CameraCapture = React.forwardRef((props, ref) => {
       {cameraActive && (
         <div className="space-y-8">
           <GlassCard className="p-8">
-            <h3 className="text-2xl font-bold text-slate-800 mb-6 text-center flex items-center justify-center gap-3">
-              <span className="text-3xl">📷</span>
-              Camera Preview - Point at Leaf
+            <h3 className="text-xl font-bold text-slate-800 mb-6 text-center flex items-center justify-center gap-3">
+              <span className="text-2xl">📷</span>
+              Camera preview
             </h3>
             <div className="flex justify-center">
               <video
@@ -866,8 +866,8 @@ const CameraCapture = React.forwardRef((props, ref) => {
               />
             </div>
             <div className="text-center mt-6">
-              <p className="text-slate-600 text-base font-medium bg-white/50 rounded-xl py-3 px-6 inline-block backdrop-blur-sm">
-                Ensure the leaf is well-lit and centered in the frame for best results
+              <p className="text-slate-600 text-sm font-medium bg-white/50 rounded-xl py-2 px-4 inline-block backdrop-blur-sm">
+                Keep leaf centered and well-lit
               </p>
             </div>
           </GlassCard>
@@ -877,15 +877,17 @@ const CameraCapture = React.forwardRef((props, ref) => {
               onClick={capturePhoto}
               variant="primary"
               icon="📸"
+              className="px-8 py-3 text-sm"
             >
-              Capture Photo
+              Capture
             </ModernButton>
             <ModernButton
               onClick={stopCamera}
               variant="danger"
               icon="❌"
+              className="px-6 py-3 text-sm"
             >
-              Cancel Camera
+              Cancel
             </ModernButton>
           </div>
         </div>
@@ -902,12 +904,12 @@ const CameraCapture = React.forwardRef((props, ref) => {
                 <div className="w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-amber-500/40 animate-pulse">
                   <span className="text-4xl text-white">💡</span>
                 </div>
-                <div className="text-center">
-                  <h3 className="text-4xl font-black text-slate-800 mb-3 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                    Capture Guidelines
-                  </h3>
-                  <p className="text-slate-600 text-xl font-medium">Master these tips for optimal leaf analysis results</p>
-                </div>
+                  <div className="text-center">
+                    <h3 className="text-2xl font-black text-slate-800 mb-3">
+                      Capture guidelines
+                    </h3>
+                    <p className="text-slate-600 text-sm font-medium">Quick tips for best results</p>
+                  </div>
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -961,8 +963,8 @@ const CameraCapture = React.forwardRef((props, ref) => {
                         <span className="text-2xl text-white group-hover:scale-110 transition-transform">{item.icon}</span>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="font-bold text-slate-800 text-xl mb-2 group-hover:text-slate-900 transition-colors">{item.text}</div>
-                        <div className="text-slate-600 text-base leading-relaxed group-hover:text-slate-700 transition-colors">{item.desc}</div>
+                        <div className="font-bold text-slate-800 text-lg mb-2 group-hover:text-slate-900 transition-colors">{item.text}</div>
+                        <div className="text-slate-600 text-sm leading-snug group-hover:text-slate-700 transition-colors">{item.desc}</div>
                       </div>
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <span className="text-slate-400 text-sm">Click for details</span>
@@ -993,10 +995,10 @@ const CameraCapture = React.forwardRef((props, ref) => {
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/5 via-teal-400/5 to-cyan-400/5"></div>
             <div className="relative z-10">
               <div className="text-center mb-12">
-                <h3 className="text-4xl font-black text-slate-800 mb-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  Choose Your Capture Method
+                <h3 className="text-2xl font-black text-slate-800 mb-4">
+                  Choose capture method
                 </h3>
-                <p className="text-slate-600 text-xl font-medium max-w-2xl mx-auto">Select the best approach for capturing your leaf sample</p>
+                <p className="text-slate-600 text-sm font-medium max-w-2xl mx-auto">Pick camera or gallery</p>
               </div>
 
               {/* Device Compatibility Status */}
@@ -1029,13 +1031,10 @@ const CameraCapture = React.forwardRef((props, ref) => {
                       onClick={openCamera}
                       variant="primary"
                       icon="📷"
-                      className="w-full text-xl py-8 px-10 mb-6 transform hover:scale-105 transition-all duration-300"
+                      className="w-full text-sm py-4 px-6 mb-4"
                       disabled={!cameraAvailable}
                     >
-                      <div>
-                        <div className="font-black text-xl mb-2">📷 Live Camera Capture</div>
-                        <div className="text-base opacity-90 font-medium">Real-time preview & instant capture</div>
-                      </div>
+                      <div className="font-black">Live capture</div>
                     </ModernButton>
                     <div className="bg-emerald-50/80 rounded-2xl p-6 border border-emerald-200/60 backdrop-blur-sm">
                       <div className="text-emerald-800 font-semibold mb-3">✨ Best For:</div>
@@ -1058,12 +1057,9 @@ const CameraCapture = React.forwardRef((props, ref) => {
                       onClick={openGallery}
                       variant="secondary"
                       icon="🖼️"
-                      className="w-full text-xl py-8 px-10 mb-6 transform hover:scale-105 transition-all duration-300"
+                      className="w-full text-sm py-4 px-6 mb-4"
                     >
-                      <div>
-                        <div className="font-black text-xl mb-2">🖼️ Gallery Selection</div>
-                        <div className="text-base opacity-90 font-medium">Choose from existing photos</div>
-                      </div>
+                      <div className="font-black">Gallery</div>
                     </ModernButton>
                     <div className="bg-blue-50/80 rounded-2xl p-6 border border-blue-200/60 backdrop-blur-sm">
                       <div className="text-blue-800 font-semibold mb-3">📁 Perfect For:</div>

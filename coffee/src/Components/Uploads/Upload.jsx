@@ -85,9 +85,12 @@ const Upload = () => {
         onChange={handleFileChange}
       />
       <div className="flex justify-center mb-6">
-        <label htmlFor="file-input" className={`cta-button ${loading ? 'opacity-60 cursor-wait' : ''} inline-flex items-center gap-3`}>
-          <span className="text-lg">📁</span>
-          Choose Image
+        <label htmlFor="file-input" className={`cta-button text-sm ${loading ? 'opacity-60 cursor-wait' : ''} inline-flex items-center gap-2`}>
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path d="M3 7a2 2 0 012-2h3l2 2h6a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round"/>
+            <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round"/>
+          </svg>
+          <span>Choose image</span>
         </label>
         <input
           id="file-input"
@@ -99,6 +102,8 @@ const Upload = () => {
           aria-label="Choose an image to upload"
         />
       </div>
+  <h2 className="text-xl md:text-2xl font-bold text-center mb-3 text-slate-800">Upload leaf image</h2>
+  <p className="text-center text-sm text-slate-600 mb-4">Use a clear, well-lit photo.</p>
 
       {preview && (
         <div className="space-y-6">
@@ -114,8 +119,8 @@ const Upload = () => {
           </div>
 
           <textarea
-            className="w-full p-4 border-2 border-blue-200 rounded-xl bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300 resize-none shadow-lg"
-            placeholder="Add a description..."
+            className="w-full p-3 border-2 border-blue-200 rounded-xl bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300 resize-none shadow-lg text-sm"
+            placeholder="Optional: short note"
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
@@ -212,13 +217,17 @@ const Upload = () => {
               {results.recommendations.disease_recommendations.symptoms && results.recommendations.disease_recommendations.symptoms.length > 0 && (
                 <div>
                   <p><strong>Symptoms:</strong></p>
-                  <ul>
-                    {results.recommendations.disease_recommendations.symptoms.map((symptom, index) => (
+                  <button
+                    className={`cta-button text-sm ${loading ? 'opacity-60 cursor-wait' : ''}`}
                       <li key={index}>{symptom}</li>
                     ))}
                   </ul>
                 </div>
-              )}
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                      <path d="M12 3v12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M8 7l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M21 21H3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
               {results.recommendations.disease_recommendations.integrated_management && (
                 <div>
                   <h4>Integrated Management</h4>
