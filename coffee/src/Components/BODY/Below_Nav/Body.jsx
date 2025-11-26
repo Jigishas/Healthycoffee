@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, Quote } from 'lucide-react';
 import { Box, Text, VStack, HStack, Avatar, Heading } from '@chakra-ui/react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Button } from '@mui/material';
 import image2 from '../../../assets/image2.jpg';
 import author from '../../../assets/author.jpg';
