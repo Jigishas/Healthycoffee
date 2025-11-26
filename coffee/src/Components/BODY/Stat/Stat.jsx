@@ -2,6 +2,8 @@ import React from 'react';
 import { Activity, Users, Sprout, Coffee, TrendingUp } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
+import { Box, SimpleGrid, VStack, Icon, Heading, Text } from '@chakra-ui/react';
+import { Card, CardContent } from '../ui/card';
 
 const Stat = () => {
   const stats = [
