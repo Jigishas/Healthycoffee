@@ -2,7 +2,7 @@ import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { ChevronDown, Quote } from 'lucide-react';
-import { Box, Text, VStack, HStack, Avatar, Heading } from '@chakra-ui/react';
+import { Box, Typography, Stack, Avatar } from '@mui/material';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Button } from '@mui/material';
 import image2 from '../../../assets/image2.jpg';
@@ -112,8 +112,8 @@ function Body() {
       </motion.div>
 
       {/* Quote Section */}
-       <Box bg="white" py={{ base: 16, md: 24 }} px={8}>
-        <Box maxW="6xl" mx="auto">
+       <Box sx={{ bgcolor: 'white', py: { xs: 16, md: 24 }, px: 8 }}>
+        <Box sx={{ maxWidth: '1200px', mx: 'auto' }}>
           <Card className="bg-slate-50 p-8 md:p-16 rounded-3xl border border-slate-200/50 shadow-xl">
             <CardContent>
               {/* Quote Icon */}
@@ -125,61 +125,56 @@ function Body() {
                 <Quote />
               </motion.div>
 
-              <Heading
-                as="h1"
-                size="2xl"
-                textAlign="center"
-                mb={8}
-                color="slate.800"
-                fontWeight="black"
+              <Typography
+                variant="h1"
+                align="center"
+                sx={{ mb: 8, color: 'slate.800', fontWeight: 'black', fontSize: { xs: '2xl', md: '3xl', lg: '4xl' } }}
               >
                 Coffee Plant Wisdom
-              </Heading>
+              </Typography>
 
-              <VStack spacing={8}>
+              <Stack spacing={8}>
                 <Box>
-                  <Text
-                    fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
-                    fontStyle="italic"
-                    color="slate.700"
-                    textAlign="center"
-                    fontWeight="light"
+                  <Typography
+                    variant="body1"
+                    sx={{ fontStyle: 'italic', color: 'slate.700', textAlign: 'center', fontWeight: 'light', fontSize: { xs: 'lg', md: 'xl', lg: '2xl' } }}
                   >
                     "You cannot roast in quality that was never grown in the plant. A healthy coffee plant is the first and most important ingredient in the cup."
-                  </Text>
+                  </Typography>
                 </Box>
 
                 {/* Author Section */}
-                <HStack
+                <Stack
+                  direction="row"
                   spacing={6}
-                  p={6}
-                  bg="white"
-                  borderRadius="2xl"
-                  border="1px solid"
-                  borderColor="slate.200"
-                  _hover={{ borderColor: "slate.300", transform: "scale(1.02)" }}
-                  transition="all 0.3s"
-                  maxW="2xl"
-                  mx="auto"
-                  align="center"
+                  sx={{
+                    p: 6,
+                    bgcolor: 'white',
+                    borderRadius: '16px',
+                    border: '1px solid',
+                    borderColor: 'slate.200',
+                    '&:hover': { borderColor: 'slate.300', transform: 'scale(1.02)' },
+                    transition: 'all 0.3s',
+                    maxWidth: '2xl',
+                    mx: 'auto',
+                    alignItems: 'center'
+                  }}
                 >
                   <Avatar
                     src={author}
                     alt="James Hernandez"
-                    size="xl"
-                    border="3px solid"
-                    borderColor="slate.400"
+                    sx={{ width: 80, height: 80, border: '3px solid', borderColor: 'slate.400' }}
                   />
-                  <VStack align="start" spacing={1}>
-                    <Heading size="md" color="slate.800">
+                  <Stack alignItems="flex-start" spacing={1}>
+                    <Typography variant="h6" sx={{ color: 'slate.800' }}>
                       James Hernandez
-                    </Heading>
-                    <Text color="slate.600" fontSize="sm">
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'slate.600' }}>
                       Coffee Expert & Agriculturist
-                    </Text>
-                  </VStack>
-                </HStack>
-              </VStack>
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </Stack>
             </CardContent>
           </Card>
         </Box>
