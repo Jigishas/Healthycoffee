@@ -76,28 +76,9 @@ function Navbar() {
             </div>
           </motion.div>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            {[
-              { name: 'Home', id: 'home' },
-              { name: 'Gallery', id: 'gallery' },
-              { name: 'Features', id: 'features' },
-              { name: 'Stats', id: 'stats' },
-              { name: 'Ask Me', id: 'askme' },
-              { name: 'Camera', id: 'camera' }
-            ].map((item) => (
-              <motion.a
-                key={item.name}
-                href={`#${item.id}`}
-                className="text-amber-700 hover:text-amber-900 font-medium transition-colors duration-300 relative group"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-500 to-orange-500 group-hover:w-full transition-all duration-300"></span>
-              </motion.a>
-            ))}
-          </div>
+         <div>
+          <input type='search' placeholder='Search...' className='hidden md:inline-block px-3 py-1.5 border border-red-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all duration-300'/>
+         </div>
 
           {/* Mobile Menu Button */}
           <motion.button
@@ -161,30 +142,6 @@ function Navbar() {
                       </div>
                     </motion.button>
                   </div>
-                </div>
-
-                {/* Navigation Links */}
-                <div className="px-4 py-3">
-                  <h3 className="text-sm font-semibold text-amber-800 mb-3">Navigation</h3>
-                  {[
-                    { name: 'Home', id: 'home' },
-                    { name: 'Gallery', id: 'gallery' },
-                    { name: 'Features', id: 'features' },
-                    { name: 'Stats', id: 'stats' },
-                    { name: 'Ask Me', id: 'askme' },
-                    { name: 'Camera', id: 'camera' }
-                  ].map((item) => (
-                    <motion.a
-                      key={item.name}
-                      href={`#${item.id}`}
-                      className="block px-3 py-2 text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </motion.a>
-                  ))}
                 </div>
               </div>
             </motion.div>
