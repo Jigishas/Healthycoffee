@@ -1,678 +1,165 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 const BACKEND_URL = import.meta.env.NODE_ENV === 'production' ? '' : 'http://127.0.0.1:8000';
 
-// eslint-disable-next-line no-unused-vars
 const CameraCapture = React.forwardRef((props, ref) => {
   const [preview, setPreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [result, setResult] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [cameraActive, setCameraActive] = useState(false);
   const [stream, setStream] = useState(null);
-  const [cameraLoading, setCameraLoading] = useState(false);
-  const [isHttps, setIsHttps] = useState(false);
-  const [imageZoomed, setImageZoomed] = useState(false);
-  const [pdfGenerating, setPdfGenerating] = useState(false);
-  const [pdfDownloadStatus, setPdfDownloadStatus] = useState(null);
-  const [cameraAvailable, setCameraAvailable] = useState(true);
 
-  const pdfExportRef = useRef(null);
-
-  // Check camera availability
-  const checkCameraAvailability = async () => {
-    try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-        return false;
-      }
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-      setCameraAvailable(videoDevices.length > 0);
-      return videoDevices.length > 0;
-    } catch (error) {
-      console.error('Error checking camera availability:', error);
-      setCameraAvailable(false);
-      return false;
-    }
-  };
-
-  // Export functions
-  const exportAsJSON = () => {
-    if (!result) return;
-    const dataStr = JSON.stringify(result, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = `leaf-analysis-${new Date().toISOString().split('T')[0]}.json`;
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-  };
-
-  const exportAsPDF = async () => {
-    if (!result) return;
-
-    setPdfGenerating(true);
-    setPdfDownloadStatus(null);
-
-    try {
-      // Create a simple, clean HTML content for PDF
-      const deficiencyConfidence = result.deficiency_prediction ? Math.round((result.deficiency_prediction.confidence || 0) * 100) : 0;
-      const diseaseConfidence = result.disease_prediction ? Math.round((result.disease_prediction.confidence || 0) * 100) : 0;
-
-      const pdfContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Leaf Analysis Report</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              margin: 20px;
-              color: #333;
-              line-height: 1.6;
-            }
-            .header {
-              text-align: center;
-              border-bottom: 2px solid #4CAF50;
-              padding-bottom: 20px;
-              margin-bottom: 30px;
-            }
-            .header h1 {
-              color: #2E7D32;
-              margin: 0;
-              font-size: 28px;
-            }
-            .header p {
-              color: #666;
-              margin: 10px 0 0 0;
-            }
-            .section {
-              margin-bottom: 30px;
-              padding: 20px;
-              border: 1px solid #ddd;
-              border-radius: 8px;
-              background: #f9f9f9;
-            }
-            .section h2 {
-              color: #2E7D32;
-              margin: 0 0 15px 0;
-              font-size: 20px;
-              border-bottom: 1px solid #4CAF50;
-              padding-bottom: 5px;
-            }
-            .confidence {
-              background: white;
-              padding: 15px;
-              border-radius: 5px;
-              margin: 10px 0;
-              border-left: 4px solid #2196F3;
-            }
-            .recommendation {
-              background: #E8F5E8;
-              padding: 15px;
-              border-radius: 5px;
-              margin: 10px 0;
-              border-left: 4px solid #4CAF50;
-            }
-            .list-item {
-              margin: 8px 0;
-              padding-left: 20px;
-            }
-            .list-item:before {
-              content: "•";
-              color: #4CAF50;
-              font-weight: bold;
-              margin-left: -20px;
-              margin-right: 10px;
-            }
-            .footer {
-              text-align: center;
-              margin-top: 40px;
-              padding-top: 20px;
-              border-top: 1px solid #ddd;
-              color: #666;
-              font-size: 12px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>🌿 Leaf Analysis Report</h1>
-            <p>Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-          </div>
-
-          ${result.deficiency_prediction ? `
-          <div class="section">
-            <h2>🧪 Nutrient Deficiency Analysis</h2>
-            <div class="confidence">
-              <strong>Result:</strong> ${result.deficiency_prediction.class}<br>
-              <strong>Confidence:</strong> ${deficiencyConfidence}%
-            </div>
-            ${result.deficiency_prediction.explanation ? `
-              <div class="recommendation">
-                <strong>Explanation:</strong><br>
-                ${result.deficiency_prediction.explanation}
-              </div>
-            ` : ''}
-            ${result.deficiency_prediction.recommendation ? `
-              <div class="recommendation">
-                <strong>Recommendation:</strong><br>
-                ${result.deficiency_prediction.recommendation}
-              </div>
-            ` : ''}
-          </div>
-          ` : ''}
-
-          ${result.disease_prediction ? `
-          <div class="section">
-            <h2>🔬 Disease Detection Analysis</h2>
-            <div class="confidence">
-              <strong>Result:</strong> ${result.disease_prediction.class}<br>
-              <strong>Confidence:</strong> ${diseaseConfidence}%
-            </div>
-            ${result.disease_prediction.explanation ? `
-              <div class="recommendation">
-                <strong>Explanation:</strong><br>
-                ${result.disease_prediction.explanation}
-              </div>
-            ` : ''}
-            ${result.disease_prediction.recommendation ? `
-              <div class="recommendation">
-                <strong>Recommendation:</strong><br>
-                ${result.disease_prediction.recommendation}
-              </div>
-            ` : ''}
-          </div>
-          ` : ''}
-
-          ${result.recommendations?.disease_recommendations ? `
-          <div class="section">
-            <h2>🛡️ Disease Management Recommendations</h2>
-
-            ${result.recommendations.disease_recommendations.overview ? `
-              <div class="recommendation">
-                <strong>Overview:</strong><br>
-                ${result.recommendations.disease_recommendations.overview}
-              </div>
-            ` : ''}
-
-            ${result.recommendations.disease_recommendations.symptoms ? `
-              <div class="recommendation">
-                <strong>Symptoms:</strong>
-                ${result.recommendations.disease_recommendations.symptoms.map(symptom => `<div class="list-item">${symptom}</div>`).join('')}
-              </div>
-            ` : ''}
-
-            ${result.recommendations.disease_recommendations.integrated_management?.cultural_practices ? `
-              <div class="recommendation">
-                <strong>Cultural Practices:</strong>
-                ${result.recommendations.disease_recommendations.integrated_management.cultural_practices.map(practice => `<div class="list-item">${practice}</div>`).join('')}
-              </div>
-            ` : ''}
-
-            ${result.recommendations.disease_recommendations.integrated_management?.chemical_control ? `
-              <div class="recommendation">
-                <strong>Chemical Control:</strong>
-                ${result.recommendations.disease_recommendations.integrated_management.chemical_control.map(control => `<div class="list-item">${control}</div>`).join('')}
-              </div>
-            ` : ''}
-          </div>
-          ` : ''}
-
-          ${result.recommendations?.deficiency_recommendations ? `
-          <div class="section">
-            <h2>🌱 Nutrition Management Recommendations</h2>
-
-            ${result.recommendations.deficiency_recommendations.basic ? `
-              <div class="recommendation">
-                <strong>Basic Recommendations:</strong>
-                ${result.recommendations.deficiency_recommendations.basic.map(rec => `<div class="list-item">${rec}</div>`).join('')}
-              </div>
-            ` : ''}
-
-            ${result.recommendations.deficiency_recommendations.management ? `
-              <div class="recommendation">
-                <strong>Management:</strong>
-                ${result.recommendations.deficiency_recommendations.management.map(manage => `<div class="list-item">${manage}</div>`).join('')}
-              </div>
-            ` : ''}
-          </div>
-          ` : ''}
-
-          <div class="footer">
-            <p>Generated by Leaf Analysis Studio | AI-Powered Plant Health Assessment</p>
-            <p>For professional agricultural advice, consult with certified experts.</p>
-          </div>
-        </body>
-        </html>
-      `;
-
-      // Create a temporary element to hold the HTML content
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = pdfContent;
-      tempDiv.style.position = 'absolute';
-      tempDiv.style.left = '-9999px';
-      tempDiv.style.top = '-9999px';
-      tempDiv.style.width = '800px';
-      document.body.appendChild(tempDiv);
-
-      // Use html2canvas with simpler options
-      const canvas = await html2canvas(tempDiv, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        width: 800,
-        height: tempDiv.scrollHeight
-      });
-
-      // Remove temporary element
-      document.body.removeChild(tempDiv);
-
-      // Create PDF with jsPDF
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 295; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-
-      let position = 0;
-
-      // Add first page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      // Add additional pages if needed
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      // Save the PDF
-      pdf.save(`leaf-analysis-report-${new Date().toISOString().split('T')[0]}.pdf`);
-
-      setPdfDownloadStatus('success');
-
-    } catch (err) {
-      console.error('PDF generation error:', err);
-      setPdfDownloadStatus('failed');
-
-      // Fallback: try a simpler approach
-      try {
-        // Create a basic text-based PDF as fallback
-        const { jsPDF } = await import('jspdf');
-        const pdf = new jsPDF();
-
-        pdf.setFontSize(20);
-        pdf.text('Leaf Analysis Report', 20, 30);
-
-        pdf.setFontSize(12);
-        pdf.text(`Generated: ${new Date().toLocaleString()}`, 20, 50);
-
-        let yPosition = 70;
-
-        if (result.deficiency_prediction) {
-          pdf.setFontSize(16);
-          pdf.text('Nutrient Deficiency Analysis', 20, yPosition);
-          yPosition += 20;
-
-          pdf.setFontSize(12);
-          pdf.text(`Result: ${result.deficiency_prediction.class}`, 20, yPosition);
-          yPosition += 15;
-          pdf.text(`Confidence: ${Math.round((result.deficiency_prediction.confidence || 0) * 100)}%`, 20, yPosition);
-          yPosition += 20;
-        }
-
-        if (result.disease_prediction) {
-          pdf.setFontSize(16);
-          pdf.text('Disease Detection Analysis', 20, yPosition);
-          yPosition += 20;
-
-          pdf.setFontSize(12);
-          pdf.text(`Result: ${result.disease_prediction.class}`, 20, yPosition);
-          yPosition += 15;
-          pdf.text(`Confidence: ${Math.round((result.disease_prediction.confidence || 0) * 100)}%`, 20, yPosition);
-          yPosition += 20;
-        }
-
-        pdf.save(`leaf-analysis-report-${new Date().toISOString().split('T')[0]}.pdf`);
-        setPdfDownloadStatus('success');
-      } catch (fallbackErr) {
-        console.error('Fallback PDF generation also failed:', fallbackErr);
-        alert('PDF generation failed. Please try the JSON export instead.');
-      }
-    } finally {
-      setPdfGenerating(false);
-    }
-  };
-
-  // Zoom functionality
-  const toggleZoom = () => {
-    setImageZoomed(!imageZoomed);
-  };
-
-  const cameraInputRef = useRef(null);
-  const galleryInputRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const componentRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-  // Check if running on HTTPS
   useEffect(() => {
-    setIsHttps(window.location.protocol === 'https:');
-    checkCameraAvailability();
-  }, []);
-
-  // Upload to backend with progress
-  const uploadToBackend = async (file) => {
-    setLoading(true);
-    setError(null);
-    setUploadProgress(0);
-
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 200);
-
-      const response = await fetch(`${BACKEND_URL}/api/upload-image`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status}`);
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
       }
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [stream, preview]);
 
-      const data = await response.json();
-      setResult(data);
-    } catch (err) {
-      console.error('Upload error:', err);
-      setError(err.message || 'Failed to upload image');
-    } finally {
-      setLoading(false);
-      setTimeout(() => setUploadProgress(0), 1000);
-    }
-  };
-
-  // Enhanced camera error handling
-  const openCameraWithBasicConstraints = async () => {
+  const startCamera = async () => {
+    setError(null);
     try {
-      const basicConstraints = { video: true };
-      const mediaStream = await navigator.mediaDevices.getUserMedia(basicConstraints);
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+      }
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
       setStream(mediaStream);
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
         await videoRef.current.play();
         setCameraActive(true);
-        setCameraLoading(false);
-      }
-    } catch {
-      setError('Cannot access camera with any configuration. Please use gallery upload instead.');
-    }
-  };
-
-  // Handle camera capture
-  const openCamera = async () => {
-    setCameraLoading(true);
-    setError(null);
-    setCameraActive(false);
-
-    if (!isHttps && window.location.hostname !== 'localhost') {
-      setCameraLoading(false);
-      setError('Camera access requires HTTPS. Please ensure you are using a secure connection (https://) or localhost.');
-      return;
-    }
-
-    try {
-      // Stop any existing stream first
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        setStream(null);
-      }
-
-      // Enhanced constraints for better mobile compatibility
-      const constraints = {
-        video: {
-          facingMode: 'environment',
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 },
-          frameRate: { ideal: 30, max: 60 }
-        }
-      };
-
-      console.log('Requesting camera access with constraints:', constraints);
-      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('Camera access granted, stream tracks:', mediaStream.getTracks().length);
-
-      setStream(mediaStream);
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-
-        // Wait for video to be ready before setting active
-        await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => {
-            reject(new Error('Video loading timeout'));
-          }, 10000); // 10 second timeout
-
-          videoRef.current.onloadedmetadata = () => {
-            clearTimeout(timeout);
-            console.log('Video metadata loaded, dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
-            resolve();
-          };
-
-          videoRef.current.onerror = () => {
-            clearTimeout(timeout);
-            reject(new Error('Video loading error'));
-          };
-        });
-
-        // Now try to play the video
-        try {
-          await videoRef.current.play();
-          console.log('Camera preview started successfully');
-          setCameraActive(true);
-          setCameraLoading(false);
-        } catch (playError) {
-          console.error('Video play error:', playError);
-          setCameraLoading(false);
-          setError('Failed to start camera preview. The camera might be in use by another application.');
-          // Clean up stream on play failure
-          if (mediaStream) {
-            mediaStream.getTracks().forEach(track => track.stop());
-            setStream(null);
-          }
-        }
-      } else {
-        setCameraLoading(false);
-        setError('Video element not available');
       }
     } catch (err) {
-      console.error('Camera access error:', err);
-      setCameraLoading(false);
-
-      // Comprehensive error handling
-      switch(err.name) {
-        case 'NotAllowedError':
-        case 'PermissionDeniedError':
-          setError('Camera access was denied. Please allow camera permissions in your browser settings and try again.');
-          break;
-        case 'NotFoundError':
-        case 'DevicesNotFoundError':
-          setError('No camera found on this device. Please check if your camera is connected and try again.');
-          break;
-        case 'NotReadableError':
-        case 'TrackStartError':
-          setError('Camera is already in use by another application. Please close other apps using the camera and try again.');
-          break;
-        case 'OverconstrainedError':
-        case 'ConstraintNotSatisfiedError':
-          setError('Camera does not support the required features. Trying with basic constraints...');
-          // Fallback to basic constraints
-          setTimeout(() => openCameraWithBasicConstraints(), 100);
-          break;
-        case 'TypeError':
-          setError('Invalid camera configuration. Please refresh the page and try again.');
-          break;
-        default:
-          setError(`Camera access failed: ${err.message || 'Please try again or use gallery upload.'}`);
-      }
+      console.error('startCamera', err);
+      setError('Cannot access camera. Check permissions.');
     }
   };
 
   const stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach(track => {
-        track.stop();
-      });
+      stream.getTracks().forEach(t => t.stop());
       setStream(null);
     }
+    if (videoRef.current) videoRef.current.pause();
     setCameraActive(false);
-    setCameraLoading(false);
   };
 
-  const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const video = videoRef.current;
-      
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const file = new File([blob], 'captured-photo.jpg', { type: 'image/jpeg' });
-          const imageUrl = URL.createObjectURL(file);
-          setPreview(imageUrl);
-          uploadToBackend(file);
-          stopCamera();
-        }
-      }, 'image/jpeg', 0.9);
-    }
+  const capture = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      const url = URL.createObjectURL(file);
+      setPreview(url);
+      await upload(file);
+      stopCamera();
+    }, 'image/jpeg', 0.9);
   };
 
-  const openGallery = () => {
-    if (galleryInputRef.current) {
-      galleryInputRef.current.click();
-    }
+  const openFilePicker = () => fileInputRef.current && fileInputRef.current.click();
+
+  const onFileChange = async (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (!f.type.startsWith('image/')) { setError('Select an image file'); return; }
+    const url = URL.createObjectURL(f);
+    setPreview(url);
+    await upload(f);
   };
 
-  const handleFileSelect = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        setError('Please select a valid image file');
-        return;
-      }
-
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl);
-      uploadToBackend(file);
-    }
-  };
-
-  const resetCapture = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
-    }
-    
-    setPreview('');
-    setResult(null);
+  const upload = async (file) => {
     setError(null);
-    setUploadProgress(0);
-    setCameraActive(false);
-    setCameraLoading(false);
-    setPdfDownloadStatus(null);
-    
-    if (cameraInputRef.current) {
-      cameraInputRef.current.value = '';
-    }
-    if (galleryInputRef.current) {
-      galleryInputRef.current.value = '';
+    setLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await fetch(`${BACKEND_URL}/api/upload-image`, { method: 'POST', body: fd });
+      if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+      console.log('Upload successful');
+    } catch (err) {
+      console.error('upload', err);
+      setError('Upload failed');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Clean up stream on unmount
-  useEffect(() => {
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => {
-          track.stop();
-          track.enabled = false;
-        });
-        setStream(null);
-      }
-    };
-  }, [stream]);
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Capture Image</h2>
 
-  // Modern Glass Card Component
-  const GlassCard = ({ children, className = '', hover = true, variant = 'default' }) => {
-    const variants = {
-      default: 'bg-white/90 backdrop-blur-xl border-white/60 shadow-slate-900/10',
-      primary: 'bg-gradient-to-br from-slate-50/95 to-white/90 backdrop-blur-xl border-slate-200/60 shadow-slate-900/15',
-      accent: 'bg-gradient-to-br from-emerald-50/95 via-slate-50/90 to-white/95 backdrop-blur-xl border-emerald-200/60 shadow-emerald-900/10'
-    };
+        <div className="flex justify-center mb-6">
+          <div className="w-64 h-48 bg-gray-100 rounded-2xl overflow-hidden flex items-center justify-center">
+            {cameraActive ? (
+              <video ref={videoRef} playsInline muted className="w-full h-full object-cover" />
+            ) : (
+              <div className="text-gray-500 text-sm">Camera preview</div>
+            )}
+          </div>
+        </div>
 
-    return (
-      <div className={`
-        rounded-3xl border
-        shadow-2xl
-        transition-all duration-500 ease-out
-        ${variants[variant]}
-        ${hover ? 'hover:shadow-2xl hover:shadow-slate-900/20 hover:scale-[1.02] hover:-translate-y-1' : ''}
-        ${className}
-      `}>
-        {children}
+        <div className="flex gap-4 mb-6">
+          <button
+            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl font-semibold transition-colors"
+            onClick={startCamera}
+          >
+            📷 Camera
+          </button>
+          <button
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl font-semibold transition-colors"
+            onClick={capture}
+            disabled={!cameraActive}
+          >
+            Capture
+          </button>
+          <button
+            className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-xl font-semibold transition-colors"
+            onClick={stopCamera}
+            disabled={!cameraActive}
+          >
+            Stop
+          </button>
+        </div>
+
+        <button
+          className="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-xl font-semibold transition-colors mb-6"
+          onClick={openFilePicker}
+        >
+          📁 Open Image
+        </button>
+
+        <input ref={fileInputRef} type="file" accept="image/*" onChange={onFileChange} style={{ display: 'none' }} />
+
+        {loading && <div className="text-center text-blue-600 mb-4">Uploading...</div>}
+        {error && <div className="text-center text-red-600 mb-4">{error}</div>}
+
+        {preview && (
+          <div className="mt-6">
+            <img src={preview} alt="preview" className="w-full rounded-2xl object-cover" />
+          </div>
+        )}
+
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
       </div>
-    );
-  };
+    </div>
+  );
+});
 
-  // Confidence Radio Component with modern design
-  const ConfidenceRadio = ({ confidence, label, color }) => {
-    const percentage = Math.round(confidence * 100);
-    const getConfidenceLevel = (percent) => {
-      if (percent >= 80) return 'High';
-      if (percent >= 60) return 'Medium';
-      if (percent >= 40) return 'Low';
-      return 'Very Low';
-    };
-
-    const getColorClasses = (baseColor) => {
-      const colors = {
-        blue: 'bg-blue-500 border-blue-500 text-blue-600',
-        rose: 'bg-rose-500 border-rose-500 text-rose-600',
-        emerald: 'bg-emerald-500 border-emerald-500 text-emerald-600',
-        amber: 'bg-amber-500 border-amber-500 text-amber-600'
-      };
-      return colors[baseColor] || colors.blue;
-    };
-
-    const colorClass = getColorClasses(color);
-
+CameraCapture.displayName = 'CameraCapture';
+export default CameraCapture;
     return (
       <div className="flex items-center justify-between p-6 bg-gradient-to-r from-slate-50/80 to-white/80 rounded-2xl border border-slate-200/60 backdrop-blur-sm transition-all duration-300 hover:border-slate-300/80">
         <div className="flex items-center gap-5">

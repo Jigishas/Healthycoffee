@@ -13,35 +13,35 @@ function Body() {
     <div className="relative overflow-hidden">
       {/* Hero Section with Background Image */}
       <motion.div
-        className="relative w-full min-h-[70vh] flex justify-center items-center"
+        className="relative w-full min-h-screen flex justify-center items-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <div className="w-full h-full relative">
+        <div className="w-full h-screen relative">
           <motion.img
             src={image2}
             alt="Coffee plantation landscape"
-            className="w-full h-fit object-fill"
-            initial={{ scale: 1.1 }}
+            className="w-full h-screen object-cover object-center"
+            initial={{ scale: 1.05 }}
             animate={{ scale: 1 }}
             transition={{ duration: 2, ease: "easeOut" }}
           />
 
-          {/* Subtle Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-emerald-900/18 to-amber-900/22" />
+          {/* Subtle Gradient Overlay (reduced vertical coverage) */}
+          <div className="absolute left-0 right-0 top-6 bottom-6 md:top-12 md:bottom-12 mx-auto rounded-2xl bg-gradient-to-br from-black/30 via-emerald-900/12 to-amber-900/18 pointer-events-none" />
         </div>
 
         {/* Main Content - Hero Section */}
-        <div className="absolute inset-0 flex items-center justify-center px-8 lg:px-20 py-16">
+        <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-16 py-12">
           <motion.div
-            className="max-w-4xl w-full"
+            className="max-w-2xl w-full transform -translate-x-4 md:-translate-x-8"
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
           >
             <motion.div
-              className="bg-white/10 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/20 shadow-2xl"
+              className="bg-white/10 backdrop-blur-sm p-6 md:p-10 rounded-2xl border border-white/20 shadow-xl"
               whileHover={{
                 scale: 1.02,
                 backgroundColor: "rgba(255, 255, 255, 0.15)"
@@ -51,13 +51,13 @@ function Body() {
               <div className="relative text-center">
                 {/* Glowing Effect */}
                 <motion.div
-                  className="absolute -inset-6 bg-gradient-to-r from-amber-400 to-emerald-400 rounded-3xl blur-xl opacity-20"
+                  className="absolute -inset-4 bg-gradient-to-r from-amber-400 to-emerald-400 rounded-2xl blur-lg opacity-20"
                   animate={{ opacity: [0.2, 0.4, 0.2] }}
                   transition={{ duration: 3, repeat: Infinity }}
                 />
 
                 <motion.h1
-                  className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 md:mb-8 relative z-10 leading-tight"
+                  className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 md:mb-6 relative z-10 leading-tight"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 1, delay: 0.8 }}
