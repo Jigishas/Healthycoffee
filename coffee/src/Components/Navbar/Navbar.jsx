@@ -62,7 +62,7 @@ function Navbar() {
                 <motion.img
                   src={logo}
                   alt="Coffee Logo"
-                  className="h-10 w-10 rounded-full object-cover shadow-lg border-2 border-amber-300"
+                  className="h-15 w-15 rounded-full object-cover shadow-lg border-2 border-amber-300"
                   whileHover={{ rotate: 20 }}
                   transition={{ duration: 0.6 }}
                 />
@@ -70,14 +70,14 @@ function Navbar() {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg font-bold bg-gradient-to-r from-amber-700 to-orange-600 bg-clip-text text-transparent">
-                CoffeeAI
+                HEALTHY COFFEE
               </h1>
               <p className="text-xs text-amber-600">Plant Health Intelligence</p>
             </div>
           </motion.div>
 
          <div>
-          <input type='search' placeholder='Search...' className='hidden md:inline-block px-3 py-1.5 border border-red-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all duration-300'/>
+          <input type='search' placeholder='Search...' className='hidden md:inline-block px-3 py-1.5 border border-red-600 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all duration-300'/>
          </div>
 
           {/* Mobile Menu Button */}
