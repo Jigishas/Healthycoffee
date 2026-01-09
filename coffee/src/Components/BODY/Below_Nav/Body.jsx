@@ -22,7 +22,7 @@ function Body() {
           <motion.img
             src={image2}
             alt="Coffee plantation landscape"
-            className="w-full max-h-fit object-cover"
+            className="w-full h-fit object-fill"
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
             transition={{ duration: 2, ease: "easeOut" }}
