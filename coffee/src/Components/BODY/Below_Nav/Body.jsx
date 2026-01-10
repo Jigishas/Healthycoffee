@@ -126,9 +126,9 @@ function Body() {
               </motion.div>
 
               <Typography
-                variant="h1"
+                variant="h2"
                 align="center"
-                sx={{ mb: 8, color: 'slate.800', fontWeight: 'black', fontSize: { xs: '2xl', md: '3xl', lg: '4xl' } }}
+                sx={{ mb: 8, color: 'slate.800', fontWeight: 'black', fontSize: { xs: '1xl', md: '2xl', lg: '3xl' } }}
               >
                 Coffee Plant Wisdom
               </Typography>
