@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+
+const BACKEND_URL = 'https://healthycoffee.onrender.com';
 
 const CameraCapture = () => {
   const [preview, setPreview] = useState('');
@@ -10,13 +11,11 @@ const CameraCapture = () => {
   const [cameraLoading, setCameraLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [pdfGenerating, setPdfGenerating] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
-  const resultRef = useRef(null);
   const [stream, setStream] = useState(null);
 
   useEffect(() => {
@@ -60,18 +59,16 @@ const CameraCapture = () => {
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
         
-        // Wait for video to load
         await new Promise((resolve) => {
           videoRef.current.onloadedmetadata = () => {
             videoRef.current.play()
               .then(resolve)
               .catch(err => {
                 console.error('Play error:', err);
-                resolve(); // Continue even if play fails
+                resolve();
               });
           };
           
-          // Fallback in case onloadedmetadata doesn't fire
           setTimeout(resolve, 500);
         });
         
@@ -127,19 +124,16 @@ const CameraCapture = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     
-    // Set canvas dimensions to match video
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
     const ctx = canvas.getContext('2d');
     
-    // Draw video frame to canvas (no mirroring)
     ctx.save();
-    ctx.scale(-1, 1); // Flip horizontally for natural view
+    ctx.scale(-1, 1);
     ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
     ctx.restore();
     
-    // Convert to blob and process
     canvas.toBlob(async (blob) => {
       if (!blob) {
         setError('Failed to capture image');
@@ -154,10 +148,8 @@ const CameraCapture = () => {
       const url = URL.createObjectURL(blob);
       setPreview(url);
       
-      // Process the image
-      await processImage(file);
+      await uploadAndAnalyzeImage(file);
       
-      // Stop camera after capture
       stopCamera();
     }, 'image/jpeg', 0.95);
   };
@@ -165,7 +157,6 @@ const CameraCapture = () => {
   // Open file picker for camera
   const openCameraFile = () => {
     if (cameraInputRef.current) {
-      // Set capture attribute for mobile cameras
       cameraInputRef.current.setAttribute('capture', 'environment');
       cameraInputRef.current.click();
     }
@@ -184,7 +175,6 @@ const CameraCapture = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Reset file input
     e.target.value = '';
     
     if (!file.type.startsWith('image/')) {
@@ -192,7 +182,6 @@ const CameraCapture = () => {
       return;
     }
     
-    // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       setError('Image too large (max 10MB)');
       return;
@@ -200,43 +189,133 @@ const CameraCapture = () => {
     
     const url = URL.createObjectURL(file);
     setPreview(url);
-    await processImage(file);
+    await uploadAndAnalyzeImage(file);
   };
 
-  // Process image (upload and analyze)
-  const processImage = async (file) => {
+  // Upload and analyze image with backend
+  const uploadAndAnalyzeImage = async (file) => {
     setError(null);
     setLoading(true);
+    setResult(null);
     
     try {
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch(`${BACKEND_URL}/api/upload-image`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+
+      const data = await response.json();
       
-      // Mock analysis result
-      const mockResult = {
-        disease: Math.random() > 0.7 ? 'Healthy' : 'Fungal Infection',
-        confidence: Math.floor(Math.random() * 30) + 70,
-        recommendations: [
-          'Apply fungicide if symptoms persist',
-          'Ensure proper drainage',
-          'Maintain adequate spacing between plants',
-          'Remove affected leaves'
-        ],
-        nutrients: {
-          nitrogen: Math.floor(Math.random() * 100),
-          phosphorus: Math.floor(Math.random() * 100),
-          potassium: Math.floor(Math.random() * 100)
-        },
-        timestamp: new Date().toISOString(),
-        imageName: file.name
-      };
-      
-      setAnalysisResult(mockResult);
-      setResult(mockResult);
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setResult(data);
       
     } catch (err) {
-      console.error('Processing error:', err);
-      setError('Failed to analyze image');
+      console.error('Upload/analysis error:', err);
+      
+      // Fallback to mock data if backend fails
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        setError('Backend connection failed. Using demo results.');
+        // Use mock data as fallback
+        const mockResult = {
+          deficiency_prediction: {
+            class: 'Nitrogen Deficient',
+            confidence: Math.floor(Math.random() * 30) + 70,
+            explanation: 'Leaf shows signs of nitrogen deficiency with yellowing of older leaves.',
+            recommendation: 'Apply nitrogen-rich fertilizer and ensure proper watering.'
+          },
+          disease_prediction: {
+            class: 'Leaf Rust',
+            confidence: Math.floor(Math.random() * 30) + 70,
+            explanation: 'Small orange-brown pustules detected on leaf surface.',
+            recommendation: 'Apply fungicide and remove affected leaves.'
+          },
+          recommendations: {
+            disease_recommendations: {
+              overview: 'Leaf rust is a fungal disease that affects plant health and productivity.',
+              symptoms: [
+                'Small orange-brown pustules on leaves',
+                'Yellowing around infection sites',
+                'Premature leaf drop'
+              ],
+              integrated_management: {
+                cultural_practices: [
+                  'Remove and destroy infected leaves',
+                  'Improve air circulation',
+                  'Avoid overhead watering'
+                ],
+                chemical_control: [
+                  'Apply copper-based fungicide',
+                  'Use systemic fungicides if severe',
+                  'Follow recommended spray intervals'
+                ],
+                biological_control: [
+                  'Use beneficial microorganisms',
+                  'Apply neem oil extract',
+                  'Introduce competitive fungi'
+                ],
+                monitoring: [
+                  'Check plants weekly',
+                  'Monitor weather conditions',
+                  'Keep records of outbreaks'
+                ]
+              },
+              severity_specific_recommendations: {
+                spray_frequency: 'Every 7-10 days',
+                intervention_level: 'Moderate',
+                immediate_actions: [
+                  'Remove severely infected leaves',
+                  'Apply preventive fungicide',
+                  'Isolate affected plants'
+                ],
+                long_term_strategies: [
+                  'Plant resistant varieties',
+                  'Improve soil health',
+                  'Implement crop rotation'
+                ]
+              },
+              economic_considerations: {
+                management_cost_usd_per_ha: 150,
+                potential_yield_loss_percent: 25,
+                return_on_investment: 3.5,
+                economic_threshold: '5% leaf area affected'
+              }
+            },
+            deficiency_recommendations: {
+              symptoms: [
+                'Yellowing of older leaves',
+                'Stunted growth',
+                'Reduced leaf size'
+              ],
+              basic: [
+                'Apply balanced fertilizer',
+                'Maintain soil pH 6.0-7.0',
+                'Ensure adequate moisture'
+              ],
+              management: [
+                'Conduct soil testing',
+                'Use slow-release fertilizers',
+                'Implement proper irrigation'
+              ]
+            }
+          },
+          timestamp: new Date().toISOString(),
+          image_name: file.name
+        };
+        
+        setResult(mockResult);
+      } else {
+        setError(err.message || 'Failed to analyze image');
+      }
     } finally {
       setLoading(false);
     }
@@ -257,103 +336,152 @@ const CameraCapture = () => {
       
       // Add title
       pdf.setFontSize(20);
-      pdf.setTextColor(0, 150, 136); // Teal color
+      pdf.setTextColor(0, 150, 136);
       pdf.text('Leaf Analysis Report', 105, 20, null, null, 'center');
       
-      // Add date
       pdf.setFontSize(10);
       pdf.setTextColor(100);
       pdf.text(`Generated: ${new Date().toLocaleString()}`, 105, 28, null, null, 'center');
       
-      // Add horizontal line
       pdf.setDrawColor(0, 150, 136);
       pdf.setLineWidth(0.5);
       pdf.line(20, 32, 190, 32);
       
-      // Add image if available
-      if (preview) {
-        try {
-          // Convert image to data URL
-          const img = new Image();
-          img.crossOrigin = 'anonymous';
-          img.src = preview;
-          
-          await new Promise((resolve, reject) => {
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              const ctx = canvas.getContext('2d');
-              
-              // Calculate dimensions for PDF (max width 170mm, maintain aspect ratio)
-              const maxWidth = 170;
-              const scaleFactor = maxWidth / img.width;
-              canvas.width = maxWidth;
-              canvas.height = img.height * scaleFactor;
-              
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              
-              const imgData = canvas.toDataURL('image/jpeg', 0.8);
-              pdf.addImage(imgData, 'JPEG', 20, 40, 170, canvas.height);
-              resolve();
-            };
-            img.onerror = reject;
-          });
-        } catch (imgErr) {
-          console.warn('Could not add image to PDF:', imgErr);
+      let yPosition = 40;
+      
+      // Add deficiency prediction
+      if (result.deficiency_prediction) {
+        pdf.setFontSize(16);
+        pdf.setTextColor(0);
+        pdf.text('Nutrient Deficiency Analysis', 20, yPosition);
+        yPosition += 10;
+        
+        pdf.setFontSize(12);
+        pdf.setTextColor(50);
+        pdf.text(`Deficiency: ${result.deficiency_prediction.class}`, 20, yPosition);
+        yPosition += 7;
+        pdf.text(`Confidence: ${result.deficiency_prediction.confidence || 'N/A'}%`, 20, yPosition);
+        yPosition += 7;
+        
+        if (result.deficiency_prediction.explanation) {
+          const explanationLines = pdf.splitTextToSize(result.deficiency_prediction.explanation, 170);
+          pdf.text('Explanation:', 20, yPosition);
+          yPosition += 7;
+          pdf.text(explanationLines, 25, yPosition);
+          yPosition += explanationLines.length * 7;
         }
+        
+        if (result.deficiency_prediction.recommendation) {
+          const recLines = pdf.splitTextToSize(result.deficiency_prediction.recommendation, 170);
+          pdf.text('Recommendation:', 20, yPosition);
+          yPosition += 7;
+          pdf.text(recLines, 25, yPosition);
+          yPosition += recLines.length * 7;
+        }
+        
+        yPosition += 10;
       }
       
-      let yPosition = preview ? 40 + (pdf.internal.pageSize.height / 3) : 40;
-      
-      // Add analysis results
-      pdf.setFontSize(16);
-      pdf.setTextColor(0);
-      pdf.text('Analysis Results', 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFontSize(12);
-      pdf.setTextColor(50);
-      pdf.text(`Status: ${result.disease}`, 20, yPosition);
-      yPosition += 7;
-      pdf.text(`Confidence: ${result.confidence}%`, 20, yPosition);
-      yPosition += 10;
-      
-      // Add nutrient levels
-      pdf.setFontSize(14);
-      pdf.setTextColor(0);
-      pdf.text('Nutrient Levels', 20, yPosition);
-      yPosition += 7;
-      
-      pdf.setFontSize(12);
-      pdf.setTextColor(50);
-      pdf.text(`Nitrogen: ${result.nutrients.nitrogen}%`, 20, yPosition);
-      yPosition += 7;
-      pdf.text(`Phosphorus: ${result.nutrients.phosphorus}%`, 20, yPosition);
-      yPosition += 7;
-      pdf.text(`Potassium: ${result.nutrients.potassium}%`, 20, yPosition);
-      yPosition += 10;
-      
-      // Add recommendations
-      pdf.setFontSize(14);
-      pdf.setTextColor(0);
-      pdf.text('Recommendations', 20, yPosition);
-      yPosition += 7;
-      
-      pdf.setFontSize(10);
-      result.recommendations.forEach((rec, index) => {
-        if (yPosition > 270) { // Check if we need new page
+      // Add disease prediction
+      if (result.disease_prediction) {
+        if (yPosition > 250) {
           pdf.addPage();
           yPosition = 20;
         }
-        pdf.text(`${index + 1}. ${rec}`, 25, yPosition);
-        yPosition += 6;
-      });
+        
+        pdf.setFontSize(16);
+        pdf.setTextColor(0);
+        pdf.text('Disease Detection', 20, yPosition);
+        yPosition += 10;
+        
+        pdf.setFontSize(12);
+        pdf.setTextColor(50);
+        pdf.text(`Disease: ${result.disease_prediction.class}`, 20, yPosition);
+        yPosition += 7;
+        pdf.text(`Confidence: ${result.disease_prediction.confidence || 'N/A'}%`, 20, yPosition);
+        yPosition += 7;
+        
+        if (result.disease_prediction.explanation) {
+          const explanationLines = pdf.splitTextToSize(result.disease_prediction.explanation, 170);
+          pdf.text('Explanation:', 20, yPosition);
+          yPosition += 7;
+          pdf.text(explanationLines, 25, yPosition);
+          yPosition += explanationLines.length * 7;
+        }
+        
+        if (result.disease_prediction.recommendation) {
+          const recLines = pdf.splitTextToSize(result.disease_prediction.recommendation, 170);
+          pdf.text('Recommendation:', 20, yPosition);
+          yPosition += 7;
+          pdf.text(recLines, 25, yPosition);
+          yPosition += recLines.length * 7;
+        }
+        
+        yPosition += 10;
+      }
+      
+      // Add detailed recommendations
+      if (result.recommendations) {
+        if (yPosition > 250) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        pdf.setFontSize(16);
+        pdf.setTextColor(0);
+        pdf.text('Detailed Recommendations', 20, yPosition);
+        yPosition += 10;
+        
+        // Disease recommendations
+        if (result.recommendations.disease_recommendations) {
+          pdf.setFontSize(14);
+          pdf.setTextColor(0, 100, 0);
+          pdf.text('Disease Management:', 20, yPosition);
+          yPosition += 7;
+          
+          if (result.recommendations.disease_recommendations.overview) {
+            pdf.setFontSize(10);
+            pdf.setTextColor(50);
+            const overviewLines = pdf.splitTextToSize(result.recommendations.disease_recommendations.overview, 170);
+            pdf.text(overviewLines, 25, yPosition);
+            yPosition += overviewLines.length * 5;
+          }
+          
+          yPosition += 5;
+        }
+        
+        // Deficiency recommendations
+        if (result.recommendations.deficiency_recommendations) {
+          if (yPosition > 250) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          pdf.setFontSize(14);
+          pdf.setTextColor(0, 0, 150);
+          pdf.text('Nutrition Management:', 20, yPosition);
+          yPosition += 7;
+          
+          if (result.recommendations.deficiency_recommendations.basic) {
+            pdf.setFontSize(10);
+            pdf.setTextColor(50);
+            result.recommendations.deficiency_recommendations.basic.forEach((rec, idx) => {
+              if (yPosition > 270) {
+                pdf.addPage();
+                yPosition = 20;
+              }
+              pdf.text(`${idx + 1}. ${rec}`, 25, yPosition);
+              yPosition += 6;
+            });
+          }
+        }
+      }
       
       // Add footer
       pdf.setFontSize(8);
       pdf.setTextColor(150);
       pdf.text('Leaf Analysis AI System - Generated Report', 105, 285, null, null, 'center');
       
-      // Save PDF
       pdf.save(`leaf-analysis-${Date.now()}.pdf`);
       
     } catch (err) {
@@ -384,11 +512,9 @@ const CameraCapture = () => {
     setPreview('');
     setError(null);
     setLoading(false);
-    setAnalysisResult(null);
     setResult(null);
     stopCamera();
     
-    // Clear file inputs
     if (cameraInputRef.current) cameraInputRef.current.value = '';
     if (galleryInputRef.current) galleryInputRef.current.value = '';
   };
@@ -477,7 +603,7 @@ const CameraCapture = () => {
               <div className="absolute inset-0 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
             <h3 className="text-xl font-semibold text-slate-800 mb-2">Analyzing Image</h3>
-            <p className="text-slate-600">Processing leaf details...</p>
+            <p className="text-slate-600">Connecting to AI analysis service...</p>
           </div>
         )}
 
@@ -502,7 +628,7 @@ const CameraCapture = () => {
         )}
 
         {/* Capture Options */}
-        {!preview && !loading && !cameraActive && !cameraLoading && (
+        {!preview && !loading && !cameraActive && !cameraLoading && !result && (
           <div className="space-y-6">
             <div className="grid md:grid-cols-2 gap-4">
               <button
@@ -537,93 +663,187 @@ const CameraCapture = () => {
 
         {/* Results Display */}
         {result && !loading && (
-          <div ref={resultRef} className="bg-white rounded-2xl shadow-xl p-6 mb-6">
+          <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
             <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
               <span className="text-emerald-500">📊</span>
               Analysis Results
             </h2>
             
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">
-                  <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                    <span className="text-emerald-500">🌱</span>
-                    Leaf Status
-                  </h3>
-                  <div className="text-3xl font-bold text-slate-800 mb-2">{result.disease}</div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 bg-slate-200 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full"
-                        style={{ width: `${result.confidence}%` }}
-                      ></div>
-                    </div>
-                    <span className="font-semibold text-slate-700">{result.confidence}%</span>
-                  </div>
-                </div>
-                
+            <div className="space-y-8">
+              {/* Deficiency Results */}
+              {result.deficiency_prediction && (
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
                   <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
                     <span className="text-blue-500">🧪</span>
-                    Nutrient Levels
+                    Nutrient Analysis
                   </h3>
-                  <div className="space-y-3">
-                    <div>
-                      <div className="flex justify-between text-sm text-slate-600 mb-1">
-                        <span>Nitrogen</span>
-                        <span>{result.nutrients.nitrogen}%</span>
-                      </div>
-                      <div className="bg-slate-200 rounded-full h-2">
+                  <div className="mb-4">
+                    <div className="text-xl font-bold text-slate-800 mb-2">
+                      {result.deficiency_prediction.class}
+                    </div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-1 bg-slate-200 rounded-full h-2">
                         <div 
                           className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full"
-                          style={{ width: `${result.nutrients.nitrogen}%` }}
+                          style={{ width: `${result.deficiency_prediction.confidence || 0}%` }}
                         ></div>
                       </div>
+                      <span className="font-semibold text-slate-700">
+                        {result.deficiency_prediction.confidence || 'N/A'}% confidence
+                      </span>
                     </div>
-                    <div>
-                      <div className="flex justify-between text-sm text-slate-600 mb-1">
-                        <span>Phosphorus</span>
-                        <span>{result.nutrients.phosphorus}%</span>
+                    {result.deficiency_prediction.explanation && (
+                      <p className="text-slate-700 mb-3">{result.deficiency_prediction.explanation}</p>
+                    )}
+                    {result.deficiency_prediction.recommendation && (
+                      <div className="bg-blue-100/80 rounded-lg p-3">
+                        <div className="font-semibold text-blue-800 mb-1">Recommendation:</div>
+                        <p className="text-blue-700">{result.deficiency_prediction.recommendation}</p>
                       </div>
-                      <div className="bg-slate-200 rounded-full h-2">
-                        <div 
-                          className="bg-gradient-to-r from-purple-500 to-pink-600 h-2 rounded-full"
-                          style={{ width: `${result.nutrients.phosphorus}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm text-slate-600 mb-1">
-                        <span>Potassium</span>
-                        <span>{result.nutrients.potassium}%</span>
-                      </div>
-                      <div className="bg-slate-200 rounded-full h-2">
-                        <div 
-                          className="bg-gradient-to-r from-amber-500 to-orange-600 h-2 rounded-full"
-                          style={{ width: `${result.nutrients.potassium}%` }}
-                        ></div>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
-              </div>
+              )}
+
+              {/* Disease Results */}
+              {result.disease_prediction && (
+                <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl p-5 border border-rose-100">
+                  <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                    <span className="text-rose-500">🔬</span>
+                    Disease Detection
+                  </h3>
+                  <div className="mb-4">
+                    <div className="text-xl font-bold text-slate-800 mb-2">
+                      {result.disease_prediction.class}
+                    </div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-1 bg-slate-200 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-rose-500 to-pink-600 h-2 rounded-full"
+                          style={{ width: `${result.disease_prediction.confidence || 0}%` }}
+                        ></div>
+                      </div>
+                      <span className="font-semibold text-slate-700">
+                        {result.disease_prediction.confidence || 'N/A'}% confidence
+                      </span>
+                    </div>
+                    {result.disease_prediction.explanation && (
+                      <p className="text-slate-700 mb-3">{result.disease_prediction.explanation}</p>
+                    )}
+                    {result.disease_prediction.recommendation && (
+                      <div className="bg-rose-100/80 rounded-lg p-3">
+                        <div className="font-semibold text-rose-800 mb-1">Recommendation:</div>
+                        <p className="text-rose-700">{result.disease_prediction.recommendation}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Detailed Recommendations */}
+              {result.recommendations && (
+                <div className="space-y-6">
+                  {/* Disease Recommendations */}
+                  {result.recommendations.disease_recommendations && (
+                    <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 border border-purple-100">
+                      <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <span className="text-purple-500">🛡️</span>
+                        Disease Management Plan
+                      </h3>
+                      
+                      {result.recommendations.disease_recommendations.overview && (
+                        <div className="mb-4">
+                          <div className="font-semibold text-purple-800 mb-2">Overview:</div>
+                          <p className="text-slate-700">{result.recommendations.disease_recommendations.overview}</p>
+                        </div>
+                      )}
+                      
+                      {result.recommendations.disease_recommendations.symptoms && (
+                        <div className="mb-4">
+                          <div className="font-semibold text-purple-800 mb-2">Symptoms:</div>
+                          <ul className="space-y-1">
+                            {result.recommendations.disease_recommendations.symptoms.map((symptom, idx) => (
+                              <li key={idx} className="flex items-start gap-2">
+                                <span className="text-purple-500 mt-1">•</span>
+                                <span className="text-slate-700">{symptom}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {result.recommendations.disease_recommendations.integrated_management && (
+                        <div>
+                          <div className="font-semibold text-purple-800 mb-2">Management Strategies:</div>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {result.recommendations.disease_recommendations.integrated_management.cultural_practices && (
+                              <div>
+                                <div className="font-medium text-slate-800 mb-1">Cultural:</div>
+                                <ul className="space-y-1">
+                                  {result.recommendations.disease_recommendations.integrated_management.cultural_practices.map((practice, idx) => (
+                                    <li key={idx} className="text-sm text-slate-700">• {practice}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {result.recommendations.disease_recommendations.integrated_management.chemical_control && (
+                              <div>
+                                <div className="font-medium text-slate-800 mb-1">Chemical:</div>
+                                <ul className="space-y-1">
+                                  {result.recommendations.disease_recommendations.integrated_management.chemical_control.map((control, idx) => (
+                                    <li key={idx} className="text-sm text-slate-700">• {control}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Deficiency Recommendations */}
+                  {result.recommendations.deficiency_recommendations && (
+                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">
+                      <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <span className="text-emerald-500">🌱</span>
+                        Nutrition Management
+                      </h3>
+                      
+                      {result.recommendations.deficiency_recommendations.symptoms && (
+                        <div className="mb-4">
+                          <div className="font-semibold text-emerald-800 mb-2">Symptoms:</div>
+                          <ul className="space-y-1">
+                            {result.recommendations.deficiency_recommendations.symptoms.map((symptom, idx) => (
+                              <li key={idx} className="flex items-start gap-2">
+                                <span className="text-emerald-500 mt-1">•</span>
+                                <span className="text-slate-700">{symptom}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {result.recommendations.deficiency_recommendations.basic && (
+                        <div>
+                          <div className="font-semibold text-emerald-800 mb-2">Basic Recommendations:</div>
+                          <ul className="space-y-2">
+                            {result.recommendations.deficiency_recommendations.basic.map((rec, idx) => (
+                              <li key={idx} className="flex items-start gap-2">
+                                <span className="text-emerald-500 mt-1">•</span>
+                                <span className="text-slate-700">{rec}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
               
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-100">
-                <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                  <span className="text-amber-500">💡</span>
-                  Recommendations
-                </h3>
-                <ul className="space-y-3">
-                  {result.recommendations.map((rec, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="text-amber-500 mt-1">•</span>
-                      <span className="text-slate-700">{rec}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-200">
+              {/* Export Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-200">
                 <button
                   onClick={generatePDF}
                   disabled={pdfGenerating}
