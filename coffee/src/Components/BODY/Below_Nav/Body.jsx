@@ -112,7 +112,7 @@ function Body() {
       </motion.div>
 
       {/* Quote Section */}
-       <Box sx={{ bgcolor: 'white', py: { xs: 18, md: 26 }, px: 8 }}>
+       <Box sx={{ bgcolor: 'white', py: { xs: 20, md: 28 }, px: 8 }}>
         <Box sx={{ maxWidth: '1200px', mx: 'auto' }}>
           <Card className="bg-slate-50 p-8 md:p-16 rounded-3xl border border-slate-200/50 shadow-xl">
             <CardContent>
