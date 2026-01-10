@@ -146,24 +146,24 @@ function Body() {
                 {/* Author Section */}
                 <Stack
                   direction="row"
-                  spacing={6}
+                  spacing={5}
                   sx={{
-                    p: 6,
+                    p: 4,
                     bgcolor: 'white',
                     borderRadius: '24px',
                     border: '1px solid',
                     borderColor: 'slate.200',
                     '&:hover': { borderColor: 'slate.300', transform: 'scale(1.02)' },
                     transition: 'all 0.3s',
-                    maxWidth: '3xl',
+                    maxWidth: '4xl',
                     mx: 'auto',
-                    alignItems: 'left'
+                    alignItems: 'center',
                   }}
                 >
                   <Avatar
                     src={author}
                     alt="James Hernandez"
-                    sx={{ width: 80, height: 80, border: '3px solid', borderColor: 'slate.400' }}
+                    sx={{ width: 80, height: 80, border: '2px solid', borderColor: 'slate.400' }}
                   />
                   <Stack alignItems="flex-start" spacing={1}>
                     <Typography variant="h6" sx={{ color: 'slate.800' }}>
