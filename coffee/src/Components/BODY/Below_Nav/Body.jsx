@@ -146,9 +146,9 @@ function Body() {
                 {/* Author Section */}
                 <Stack
                   direction="row"
-                  spacing={5}
+                  spacing={4}
                   sx={{
-                    p: 4,
+                    p: 3,
                     bgcolor: 'white',
                     borderRadius: '24px',
                     border: '1px solid',
