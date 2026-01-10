@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import jsPDF from 'jspdf';
 
-const BACKEND_URL = 'https://healthycoffee.onrender.com';
+const BACKEND_URL =  'https://healthycoffee.onrender.com';
+const LOCAL_FALLBACK = 'http://127.0.0.1:8000';
 
 const CameraCapture = () => {
   const [preview, setPreview] = useState('');
@@ -11,6 +12,9 @@ const CameraCapture = () => {
   const [cameraLoading, setCameraLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [pdfGenerating, setPdfGenerating] = useState(false);
+  const [activeBackend, setActiveBackend] = useState(null);
+  const [backendChecking, setBackendChecking] = useState(false);
+  const [backendError, setBackendError] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -197,128 +201,194 @@ const CameraCapture = () => {
     setError(null);
     setLoading(true);
     setResult(null);
-    
+
+    // small helper to POST to backend with timeout
+    const postTo = async (baseUrl, timeoutMs = 15000) => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const fd = new FormData();
+        fd.append('image', file);
+        const resp = await fetch(`${baseUrl}/api/upload-image`, {
+          method: 'POST',
+          body: fd,
+          signal: controller.signal,
+        });
+        clearTimeout(id);
+        if (!resp.ok) throw new Error(`Server responded with status: ${resp.status}`);
+        const json = await resp.json();
+        if (json.error) throw new Error(json.error);
+        return json;
+      } finally {
+        clearTimeout(id);
+      }
+    };
+
     try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch(`${BACKEND_URL}/api/upload-image`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
+      // ensure we have a working backend before uploading
+      let backendToUse = activeBackend;
+      if (!backendToUse) {
+        backendToUse = await ensureBackend();
       }
 
-      const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(data.error);
+      if (!backendToUse) {
+        setError('No backend available. Please retry or use demo results.');
+        setLoading(false);
+        return;
       }
 
+      const data = await postTo(backendToUse);
       setResult(data);
-      
     } catch (err) {
       console.error('Upload/analysis error:', err);
-      
-      // Fallback to mock data if backend fails
-      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-        setError('Backend connection failed. Using demo results.');
-        // Use mock data as fallback
-        const mockResult = {
-          deficiency_prediction: {
-            class: 'Nitrogen Deficient',
-            confidence: Math.floor(Math.random() * 30) + 70,
-            explanation: 'Leaf shows signs of nitrogen deficiency with yellowing of older leaves.',
-            recommendation: 'Apply nitrogen-rich fertilizer and ensure proper watering.'
-          },
-          disease_prediction: {
-            class: 'Leaf Rust',
-            confidence: Math.floor(Math.random() * 30) + 70,
-            explanation: 'Small orange-brown pustules detected on leaf surface.',
-            recommendation: 'Apply fungicide and remove affected leaves.'
-          },
-          recommendations: {
-            disease_recommendations: {
-              overview: 'Leaf rust is a fungal disease that affects plant health and productivity.',
-              symptoms: [
-                'Small orange-brown pustules on leaves',
-                'Yellowing around infection sites',
-                'Premature leaf drop'
-              ],
-              integrated_management: {
-                cultural_practices: [
-                  'Remove and destroy infected leaves',
-                  'Improve air circulation',
-                  'Avoid overhead watering'
-                ],
-                chemical_control: [
-                  'Apply copper-based fungicide',
-                  'Use systemic fungicides if severe',
-                  'Follow recommended spray intervals'
-                ],
-                biological_control: [
-                  'Use beneficial microorganisms',
-                  'Apply neem oil extract',
-                  'Introduce competitive fungi'
-                ],
-                monitoring: [
-                  'Check plants weekly',
-                  'Monitor weather conditions',
-                  'Keep records of outbreaks'
-                ]
-              },
-              severity_specific_recommendations: {
-                spray_frequency: 'Every 7-10 days',
-                intervention_level: 'Moderate',
-                immediate_actions: [
-                  'Remove severely infected leaves',
-                  'Apply preventive fungicide',
-                  'Isolate affected plants'
-                ],
-                long_term_strategies: [
-                  'Plant resistant varieties',
-                  'Improve soil health',
-                  'Implement crop rotation'
-                ]
-              },
-              economic_considerations: {
-                management_cost_usd_per_ha: 150,
-                potential_yield_loss_percent: 25,
-                return_on_investment: 3.5,
-                economic_threshold: '5% leaf area affected'
-              }
-            },
-            deficiency_recommendations: {
-              symptoms: [
-                'Yellowing of older leaves',
-                'Stunted growth',
-                'Reduced leaf size'
-              ],
-              basic: [
-                'Apply balanced fertilizer',
-                'Maintain soil pH 6.0-7.0',
-                'Ensure adequate moisture'
-              ],
-              management: [
-                'Conduct soil testing',
-                'Use slow-release fertilizers',
-                'Implement proper irrigation'
-              ]
-            }
-          },
-          timestamp: new Date().toISOString(),
-          image_name: file.name
-        };
-        
-        setResult(mockResult);
-      } else {
-        setError(err.message || 'Failed to analyze image');
-      }
+      setError(err.message || 'Failed to analyze image');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Health-check helpers
+  const checkBackend = async (baseUrl, timeoutMs = 4000) => {
+    try {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const resp = await fetch(`${baseUrl}/health`, { method: 'GET', signal: controller.signal });
+        clearTimeout(id);
+        return resp.ok;
+      } finally {
+        clearTimeout(id);
+      }
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const ensureBackend = async () => {
+    setBackendChecking(true);
+    setBackendError(null);
+    try {
+      // Try primary
+      if (await checkBackend(BACKEND_URL)) {
+        setActiveBackend(BACKEND_URL);
+        return BACKEND_URL;
+      }
+
+      // Try local fallback
+      if (await checkBackend(LOCAL_FALLBACK)) {
+        setActiveBackend(LOCAL_FALLBACK);
+        return LOCAL_FALLBACK;
+      }
+
+      setActiveBackend(null);
+      setBackendError('No reachable backend');
+      return null;
+    } finally {
+      setBackendChecking(false);
+    }
+  };
+
+  const retryBackend = async () => {
+    setError(null);
+    const selected = await ensureBackend();
+    if (selected && lastFile) {
+      // try re-uploading last file
+      await uploadAndAnalyzeImage(lastFile);
+    }
+  };
+
+  const useDemoResults = async (file) => {
+    setError(null);
+    setLoading(true);
+    // generate mock result (same as previous demo result)
+    const mockResult = {
+      deficiency_prediction: {
+        class: 'Nitrogen Deficient',
+        confidence: Math.floor(Math.random() * 30) + 70,
+        explanation: 'Leaf shows signs of nitrogen deficiency with yellowing of older leaves.',
+        recommendation: 'Apply nitrogen-rich fertilizer and ensure proper watering.'
+      },
+      disease_prediction: {
+        class: 'Leaf Rust',
+        confidence: Math.floor(Math.random() * 30) + 70,
+        explanation: 'Small orange-brown pustules detected on leaf surface.',
+        recommendation: 'Apply fungicide and remove affected leaves.'
+      },
+      recommendations: {
+        disease_recommendations: {
+          overview: 'Leaf rust is a fungal disease that affects plant health and productivity.',
+          symptoms: [
+            'Small orange-brown pustules on leaves',
+            'Yellowing around infection sites',
+            'Premature leaf drop'
+          ],
+          integrated_management: {
+            cultural_practices: [
+              'Remove and destroy infected leaves',
+              'Improve air circulation',
+              'Avoid overhead watering'
+            ],
+            chemical_control: [
+              'Apply copper-based fungicide',
+              'Use systemic fungicides if severe',
+              'Follow recommended spray intervals'
+            ],
+            biological_control: [
+              'Use beneficial microorganisms',
+              'Apply neem oil extract',
+              'Introduce competitive fungi'
+            ],
+            monitoring: [
+              'Check plants weekly',
+              'Monitor weather conditions',
+              'Keep records of outbreaks'
+            ]
+          },
+          severity_specific_recommendations: {
+            spray_frequency: 'Every 7-10 days',
+            intervention_level: 'Moderate',
+            immediate_actions: [
+              'Remove severely infected leaves',
+              'Apply preventive fungicide',
+              'Isolate affected plants'
+            ],
+            long_term_strategies: [
+              'Plant resistant varieties',
+              'Improve soil health',
+              'Implement crop rotation'
+            ]
+          },
+          economic_considerations: {
+            management_cost_usd_per_ha: 150,
+            potential_yield_loss_percent: 25,
+            return_on_investment: 3.5,
+            economic_threshold: '5% leaf area affected'
+          }
+        },
+        deficiency_recommendations: {
+          symptoms: [
+            'Yellowing of older leaves',
+            'Stunted growth',
+            'Reduced leaf size'
+          ],
+          basic: [
+            'Apply balanced fertilizer',
+            'Maintain soil pH 6.0-7.0',
+            'Ensure adequate moisture'
+          ],
+          management: [
+            'Conduct soil testing',
+            'Use slow-release fertilizers',
+            'Implement proper irrigation'
+          ]
+        }
+      },
+      timestamp: new Date().toISOString(),
+      image_name: file?.name || 'demo.jpg'
+    };
+
+    setResult(mockResult);
+    setLoading(false);
   };
 
   // Generate and download PDF report
@@ -617,12 +687,41 @@ const CameraCapture = () => {
               <div className="flex-1">
                 <p className="text-rose-700 font-medium">{error}</p>
               </div>
-              <button
-                onClick={resetCapture}
-                className="px-4 py-2 bg-white border border-rose-300 text-rose-700 rounded-lg font-medium hover:bg-rose-50 transition-colors"
-              >
-                OK
-              </button>
+              <div className="flex items-center gap-2">
+                {backendChecking ? (
+                  <div className="px-4 py-2 bg-white border border-rose-300 text-rose-700 rounded-lg font-medium">
+                    Checking backends...
+                  </div>
+                ) : (backendError || (error && error.includes('No backend'))) ? (
+                  <>
+                    <button
+                      onClick={retryBackend}
+                      className="px-3 py-2 bg-white border border-emerald-300 text-emerald-700 rounded-lg font-medium hover:bg-emerald-50 transition-colors"
+                    >
+                      Retry Backend
+                    </button>
+                    <button
+                      onClick={() => useDemoResults(lastFile)}
+                      className="px-3 py-2 bg-white border border-rose-300 text-rose-700 rounded-lg font-medium hover:bg-rose-50 transition-colors"
+                    >
+                      Use Demo Results
+                    </button>
+                    <button
+                      onClick={resetCapture}
+                      className="px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={resetCapture}
+                    className="px-4 py-2 bg-white border border-rose-300 text-rose-700 rounded-lg font-medium hover:bg-rose-50 transition-colors"
+                  >
+                    OK
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}
