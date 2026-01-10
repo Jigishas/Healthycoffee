@@ -150,14 +150,14 @@ function Body() {
                   sx={{
                     p: 6,
                     bgcolor: 'white',
-                    borderRadius: '16px',
+                    borderRadius: '24px',
                     border: '1px solid',
                     borderColor: 'slate.200',
                     '&:hover': { borderColor: 'slate.300', transform: 'scale(1.02)' },
                     transition: 'all 0.3s',
-                    maxWidth: '2xl',
+                    maxWidth: '3xl',
                     mx: 'auto',
-                    alignItems: 'center'
+                    alignItems: 'left'
                   }}
                 >
                   <Avatar
