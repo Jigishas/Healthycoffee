@@ -71,34 +71,65 @@ def validate_image_file(file):
     return True, None
 
 # Initialize interactive learning system
-interactive_system = InteractiveCoffeeDiagnosis(
-    'models/leaf_diseases/efficientnet_disease_balanced.pth',
-    'models/leaf_diseases/class_mapping_diseases.json',
-    'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-    'models/leaf_deficiencies/class_mapping_deficiencies.json'
-)
+try:
+    interactive_system = InteractiveCoffeeDiagnosis(
+        'models/leaf_diseases/efficientnet_disease_balanced.pth',
+        'models/leaf_diseases/class_mapping_diseases.json',
+        'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
+        'models/leaf_deficiencies/class_mapping_deficiencies.json'
+    )
+    interactive_system_loaded = True
+    logger.info("Interactive learning system initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize interactive learning system: {str(e)}")
+    interactive_system = None
+    interactive_system_loaded = False
 
 # Keep legacy classifiers for backward compatibility
-disease_classifier = OptimizedTorchClassifier(
-    'models/leaf_diseases/efficientnet_disease_balanced.pth',
-    'models/leaf_diseases/class_mapping_diseases.json',
-    confidence_threshold=0.3
-)
-disease_model_type = 'interactive_optimized'
+try:
+    disease_classifier = OptimizedTorchClassifier(
+        'models/leaf_diseases/efficientnet_disease_balanced.pth',
+        'models/leaf_diseases/class_mapping_diseases.json',
+        confidence_threshold=0.3
+    )
+    disease_model_type = 'interactive_optimized'
+    disease_classifier_loaded = True
+    logger.info("Disease classifier initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize disease classifier: {str(e)}")
+    disease_classifier = None
+    disease_model_type = 'failed'
+    disease_classifier_loaded = False
 
-deficiency_classifier = OptimizedTorchClassifier(
-    'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-    'models/leaf_deficiencies/class_mapping_deficiencies.json',
-    confidence_threshold=0.3
-)
-deficiency_model_type = 'interactive_optimized'
+try:
+    deficiency_classifier = OptimizedTorchClassifier(
+        'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
+        'models/leaf_deficiencies/class_mapping_deficiencies.json',
+        confidence_threshold=0.3
+    )
+    deficiency_model_type = 'interactive_optimized'
+    deficiency_classifier_loaded = True
+    logger.info("Deficiency classifier initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize deficiency classifier: {str(e)}")
+    deficiency_classifier = None
+    deficiency_model_type = 'failed'
+    deficiency_classifier_loaded = False
 
-logger.info(f"Interactive learning system initialized with optimized models")
+if not disease_classifier_loaded or not deficiency_classifier_loaded:
+    logger.error("Critical: At least one model failed to load. Application may not function properly.")
+else:
+    logger.info("All models initialized successfully")
 
 @app.route('/api/upload-image', methods=['POST'])
 def upload_image():
     """Enhanced image upload endpoint with optimized models"""
     try:
+        # Check if models are loaded
+        if not disease_classifier_loaded or not deficiency_classifier_loaded:
+            logger.error('Models not loaded properly')
+            return jsonify({'error': 'Service temporarily unavailable - models not loaded'}), 503
+
         if 'image' not in request.files:
             logger.warning('No image file in request')
             return jsonify({'error': 'No image file provided'}), 400

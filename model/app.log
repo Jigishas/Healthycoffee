@@ -1172,3 +1172,7 @@
 2025-11-18 16:17:10,718 - __main__ - INFO - File saved: uploads\coffee_hh2.jpg
 2025-11-18 16:17:11,190 - __main__ - INFO - Prediction completed in 0.4676s
 2025-11-18 16:17:11,204 - werkzeug - INFO - 127.0.0.1 - - [18/Nov/2025 16:17:11] "POST /api/upload-image HTTP/1.1" 200 -
+2026-01-11 12:45:15,867 - __main__ - INFO - Interactive learning system initialized with optimized models
+2026-01-11 12:45:15,933 - __main__ - INFO - Starting combined Flask server on port 5000...
+2026-01-11 12:56:05,754 - __main__ - INFO - Interactive learning system initialized with optimized models
+2026-01-11 12:56:05,820 - __main__ - INFO - Starting combined Flask server on port 5000...
