@@ -74,7 +74,7 @@ const Belowimg = () => {
             viewport={{ once: true }}
           >
             <p className="text-lg md:text-xl lg:text-2xl text-amber-800 leading-relaxed font-medium mb-8 max-w-4xl mx-auto">
-              A healthy coffee plant is the foundation of the entire coffee industry. It ensures high yields of quality beans, supports farmer livelihoods, and is more resistant to pests and diseases, which is vital for sustainable production. AI is needed in this field to improve the Quality and yield of our Products. 
+              A healthy coffee plant is the foundation of the entire coffee industry. It ensures high yields of quality beans, supports farmer livelihoods, and is more resistant to pests and diseases, which is vital for sustainable production. AI is needed in this field to improve the Quality and yield for our Products. 
             </p>
 
             {/* Feature Icons */}
