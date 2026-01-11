@@ -434,5 +434,6 @@ def learning_stats():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    logger.info('Starting combined Flask server...')
-    app.run(host='0.0.0.0', port=8000, debug=False, threaded=True)
+    port = int(os.environ.get('PORT', 8000))
+    logger.info(f'Starting combined Flask server on port {port}...')
+    app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
