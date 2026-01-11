@@ -1,7 +1,8 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { Leaf, Heart, Shield } from 'lucide-react';
+import { Leaf, Heart, Shield, WandSparkles } from 'lucide-react';
+
 
 const Belowimg = () => {
   return (
@@ -73,7 +74,7 @@ const Belowimg = () => {
             viewport={{ once: true }}
           >
             <p className="text-lg md:text-xl lg:text-2xl text-amber-800 leading-relaxed font-medium mb-8 max-w-4xl mx-auto">
-              A healthy coffee plant is the foundation of the entire coffee industry. It ensures high yields of quality beans, supports farmer livelihoods, and is more resistant to pests and diseases, which is vital for sustainable production.
+              A healthy coffee plant is the foundation of the entire coffee industry. It ensures high yields of quality beans, supports farmer livelihoods, and is more resistant to pests and diseases, which is vital for sustainable production. AI is needed in this field to improve the Quality and yield of our Products. 
             </p>
 
             {/* Feature Icons */}
@@ -87,7 +88,8 @@ const Belowimg = () => {
               {[
                 { icon: Leaf, label: "Quality Beans", color: "text-emerald-600" },
                 { icon: Heart, label: "Farmer Support", color: "text-red-500" },
-                { icon: Shield, label: "Disease Resistant", color: "text-blue-600" }
+                { icon: Shield, label: "Disease Resistant", color: "text-blue-600" },
+                { icon: WandSparkles, label: "AI Driven Growth", color: "text-purple-600" }
               ].map((item, index) => (
                 <motion.div
                   key={item.label}
