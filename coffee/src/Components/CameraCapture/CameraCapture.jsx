@@ -15,6 +15,7 @@ const CameraCapture = () => {
   const [activeBackend, setActiveBackend] = useState(null);
   const [backendChecking, setBackendChecking] = useState(false);
   const [backendError, setBackendError] = useState(null);
+  const [lastFile, setLastFile] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -64,15 +65,15 @@ const CameraCapture = () => {
         videoRef.current.srcObject = mediaStream;
         
         await new Promise((resolve) => {
-          videoRef.current.onloadedmetadata = () => {
-            videoRef.current.play()
-              .then(resolve)
-              .catch(err => {
-                console.error('Play error:', err);
-                resolve();
-              });
-          };
-          
+            videoRef.current.onloadedmetadata = () => {
+              videoRef.current.play()
+                .then(resolve)
+                .catch(() => {
+                  console.error('Play error');
+                  resolve();
+                });
+            };
+
           setTimeout(resolve, 500);
         });
         
@@ -143,17 +144,18 @@ const CameraCapture = () => {
         setError('Failed to capture image');
         return;
       }
-      
-      const file = new File([blob], `leaf-capture-${Date.now()}.jpg`, { 
+
+      const file = new File([blob], `leaf-capture-${Date.now()}.jpg`, {
         type: 'image/jpeg',
         lastModified: Date.now()
       });
-      
+
       const url = URL.createObjectURL(blob);
       setPreview(url);
-      
+      setLastFile(file);
+
       await uploadAndAnalyzeImage(file);
-      
+
       stopCamera();
     }, 'image/jpeg', 0.95);
   };
@@ -178,21 +180,22 @@ const CameraCapture = () => {
   const handleFileSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     e.target.value = '';
-    
+
     if (!file.type.startsWith('image/')) {
       setError('Please select an image file');
       return;
     }
-    
+
     if (file.size > 10 * 1024 * 1024) {
       setError('Image too large (max 10MB)');
       return;
     }
-    
+
     const url = URL.createObjectURL(file);
     setPreview(url);
+    setLastFile(file);
     await uploadAndAnalyzeImage(file);
   };
 
@@ -232,8 +235,7 @@ const CameraCapture = () => {
       }
 
       if (!backendToUse) {
-        setError('No backend available. Please retry or use demo results.');
-        setLoading(false);
+        await generateDemoResults(file);
         return;
       }
 
@@ -297,9 +299,8 @@ const CameraCapture = () => {
     }
   };
 
-  const useDemoResults = async (file) => {
+  const generateDemoResults = async (file) => {
     setError(null);
-    setLoading(true);
     // generate mock result (same as previous demo result)
     const mockResult = {
       deficiency_prediction: {
@@ -701,7 +702,7 @@ const CameraCapture = () => {
                       Retry Backend
                     </button>
                     <button
-                      onClick={() => useDemoResults(lastFile)}
+                      onClick={() => generateDemoResults(lastFile)}
                       className="px-3 py-2 bg-white border border-rose-300 text-rose-700 rounded-lg font-medium hover:bg-rose-50 transition-colors"
                     >
                       Use Demo Results

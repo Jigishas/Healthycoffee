@@ -2,6 +2,78 @@
 
 const BACKEND_URL = 'https://healthycoffee.onrender.com';
 
+// Demo results for when backend is unavailable
+const getDemoResults = () => {
+  const demoDiseases = [
+    {
+      class: "Coffee Leaf Rust",
+      confidence: 0.87,
+      explanation: "Orange-yellow powdery pustules visible on the leaf underside, characteristic of Hemileia vastatrix infection.",
+      recommendation: "Apply copper-based fungicide immediately. Remove and destroy infected leaves. Improve air circulation around plants."
+    },
+    {
+      class: "Cercospora Leaf Spot",
+      confidence: 0.82,
+      explanation: "Circular brown spots with light centers observed, typical of Cercospora coffeicola fungal infection.",
+      recommendation: "Apply fungicide containing copper oxychloride. Ensure proper plant spacing for better air circulation."
+    },
+    {
+      class: "Healthy",
+      confidence: 0.91,
+      explanation: "Leaf appears healthy with uniform green color and no visible disease symptoms.",
+      recommendation: "Continue good cultural practices including proper fertilization and irrigation."
+    }
+  ];
+
+  const demoDeficiencies = [
+    {
+      class: "Nitrogen Deficiency",
+      confidence: 0.78,
+      explanation: "Pale yellow leaves starting from older leaves, indicating insufficient nitrogen availability.",
+      recommendation: "Apply nitrogen-rich fertilizer. Use urea or ammonium sulfate. Monitor soil pH and organic matter levels."
+    },
+    {
+      class: "Iron Deficiency",
+      confidence: 0.85,
+      explanation: "Interveinal chlorosis on young leaves while veins remain green, typical iron chlorosis pattern.",
+      recommendation: "Apply iron chelate or ferrous sulfate. Ensure soil pH is not too high. Consider foliar iron applications."
+    },
+    {
+      class: "Healthy",
+      confidence: 0.88,
+      explanation: "No visible nutrient deficiency symptoms. Balanced nutrient uptake observed.",
+      recommendation: "Maintain regular soil testing and balanced fertilization program."
+    }
+  ];
+
+  // Randomly select demo results
+  const randomDisease = demoDiseases[Math.floor(Math.random() * demoDiseases.length)];
+  const randomDeficiency = demoDeficiencies[Math.floor(Math.random() * demoDeficiencies.length)];
+
+  return {
+    disease_prediction: randomDisease,
+    deficiency_prediction: randomDeficiency,
+    recommendations: {
+      disease_recommendations: {
+        overview: "This is a demo analysis. The backend is currently unavailable, so you're seeing sample results.",
+        symptoms: ["Demo: " + randomDisease.class + " symptoms would be displayed here"],
+        integrated_management: {
+          cultural_practices: ["Demo: Improve plant spacing", "Demo: Remove infected plant material"],
+          chemical_control: ["Demo: Apply appropriate fungicide based on disease"],
+          biological_control: ["Demo: Use beneficial microorganisms"],
+          monitoring: ["Demo: Regular field inspections"]
+        }
+      },
+      deficiency_recommendations: {
+        symptoms: ["Demo: " + randomDeficiency.class + " symptoms would be displayed here"],
+        basic: ["Demo: Apply recommended fertilizers", "Demo: Soil testing advised"],
+        management: ["Demo: Monitor soil pH and nutrient levels"]
+      }
+    },
+    status: "demo"
+  };
+};
+
 const Upload = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState('');
@@ -45,7 +117,16 @@ const Upload = () => {
       if (!res.ok) {
         const text = await res.text().catch(() => '');
         console.error('Upload error response:', res.status, text);
-        setStatus(`Upload failed: ${res.status} ${res.statusText}`);
+
+        // Backend unavailable - use demo results
+        if (res.status === 500 || res.status === 502 || res.status === 503 || res.status === 504 || res.status === 520) {
+          console.log('Backend unavailable, using demo results');
+          const demoResults = getDemoResults();
+          setResults(demoResults);
+          setStatus('Demo analysis completed. Backend is currently unavailable.');
+        } else {
+          setStatus(`Upload failed: ${res.status} ${res.statusText}`);
+        }
         setLoading(false);
         return;
       }
@@ -66,7 +147,12 @@ const Upload = () => {
       setDescription('');
     } catch (err) {
       console.error('Network/upload error:', err);
-      setStatus('Error uploading the photo. Check backend URL and CORS.');
+
+      // Network error - use demo results
+      console.log('Network error, using demo results');
+      const demoResults = getDemoResults();
+      setResults(demoResults);
+      setStatus('Demo analysis completed. Backend is currently unavailable.');
     } finally {
       setLoading(false);
     }
