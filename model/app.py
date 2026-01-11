@@ -36,7 +36,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://healthycoffee.vercel.app"])
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -434,6 +434,6 @@ def learning_stats():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8000))
+    port = int(os.environ.get('PORT', 5000))
     logger.info(f'Starting combined Flask server on port {port}...')
     app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
