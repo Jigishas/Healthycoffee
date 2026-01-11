@@ -74,7 +74,7 @@ function Body() {
                   transition={{ duration: 1, delay: 1 }}
                 >
                   <h3 className="text-lg md:text-xl lg:text-2xl text-white leading-relaxed font-medium drop-shadow-2xl max-w-3xl mx-auto pl-1 blur-left-card">
-  Coffee is one of the easiest plant to grow and the leading export product in Kenya and East Africa. It is grown in many parts of the country and farmers profit from it a lot.
+  Coffee is one of the easiest plants to grow and sell and also the leading export product in Kenya and East Africa. It is grown in many parts of the Region and farmers profit from it a lot.
 </h3>
 
                   {/* Animated Underline */}
