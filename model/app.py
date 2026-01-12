@@ -36,7 +36,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app, origins=["https://healthycoffee.vercel.app"])
+# Allow CORS from any origin for now (helps Render / local testing).
+# In production, restrict this to the frontend origin(s).
+from flask_cors import CORS as _CORS
+_CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -276,6 +279,11 @@ def health():
     except Exception as e:
         logger.error(f'Health check error: {e}')
         return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({'status': 'ok', 'message': 'HealthyCoffee backend running', 'routes': ['/health', '/api/upload-image']}), 200
 
 @app.route('/api/model-info', methods=['GET'])
 def model_info():
