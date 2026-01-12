@@ -6,45 +6,7 @@ const TARGET_HEIGHT = 224;
 const BACKEND_URL = 'https://healthycoffee.onrender.com';
 const LOCAL_FALLBACK = 'http://localhost:5000';
 
-const getDemoResults = () => {
-  const demoDiseases = [
-    { class: 'Coffee Leaf Rust', confidence: 0.87, explanation: 'Orange-yellow powdery pustules visible on the leaf underside, characteristic of Hemileia vastatrix infection.', recommendation: 'Apply copper-based fungicide immediately. Remove and destroy infected leaves. Improve air circulation around plants.' },
-    { class: 'Cercospora Leaf Spot', confidence: 0.82, explanation: 'Circular brown spots with light centers observed, typical of Cercospora coffeicola fungal infection.', recommendation: 'Apply fungicide containing copper oxychloride. Ensure proper plant spacing for better air circulation.' },
-    { class: 'Healthy', confidence: 0.91, explanation: 'Leaf appears healthy with uniform green color and no visible disease symptoms.', recommendation: 'Continue good cultural practices including proper fertilization and irrigation.' }
-  ];
 
-  const demoDeficiencies = [
-    { class: 'Nitrogen Deficiency', confidence: 0.78, explanation: 'Pale yellow leaves starting from older leaves, indicating insufficient nitrogen availability.', recommendation: 'Apply nitrogen-rich fertilizer. Use urea or ammonium sulfate. Monitor soil pH and organic matter levels.' },
-    { class: 'Iron Deficiency', confidence: 0.85, explanation: 'Interveinal chlorosis on young leaves while veins remain green, typical iron chlorosis pattern.', recommendation: 'Apply iron chelate or ferrous sulfate. Ensure soil pH is not too high. Consider foliar iron applications.' },
-    { class: 'Healthy', confidence: 0.88, explanation: 'No visible nutrient deficiency symptoms. Balanced nutrient uptake observed.', recommendation: 'Maintain regular soil testing and balanced fertilization program.' }
-  ];
-
-  const randomDisease = demoDiseases[Math.floor(Math.random() * demoDiseases.length)];
-  const randomDeficiency = demoDeficiencies[Math.floor(Math.random() * demoDeficiencies.length)];
-
-  return {
-    disease_prediction: randomDisease,
-    deficiency_prediction: randomDeficiency,
-    recommendations: {
-      disease_recommendations: {
-        overview: 'This is a demo analysis. The backend is currently unavailable, so you\'re seeing sample results.',
-        symptoms: ['Demo: ' + randomDisease.class + ' symptoms would be displayed here'],
-        integrated_management: {
-          cultural_practices: ['Demo: Improve plant spacing', 'Demo: Remove infected plant material'],
-          chemical_control: ['Demo: Apply appropriate fungicide based on disease'],
-          biological_control: ['Demo: Use beneficial microorganisms'],
-          monitoring: ['Demo: Regular field inspections']
-        }
-      },
-      deficiency_recommendations: {
-        symptoms: ['Demo: ' + randomDeficiency.class + ' symptoms would be displayed here'],
-        basic: ['Demo: Apply recommended fertilizers', 'Demo: Soil testing advised'],
-        management: ['Demo: Monitor soil pH and nutrient levels']
-      }
-    },
-    status: 'demo'
-  };
-};
 
 export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-image`, onResult }) {
   const videoRef = useRef(null);
@@ -204,8 +166,7 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
       }
 
       if (!backendToUse) {
-        await generateDemoResults(file);
-        return;
+        throw new Error('No backend available for analysis. Please check your connection and try again.');
       }
 
       // Upload resized image
@@ -281,11 +242,7 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
     }
   };
 
-  const generateDemoResults = async (file) => {
-    const mockResult = getDemoResults();
-    setResult(mockResult);
-    setLoading(false);
-  };
+
 
   const resetCapture = () => {
     setPreview('');
@@ -404,12 +361,6 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
                       Retry Backend
                     </button>
                     <button
-                      onClick={() => generateDemoResults(lastFile)}
-                      className="px-3 py-2 bg-white border border-rose-300 text-rose-700 rounded-lg font-medium hover:bg-rose-50 transition-colors"
-                    >
-                      Use Demo Results
-                    </button>
-                    <button
                       onClick={resetCapture}
                       className="px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
                     >
@@ -484,11 +435,11 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
                       <div className="flex-1 bg-slate-200 rounded-full h-2">
                         <div
                           className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full"
-                          style={{ width: `${result.deficiency_prediction.confidence || 0}%` }}
+                          style={{ width: `${result.deficiency_prediction.confidence ? Math.round(result.deficiency_prediction.confidence * 100) : 0}%` }}
                         ></div>
                       </div>
                       <span className="font-semibold text-slate-700">
-                        {result.deficiency_prediction.confidence || 'N/A'}% confidence
+                        {result.deficiency_prediction.confidence ? Math.round(result.deficiency_prediction.confidence * 100) : 'N/A'}% confidence
                       </span>
                     </div>
                     {result.deficiency_prediction.explanation && (
@@ -518,11 +469,11 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
                       <div className="flex-1 bg-slate-200 rounded-full h-2">
                         <div
                           className="bg-gradient-to-r from-rose-500 to-pink-600 h-2 rounded-full"
-                          style={{ width: `${result.disease_prediction.confidence || 0}%` }}
+                          style={{ width: `${result.disease_prediction.confidence ? Math.round(result.disease_prediction.confidence * 100) : 0}%` }}
                         ></div>
                       </div>
                       <span className="font-semibold text-slate-700">
-                        {result.disease_prediction.confidence || 'N/A'}% confidence
+                        {result.disease_prediction.confidence ? Math.round(result.disease_prediction.confidence * 100) : 'N/A'}% confidence
                       </span>
                     </div>
                     {result.disease_prediction.explanation && (
