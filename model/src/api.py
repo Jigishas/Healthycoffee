@@ -1,10 +1,16 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import analyze_leaf
 
 app = Flask(__name__)
+# Allow CORS so the frontend can call this API from browsers
+CORS(app, resources={r"/*": {"origins": [
+    "https://healthycoffee.vercel.app",
+    "https://healthycoffee.vercel.app/"
+]}})
 
 @app.route('/api/upload-image', methods=['POST'])
 def upload_image():

@@ -39,7 +39,10 @@ app = Flask(__name__)
 # Allow CORS from any origin for now (helps Render / local testing).
 # In production, restrict this to the frontend origin(s).
 from flask_cors import CORS as _CORS
-_CORS(app, resources={r"/*": {"origins": "*"}})
+_CORS(app, resources={r"/*": {"origins": [
+    "https://healthycoffee.vercel.app",
+    "https://healthycoffee.vercel.app/"
+]}})
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
