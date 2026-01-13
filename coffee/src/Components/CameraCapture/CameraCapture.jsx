@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { resizeImage } from '../../lib/imageUtils';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const TARGET_WIDTH = 224;
 const TARGET_HEIGHT = 224;
@@ -297,6 +299,179 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
 
     if (cameraInputRef.current) cameraInputRef.current.value = '';
     if (galleryInputRef.current) galleryInputRef.current.value = '';
+  };
+
+  const downloadPDF = async () => {
+    if (!result) return;
+
+    try {
+      // Create a temporary div to hold the content for PDF generation
+      const pdfContent = document.createElement('div');
+      pdfContent.style.width = '800px';
+      pdfContent.style.padding = '20px';
+      pdfContent.style.fontFamily = 'Arial, sans-serif';
+      pdfContent.style.backgroundColor = '#ffffff';
+      pdfContent.style.color = '#1f2937';
+
+      // Add header
+      pdfContent.innerHTML = `
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #10b981; padding-bottom: 20px;">
+          <h1 style="color: #10b981; font-size: 28px; margin: 0;">🌿 Leaf Analysis Report</h1>
+          <p style="color: #6b7280; margin: 10px 0 0 0;">Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+        </div>
+      `;
+
+      // Add deficiency prediction if exists
+      if (result.deficiency_prediction) {
+        pdfContent.innerHTML += `
+          <div style="margin-bottom: 25px; padding: 20px; background-color: #eff6ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h2 style="color: #1e40af; margin: 0 0 15px 0; font-size: 20px;">🧪 Nutrient Analysis</h2>
+            <div style="margin-bottom: 10px;">
+              <strong style="font-size: 18px; color: #1f2937;">${result.deficiency_prediction.class}</strong>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Confidence:</strong> ${result.deficiency_prediction.confidence ? Math.round(result.deficiency_prediction.confidence * 100) : 'N/A'}%
+            </div>
+            ${result.deficiency_prediction.explanation ? `<p style="margin-bottom: 15px; color: #374151;">${result.deficiency_prediction.explanation}</p>` : ''}
+            ${result.deficiency_prediction.recommendation ? `<div style="background-color: #dbeafe; padding: 10px; border-radius: 6px;"><strong>Recommendation:</strong> ${result.deficiency_prediction.recommendation}</div>` : ''}
+          </div>
+        `;
+      }
+
+      // Add disease prediction if exists
+      if (result.disease_prediction) {
+        pdfContent.innerHTML += `
+          <div style="margin-bottom: 25px; padding: 20px; background-color: #fef2f2; border-radius: 8px; border-left: 4px solid #ef4444;">
+            <h2 style="color: #dc2626; margin: 0 0 15px 0; font-size: 20px;">🔬 Disease Detection</h2>
+            <div style="margin-bottom: 10px;">
+              <strong style="font-size: 18px; color: #1f2937;">${result.disease_prediction.class}</strong>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Confidence:</strong> ${result.disease_prediction.confidence ? Math.round(result.disease_prediction.confidence * 100) : 'N/A'}%
+            </div>
+            ${result.disease_prediction.explanation ? `<p style="margin-bottom: 15px; color: #374151;">${result.disease_prediction.explanation}</p>` : ''}
+            ${result.disease_prediction.recommendation ? `<div style="background-color: #fee2e2; padding: 10px; border-radius: 6px;"><strong>Recommendation:</strong> ${result.disease_prediction.recommendation}</div>` : ''}
+          </div>
+        `;
+      }
+
+      // Add recommendations if exist
+      if (result.recommendations) {
+        if (result.recommendations.disease_recommendations) {
+          pdfContent.innerHTML += `
+            <div style="margin-bottom: 25px; padding: 20px; background-color: #faf5ff; border-radius: 8px; border-left: 4px solid #8b5cf6;">
+              <h2 style="color: #7c3aed; margin: 0 0 15px 0; font-size: 20px;">🛡️ Disease Management Plan</h2>
+              ${result.recommendations.disease_recommendations.overview ? `<p style="margin-bottom: 15px; color: #374151;"><strong>Overview:</strong> ${result.recommendations.disease_recommendations.overview}</p>` : ''}
+              ${result.recommendations.disease_recommendations.symptoms ? `
+                <div style="margin-bottom: 15px;">
+                  <strong>Symptoms:</strong>
+                  <ul style="margin: 5px 0; padding-left: 20px;">
+                    ${result.recommendations.disease_recommendations.symptoms.map(symptom => `<li>${symptom}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+              ${result.recommendations.disease_recommendations.integrated_management ? `
+                <div>
+                  <strong>Management Strategies:</strong>
+                  ${result.recommendations.disease_recommendations.integrated_management.cultural_practices ? `
+                    <div style="margin-top: 10px;">
+                      <em>Cultural Practices:</em>
+                      <ul style="margin: 5px 0; padding-left: 20px;">
+                        ${result.recommendations.disease_recommendations.integrated_management.cultural_practices.map(practice => `<li>${practice}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                  ${result.recommendations.disease_recommendations.integrated_management.chemical_control ? `
+                    <div style="margin-top: 10px;">
+                      <em>Chemical Control:</em>
+                      <ul style="margin: 5px 0; padding-left: 20px;">
+                        ${result.recommendations.disease_recommendations.integrated_management.chemical_control.map(control => `<li>${control}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }
+
+        if (result.recommendations.deficiency_recommendations) {
+          pdfContent.innerHTML += `
+            <div style="margin-bottom: 25px; padding: 20px; background-color: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+              <h2 style="color: #059669; margin: 0 0 15px 0; font-size: 20px;">🌱 Nutrition Management</h2>
+              ${result.recommendations.deficiency_recommendations.symptoms ? `
+                <div style="margin-bottom: 15px;">
+                  <strong>Symptoms:</strong>
+                  <ul style="margin: 5px 0; padding-left: 20px;">
+                    ${result.recommendations.deficiency_recommendations.symptoms.map(symptom => `<li>${symptom}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+              ${result.recommendations.deficiency_recommendations.basic ? `
+                <div>
+                  <strong>Basic Recommendations:</strong>
+                  <ul style="margin: 5px 0; padding-left: 20px;">
+                    ${result.recommendations.deficiency_recommendations.basic.map(rec => `<li>${rec}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }
+      }
+
+      // Add footer
+      pdfContent.innerHTML += `
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #d1d5db; text-align: center; color: #6b7280; font-size: 12px;">
+          <p>This report was generated by Healthy Coffee Leaf Analysis System</p>
+          <p>For more information, visit our website or contact support</p>
+        </div>
+      `;
+
+      // Temporarily add to DOM for html2canvas
+      document.body.appendChild(pdfContent);
+
+      // Generate PDF
+      const canvas = await html2canvas(pdfContent, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+
+      // Remove temporary element
+      document.body.removeChild(pdfContent);
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Add additional pages if needed
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Download the PDF
+      const fileName = `leaf-analysis-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      setError('Failed to generate PDF report');
+    }
   };
 
   return (
@@ -653,13 +828,22 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
         <canvas ref={canvasRef} style={{ display: 'none' }} />
 
         {result && (
-          <button
-            onClick={resetCapture}
-            className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-3 shadow-lg"
-          >
-            <span>🌿</span>
-            Analyze Another Leaf
-          </button>
+          <div className="space-y-4">
+            <button
+              onClick={downloadPDF}
+              className="w-full py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-3 shadow-lg"
+            >
+              <span>📄</span>
+              Download PDF Report
+            </button>
+            <button
+              onClick={resetCapture}
+              className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-3 shadow-lg"
+            >
+              <span>🌿</span>
+              Analyze Another Leaf
+            </button>
+          </div>
         )}
       </div>
     </div>
