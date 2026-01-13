@@ -246,7 +246,19 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
     setBackendChecking(true);
     setBackendError(null);
     try {
-      // Prefer explicit host from uploadUrl if it's absolute
+      // In production, prioritize the Render backend
+      if (await checkBackend(BACKEND_URL)) {
+        setActiveBackend(BACKEND_URL);
+        return BACKEND_URL;
+      }
+
+      // Fallback to localhost for development
+      if (await checkBackend(LOCAL_FALLBACK)) {
+        setActiveBackend(LOCAL_FALLBACK);
+        return LOCAL_FALLBACK;
+      }
+
+      // Finally check explicit host from uploadUrl if it's absolute
       try {
         const parsed = new URL(uploadUrl);
         const origin = parsed.origin;
@@ -258,14 +270,6 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
         // uploadUrl not absolute, fall back to defaults
       }
 
-      if (await checkBackend(BACKEND_URL)) {
-        setActiveBackend(BACKEND_URL);
-        return BACKEND_URL;
-      }
-      if (await checkBackend(LOCAL_FALLBACK)) {
-        setActiveBackend(LOCAL_FALLBACK);
-        return LOCAL_FALLBACK;
-      }
       setActiveBackend(null);
       setBackendError('No reachable backend');
       return null;
