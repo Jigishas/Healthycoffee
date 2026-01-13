@@ -41,7 +41,9 @@ app = Flask(__name__)
 from flask_cors import CORS as _CORS
 _CORS(app, resources={r"/*": {"origins": [
     "https://healthycoffee.vercel.app",
-    "https://healthycoffee.vercel.app/"
+    "https://healthycoffee.vercel.app/",
+    "https://healthycoffee.onrender.com",
+    "https://healthycoffee.onrender.com/"
 ]}})
 
 # Configuration
@@ -479,4 +481,4 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     logger.info(f'Starting combined Flask server on port {port}...')
     print(f"Starting server on port {port}")
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+    app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
