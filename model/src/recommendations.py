@@ -9,7 +9,16 @@ class CoffeeDiseaseRecommender:
                     "Spots enlarge and merge, forming irregular patches",
                     "Yellow halos around lesions",
                     "Premature leaf drop in severe cases",
-                    "Reduced plant vigor and yield"
+                    "Reduced plant vigor and yield",
+                    "Angular leaf spots with dark borders",
+                    "Lesions appear first on lower leaves",
+                    "Spots develop concentric rings as they grow",
+                    "Infected leaves become brittle and crack easily",
+                    "Defoliation starts from bottom of plant",
+                    "Young leaves may show chlorotic areas",
+                    "Severe infections cause skeletonized leaves",
+                    "Brown streaks along leaf veins",
+                    "Leaves curl and distort in advanced stages"
                 ],
                 "integrated_management": {
                     "cultural_practices": [
@@ -167,7 +176,20 @@ class CoffeeDiseaseRecommender:
                     "Premature leaf drop",
                     "Reduced photosynthesis",
                     "Branch dieback in severe cases",
-                    "Stunted berry development"
+                    "Stunted berry development",
+                    "Lesions appear first on lower leaves",
+                    "Pustules rupture releasing orange spores",
+                    "Leaves become brittle and curl",
+                    "Severe infections cause complete defoliation",
+                    "Brown spots on stems and berries",
+                    "Reduced flowering and fruit set",
+                    "Plants show chlorosis around lesions",
+                    "Infected leaves show mosaic pattern",
+                    "Yellow halos around pustules",
+                    "Spore masses visible as orange powder",
+                    "Leaves twist and distort in advanced stages",
+                    "Young shoots may be infected",
+                    "Defoliation starts from tree top"
                 ],
                 "integrated_management": {
                     "cultural_practices": [
@@ -997,19 +1019,33 @@ def get_deficiency_specific_recommendations(deficiency_name):
                 "Apply phosphorus fertilizers such as DAP or rock phosphate",
                 "Use phosphorus-rich organic amendments",
                 "Ensure proper soil pH for phosphorus availability",
-                "Avoid excessive lime applications"
+                "Avoid excessive lime applications",
+                "Apply phosphorus during early root development stages",
+                "Use banded application near roots for better uptake"
             ],
             "symptoms": [
                 "Dark green foliage with purplish tinge",
                 "Stunted growth and reduced plant height",
                 "Poor root development",
-                "Delayed flowering and maturity"
+                "Delayed flowering and maturity",
+                "Small, narrow leaves with upright growth",
+                "Reduced leaf size and thickness",
+                "Weak stems that break easily",
+                "Poor fruit set and small berries",
+                "Increased susceptibility to root diseases",
+                "Older leaves show reddish-purple discoloration",
+                "Plants mature later than healthy ones",
+                "Reduced yield and poor quality berries"
             ],
             "management": [
                 "Fertilizer: DAP at 100-150 kg/ha",
                 "Rock phosphate: Apply 200-400 kg/ha",
                 "Organic sources: Bone meal or compost",
-                "Soil pH: Maintain between 5.5-6.5 for P availability"
+                "Soil pH: Maintain between 5.5-6.5 for P availability",
+                "Foliar application: 1-2% monoammonium phosphate solution",
+                "Timing: Apply at planting and during early growth",
+                "Method: Band application near roots for efficiency",
+                "Split applications: 50% at planting, 50% during flowering"
             ]
         },
         "potassium_deficiency": {
