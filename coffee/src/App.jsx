@@ -9,7 +9,6 @@ import Stat from './Components/BODY/Stat/Stat'
 import Belowimg from './Components/BODY/imageSlider/Belowimg'
 import Askme from './Components/BODY/Ask me/Askme'
 import CameraCapture from './Components/CameraCapture/CameraCapture'
-import Upload from './Components/Uploads/Upload'
 import PWAInstallPrompt from './Components/PWAInstallPrompt'
 
 function App() {

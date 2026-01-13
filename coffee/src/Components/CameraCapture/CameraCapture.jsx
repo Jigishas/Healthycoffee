@@ -165,16 +165,38 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
         backendToUse = await ensureBackend();
       }
 
-      if (!backendToUse) {
+      if (!backendToUse && !uploadUrl) {
         throw new Error('No backend available for analysis. Please check your connection and try again.');
       }
 
-      // Upload resized image
+      // Build the final endpoint using the provided uploadUrl and the detected backend base if needed
+      const buildEndpoint = (backendBase) => {
+        try {
+          const parsed = new URL(uploadUrl);
+          if (backendBase) {
+            const base = new URL(backendBase);
+            return `${base.origin}${parsed.pathname}${parsed.search}`;
+          }
+          return parsed.toString();
+        } catch (e) {
+          // uploadUrl might be a relative path like '/api/upload-image'
+          if (backendBase) return backendBase.replace(/\/$/, '') + (uploadUrl.startsWith('/') ? uploadUrl : '/' + uploadUrl);
+          return uploadUrl;
+        }
+      };
+
+      const endpoint = buildEndpoint(backendToUse);
+      if (!endpoint) throw new Error('Failed to build backend endpoint');
+
+      // Upload resized image as FormData
       const fd = new FormData();
       fd.append('image', resizedBlob, 'resized_image.jpg');
 
-      const resp = await fetch(`${backendToUse}/api/upload-image`, {
+      const resp = await fetch(endpoint, {
         method: 'POST',
+        headers: {
+          Accept: 'application/json'
+        },
         body: fd
       });
 
@@ -182,7 +204,13 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
         throw new Error(`Server responded with status: ${resp.status}`);
       }
 
-      const json = await resp.json();
+      let json;
+      try {
+        json = await resp.json();
+      } catch (e) {
+        throw new Error('Invalid JSON response from server');
+      }
+
       if (json.error) throw new Error(json.error);
 
       setResult(json);
@@ -218,6 +246,18 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
     setBackendChecking(true);
     setBackendError(null);
     try {
+      // Prefer explicit host from uploadUrl if it's absolute
+      try {
+        const parsed = new URL(uploadUrl);
+        const origin = parsed.origin;
+        if (await checkBackend(origin)) {
+          setActiveBackend(origin);
+          return origin;
+        }
+      } catch (e) {
+        // uploadUrl not absolute, fall back to defaults
+      }
+
       if (await checkBackend(BACKEND_URL)) {
         setActiveBackend(BACKEND_URL);
         return BACKEND_URL;
