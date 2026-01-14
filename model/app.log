@@ -1208,3 +1208,10 @@
 2026-01-13 16:09:47,272 - __main__ - INFO - File saved: uploads\resized_image.jpg
 2026-01-13 16:09:48,254 - __main__ - INFO - Prediction completed in 0.9749s
 2026-01-13 16:09:48,257 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 16:09:48] "POST /api/upload-image HTTP/1.1" 200 -
+2026-01-13 16:11:49,595 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 16:11:49] "GET /health HTTP/1.1" 200 -
+2026-01-13 16:11:49,726 - __main__ - INFO - File saved: uploads\resized_image.jpg
+2026-01-13 16:11:50,239 - __main__ - INFO - Prediction completed in 0.5047s
+2026-01-13 16:11:50,241 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 16:11:50] "POST /api/upload-image HTTP/1.1" 200 -
+2026-01-13 16:13:00,251 - __main__ - INFO - File saved: uploads\resized_image.jpg
+2026-01-13 16:13:01,814 - __main__ - INFO - Prediction completed in 1.5535s
+2026-01-13 16:13:01,817 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 16:13:01] "POST /api/upload-image HTTP/1.1" 200 -
