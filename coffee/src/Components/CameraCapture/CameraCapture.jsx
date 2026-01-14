@@ -5,8 +5,8 @@ import html2canvas from 'html2canvas';
 
 const TARGET_WIDTH = 224;
 const TARGET_HEIGHT = 224;
-const BACKEND_URL = 'https://healthycoffee.onrender.com';
-const LOCAL_FALLBACK = 'http://localhost:10000';
+const BACKEND_URL = 'https://healthycoffee.onrender.com:8000';
+const LOCAL_FALLBACK = 'http://localhost:8000';
 
 
 

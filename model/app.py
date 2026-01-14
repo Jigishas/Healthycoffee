@@ -98,9 +98,9 @@ try:
     disease_classifier = OptimizedTorchClassifier(
         'models/leaf_diseases/efficientnet_disease_balanced.pth',
         'models/leaf_diseases/class_mapping_diseases.json',
-        confidence_threshold=0.3
+        confidence_threshold=0.5  # Increased for higher accuracy in production
     )
-    disease_model_type = 'interactive_optimized'
+    disease_model_type = 'production_optimized'
     disease_classifier_loaded = True
     logger.info("Disease classifier initialized successfully")
 except Exception as e:
@@ -113,9 +113,9 @@ try:
     deficiency_classifier = OptimizedTorchClassifier(
         'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
         'models/leaf_deficiencies/class_mapping_deficiencies.json',
-        confidence_threshold=0.3
+        confidence_threshold=0.5  # Increased for higher accuracy in production
     )
-    deficiency_model_type = 'interactive_optimized'
+    deficiency_model_type = 'production_optimized'
     deficiency_classifier_loaded = True
     logger.info("Deficiency classifier initialized successfully")
 except Exception as e:
@@ -478,7 +478,7 @@ def learning_stats():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))
+    port = int(os.environ.get('PORT', 8000))
     logger.info(f'Starting combined Flask server on port {port}...')
     print(f"Starting server on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False, threaded=True)

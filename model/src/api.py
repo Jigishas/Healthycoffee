@@ -22,4 +22,6 @@ def upload_image():
     return jsonify({"results": result})
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=8000)
+    # In production (Render), bind to 0.0.0.0 and use the PORT env var
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
