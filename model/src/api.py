@@ -23,5 +23,5 @@ def upload_image():
 
 if __name__ == "__main__":
     # In production (Render), bind to 0.0.0.0 and use the PORT env var
-    port = int(os.environ.get("PORT", 8000))
+    port = 8000
     app.run(host='0.0.0.0', port=port)
