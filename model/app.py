@@ -81,7 +81,7 @@ def validate_image_file(file):
 # Initialize interactive learning system
 try:
     interactive_system = InteractiveCoffeeDiagnosis(
-        'models/leaf_diseases/efficientnet_disease_balanced.pth',
+        'models/leaf_diseases/improved_disease_model.pth',
         'models/leaf_diseases/class_mapping_diseases.json',
         'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
         'models/leaf_deficiencies/class_mapping_deficiencies.json'
@@ -96,7 +96,7 @@ except Exception as e:
 # Keep legacy classifiers for backward compatibility
 try:
     disease_classifier = OptimizedTorchClassifier(
-        'models/leaf_diseases/efficientnet_disease_balanced.pth',
+        'models/leaf_diseases/improved_disease_model.pth',
         'models/leaf_diseases/class_mapping_diseases.json',
         confidence_threshold=0.5  # Increased for higher accuracy in production
     )
