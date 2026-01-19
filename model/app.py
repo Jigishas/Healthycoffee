@@ -45,6 +45,17 @@ _CORS(app, resources={r"/*": {"origins": [
     "https://healthycoffee.onrender.com",
     "https://healthycoffee.onrender.com/"
 ]}})
+from flask_cors import CORS as _CORS
+# During troubleshooting allow all origins; lock down in production to specific origins.
+_CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers.setdefault('Access-Control-Allow-Origin', '*')
+    response.headers.setdefault('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    return response
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -478,7 +489,7 @@ def learning_stats():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    port =  8000
+    port = int(os.environ.get('PORT', 8000))
     logger.info(f'Starting combined Flask server on port {port}...')
     print(f"Starting server on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
