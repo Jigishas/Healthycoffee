@@ -66,14 +66,11 @@ function Body() {
                       </span>
                     </Typography>
 
-                           <motion.div
-                             className="relative w-full flex justify-center items-center hero-safe"
-                             initial={{ opacity: 0 }}
-                             animate={{ opacity: 1 }}
-                             transition={{ duration: 1.5 }}
-                             style={{ minHeight: 'calc(100vh - var(--navbar-height))' }}
-                           >
-                      of farming families.
+                    <Typography
+                      variant="body1"
+                      className="text-lg md:text-xl text-grey-700 mb-8 leading-relaxed"
+                    >
+                      Empowering over 700,000 farming families across East Africa with cutting-edge plant health intelligence and sustainable farming practices.
                     </Typography>
 
                     {/* Quick Stats */}

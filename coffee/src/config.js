@@ -7,11 +7,11 @@ export const BACKEND_CONFIG = {
 // Determine which backend URL to use based on environment
 export const getBackendUrl = () => {
   // In production (when deployed), use production URL
-  // In development (localhost), try production first, fallback to localhost
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-    return BACKEND_CONFIG.PRODUCTION_URL;
+  // In development (localhost), use localhost for faster development
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return BACKEND_CONFIG.LOCAL_FALLBACK;
   }
-  return BACKEND_CONFIG.PRODUCTION_URL; // Always try production first
+  return BACKEND_CONFIG.PRODUCTION_URL;
 };
 
 // Legacy export for backward compatibility

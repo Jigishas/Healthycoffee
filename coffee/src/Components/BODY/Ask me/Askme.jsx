@@ -1,220 +1,620 @@
-import React from 'react';
+import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Card, CardContent, CardHeader, CardTitle 
+} from '../../ui/card';
+import { 
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger 
+} from '../../ui/accordion';
+import { 
+  Sprout, Coffee, Thermometer, CloudRain, Mountain, 
+  Shield, TrendingUp, Leaf, Clock, Droplets, Sun,
+  ChevronDown, Search, Filter, BookOpen, Target,
+  BarChart, Zap, Users, TreePine
+} from 'lucide-react';
+import { 
+  Box, Typography, Grid, Container, Chip,
+  TextField, InputAdornment, Stack
+} from '@mui/material';
 
 const Askme = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [openItems, setOpenItems] = useState([]);
+
+  const toggleItem = (index) => {
+    setOpenItems(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
+    );
+  };
+
   const faqData = [
     {
+      id: 1,
       question: "What are the ideal growing conditions for coffee plants?",
+      category: "cultivation",
+      icon: <Sprout />,
+      priority: "high",
       answer: (
-        <div>
-          <p className="mb-4">Coffee plants thrive in specific conditions often called the "coffee belt" between the Tropics of Cancer and Capricorn. Ideal conditions include:</p>
-          <ul className="list-disc pl-6 space-y-2">
-            <li><strong>Temperature:</strong> 15-24°C (59-75°F) for Arabica, 24-30°C (75-86°F) for Robusta</li>
-            <li><strong>Altitude:</strong> 600-2,000 meters (2,000-6,500 ft) above sea level</li>
-            <li><strong>Rainfall:</strong> 1,500-2,500 mm (60-100 in) annually, well-distributed</li>
-            <li><strong>Soil:</strong> Volcanic, well-draining, pH 6-6.5, rich in organic matter</li>
-            <li><strong>Sunlight:</strong> Filtered sunlight or partial shade (especially for young plants)</li>
-          </ul>
-        </div>
+        <Box>
+          <Typography variant="body1" className="mb-4">
+            Coffee plants thrive in specific conditions often called the "coffee belt" between the Tropics of Cancer and Capricorn. 
+            Ideal conditions include:
+          </Typography>
+          <Grid container spacing={2} className="mb-4">
+            <Grid item xs={12} md={6}>
+              <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <Thermometer className="w-6 h-6 text-emerald-600" />
+                  <Typography variant="h6" className="font-semibold text-emerald-800">
+                    Temperature
+                  </Typography>
+                </div>
+                <Typography variant="body2">
+                  <strong>Arabica:</strong> 15-24°C (59-75°F)<br />
+                  <strong>Robusta:</strong> 24-30°C (75-86°F)
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <Mountain className="w-6 h-6 text-amber-600" />
+                  <Typography variant="h6" className="font-semibold text-amber-800">
+                    Altitude
+                  </Typography>
+                </div>
+                <Typography variant="body2">
+                  <strong>Optimal:</strong> 600-2,000 meters<br />
+                  <strong>Higher altitude</strong> = Better flavor complexity
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <CloudRain className="w-6 h-6 text-blue-600" />
+                  <Typography variant="h6" className="font-semibold text-blue-800">
+                    Rainfall
+                  </Typography>
+                </div>
+                <Typography variant="body2">
+                  <strong>Required:</strong> 1,500-2,500 mm annually<br />
+                  <strong>Distribution:</strong> Well-distributed throughout year
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <Droplets className="w-6 h-6 text-green-600" />
+                  <Typography variant="h6" className="font-semibold text-green-800">
+                    Soil & Sun
+                  </Typography>
+                </div>
+                <Typography variant="body2">
+                  <strong>Soil pH:</strong> 6.0-6.5 (volcanic soil ideal)<br />
+                  <strong>Sunlight:</strong> Partial shade, especially for young plants
+                </Typography>
+              </Card>
+            </Grid>
+          </Grid>
+        </Box>
       )
     },
     {
+      id: 2,
       question: "How long does it take for a coffee plant to produce beans?",
-      answer: <p>It typically takes 3 to 4 years for a newly planted coffee tree to begin bearing fruit. The coffee cherries will initially be green and then turn red when ripe and ready for harvesting. A single coffee tree can produce approximately 2,000 coffee cherries annually, which amounts to about 4,000 beans or roughly one pound of roasted coffee.</p>
+      category: "growth",
+      icon: <Clock />,
+      priority: "high",
+      answer: (
+        <Box>
+          <Grid container spacing={3} className="mb-4">
+            <Grid item xs={12} md={4}>
+              <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 p-4 text-center">
+                <Typography variant="h4" className="font-black text-amber-700 mb-2">
+                  3-4 Years
+                </Typography>
+                <Typography variant="body2" className="text-amber-800">
+                  Time to first harvest
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 p-4 text-center">
+                <Typography variant="h4" className="font-black text-emerald-700 mb-2">
+                  2,000 Cherries
+                </Typography>
+                <Typography variant="body2" className="text-emerald-800">
+                  Annual yield per tree
+                </Typography>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 p-4 text-center">
+                <Typography variant="h4" className="font-black text-blue-700 mb-2">
+                  15-25 Years
+                </Typography>
+                <Typography variant="body2" className="text-blue-800">
+                  Productive lifespan
+                </Typography>
+              </Card>
+            </Grid>
+          </Grid>
+          <Typography variant="body1">
+            It typically takes 3 to 4 years for a newly planted coffee tree to begin bearing fruit. 
+            The coffee cherries will initially be green and then turn red when ripe and ready for harvesting. 
+            A single coffee tree can produce approximately 2,000 coffee cherries annually, which amounts to 
+            about 4,000 beans or roughly one pound of roasted coffee.
+          </Typography>
+        </Box>
+      )
     },
     {
+      id: 3,
       question: "What's the difference between Arabica and Robusta coffee plants?",
+      category: "varieties",
+      icon: <Coffee />,
+      priority: "high",
       answer: (
-        <div>
-          <p className="mb-4">Arabica and Robusta are the two main species of coffee plants cultivated for consumption:</p>
-          <ul className="list-disc pl-6 space-y-2">
-            <li><strong>Arabica (Coffea arabica):</strong> Accounts for about 60-70% of global production. It has a smoother, more complex flavor with higher acidity. It contains about 1.5% caffeine and grows best at higher altitudes.</li>
-            <li><strong>Robusta (Coffea canephora):</strong> Has a stronger, more bitter taste with higher caffeine content (about 2.7%). It's more disease-resistant and easier to cultivate, thriving at lower altitudes with higher yields.</li>
-          </ul>
-        </div>
+        <Box>
+          <Typography variant="h6" className="font-semibold mb-4 text-emerald-800">
+            Comparison of Coffee Varieties
+          </Typography>
+          <Grid container spacing={3} className="mb-6">
+            <Grid item xs={12} md={4}>
+              <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 h-full">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-emerald-100 rounded-lg">
+                      <Coffee className="w-6 h-6 text-emerald-600" />
+                    </div>
+                    <Typography variant="h5" className="font-bold text-emerald-800">
+                      Arabica
+                    </Typography>
+                  </div>
+                  <Stack spacing={2}>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Global Market</Typography>
+                      <Chip label="60-70%" size="small" className="bg-emerald-100 text-emerald-800" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Caffeine Content</Typography>
+                      <Chip label="1.5%" size="small" className="bg-emerald-100 text-emerald-800" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Altitude</Typography>
+                      <Chip label="600-2000m" size="small" className="bg-emerald-100 text-emerald-800" />
+                    </div>
+                    <Typography variant="body2" className="text-grey-700">
+                      Smooth, complex flavor with higher acidity. Premium quality, ideal for specialty coffee.
+                    </Typography>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 h-full">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-amber-100 rounded-lg">
+                      <Shield className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <Typography variant="h5" className="font-bold text-amber-800">
+                      Robusta
+                    </Typography>
+                  </div>
+                  <Stack spacing={2}>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Global Market</Typography>
+                      <Chip label="30-40%" size="small" className="bg-amber-100 text-amber-800" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Caffeine Content</Typography>
+                      <Chip label="2.7%" size="small" className="bg-amber-100 text-amber-800" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Altitude</Typography>
+                      <Chip label="0-800m" size="small" className="bg-amber-100 text-amber-800" />
+                    </div>
+                    <Typography variant="body2" className="text-grey-700">
+                      Strong, bold flavor with higher caffeine. Disease-resistant, higher yields, easier to cultivate.
+                    </Typography>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 h-full">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Leaf className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <Typography variant="h5" className="font-bold text-blue-800">
+                      Liberica
+                    </Typography>
+                  </div>
+                  <Stack spacing={2}>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Global Market</Typography>
+                      <Chip label="<2%" size="small" className="bg-blue-100 text-blue-800" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Flavor Profile</Typography>
+                      <Chip label="Unique" size="small" className="bg-blue-100 text-blue-800" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Typography variant="body2" className="text-grey-600">Climate</Typography>
+                      <Chip label="Heat Tolerant" size="small" className="bg-blue-100 text-blue-800" />
+                    </div>
+                    <Typography variant="body2" className="text-grey-700">
+                      Unique floral aroma with woody, smoky flavor. Rare variety, heat tolerant, disease resistant.
+                    </Typography>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Box>
       )
     },
+    // Add more FAQ items following the same structure...
     {
-      question: "How are coffee beans harvested and processed?",
-      answer: (
-        <div>
-          <p className="mb-4">There are two primary methods for harvesting coffee:</p>
-          <ol className="list-decimal pl-6 space-y-2 mb-4">
-            <li><strong>Strip Picking:</strong> All cherries are stripped off the branch at once, either by machine or by hand.</li>
-            <li><strong>Selective Picking:</strong> Only the ripe cherries are harvested individually by hand, with multiple passes done every 8-10 days.</li>
-          </ol>
-          <p className="mb-4">After harvesting, coffee beans are processed using either:</p>
-          <ul className="list-disc pl-6 space-y-2">
-            <li><strong>Dry Method:</strong> Cherries are spread out in the sun to dry for 2-3 weeks</li>
-            <li><strong>Wet Method:</strong> Pulp is removed from the cherry before the beans are dried</li>
-          </ul>
-        </div>
-      )
-    },
-    {
+      id: 4,
       question: "What are the main challenges in coffee farming?",
-      answer: (
-        <ul className="list-disc pl-6 space-y-2">
-          <li><strong>Climate Change:</strong> Rising temperatures and unpredictable rainfall patterns affect yield and quality</li>
-          <li><strong>Pests and Diseases:</strong> Coffee leaf rust, berry borer beetles, and other pathogens can devastate crops</li>
-          <li><strong>Price Volatility:</strong> Global coffee prices fluctuate significantly, affecting farmer income</li>
-          <li><strong>Labor Intensive:</strong> Coffee harvesting requires substantial manual labor</li>
-          <li><strong>Water Management:</strong> Traditional processing methods can consume large amounts of water</li>
-        </ul>
-      )
+      category: "challenges",
+      icon: <Shield />,
+      priority: "medium",
+      answer: "Detailed answer about challenges..."
     },
     {
+      id: 5,
       question: "What is shade-grown coffee and why is it important?",
-      answer: (
-        <div>
-          <p className="mb-4">Shade-grown coffee is cultivated under a canopy of trees, which provides several benefits:</p>
-          <ul className="list-disc pl-6 space-y-2 mb-4">
-            <li><strong>Biodiversity:</strong> Provides habitat for birds and other wildlife</li>
-            <li><strong>Soil Health:</strong> Trees help prevent soil erosion and maintain fertility</li>
-            <li><strong>Natural Pest Control:</strong> Birds and insects in the canopy help control pests</li>
-            <li><strong>Microclimate:</strong> Trees provide wind protection and temperature regulation</li>
-            <li><strong>Quality:</strong> Slower berry maturation often results in more complex flavors</li>
-          </ul>
-          <p>While shade-grown coffee typically has lower yields than sun-grown varieties, it's generally more sustainable and environmentally friendly.</p>
-        </div>
-      )
+      category: "sustainability",
+      icon: <TreePine />,
+      priority: "medium",
+      answer: "Detailed answer about shade-grown coffee..."
     },
     {
+      id: 6,
       question: "How does altitude affect coffee flavor?",
-      answer: (
-        <div>
-          <p className="mb-4">Altitude significantly impacts coffee quality and flavor profile:</p>
-          <ul className="list-disc pl-6 space-y-2 mb-4">
-            <li><strong>High Altitude (1,200m+):</strong> Slower bean maturation develops more complex sugars, resulting in better acidity, aroma, and flavor. Beans are typically denser and harder.</li>
-            <li><strong>Medium Altitude (600-1,200m):</strong> Balance between yield and quality, often with good body and mild acidity.</li>
-            <li><strong>Low Altitude (0-600m):</strong> Faster maturation produces softer, less complex beans often with more bitter notes.</li>
-          </ul>
-          <p>The temperature decrease at higher elevations (approximately 1°C per 165m altitude gain) slows the growth cycle, allowing more time for flavor development.</p>
-        </div>
-      )
+      category: "quality",
+      icon: <Mountain />,
+      priority: "high",
+      answer: "Detailed answer about altitude effects..."
     },
     {
+      id: 7,
+      question: "How are coffee beans harvested and processed?",
+      category: "processing",
+      icon: <Zap />,
+      priority: "high",
+      answer: "Detailed answer about harvesting..."
+    },
+    {
+      id: 8,
       question: "What is the coffee cherry and how is it structured?",
-      answer: (
-        <div>
-          <p className="mb-4">The coffee cherry is the fruit of the coffee plant, and it has several layers:</p>
-          <ol className="list-decimal pl-6 space-y-2 mb-4">
-            <li><strong>Outer Skin:</strong> Thin red or yellow skin (exocarp)</li>
-            <li><strong>Pulp:</strong> Sweet, fruity flesh (mesocarp)</li>
-            <li><strong>Pectin Layer:</strong> Mucilaginous layer rich in sugars</li>
-            <li><strong>Parchment:</strong> Protective hull around the bean (endocarp)</li>
-            <li><strong>Silver Skin:</strong> Thin membrane covering the bean</li>
-            <li><strong>Bean:</strong> Actually the seed of the fruit - usually two per cherry</li>
-          </ol>
-          <p>Processing coffee involves removing these outer layers to get to the green coffee beans inside.</p>
-        </div>
-      )
+      category: "basics",
+      icon: <Sprout />,
+      priority: "medium",
+      answer: "Detailed answer about coffee cherry..."
     }
   ];
 
-  const coffeeTypes = [
-    { name: "Arabica", desc: "Smooth, complex flavor\nHigher acidity\n1.5% caffeine\nGrows at higher altitudes" },
-    { name: "Robusta", desc: "Strong, bold flavor\nHigher caffeine (2.7%)\nDisease resistant\nGrows at lower altitudes" },
-    { name: "Liberica", desc: "Unique floral aroma\nWoody, smoky flavor\nHeat tolerant\nRare variety" }
+  const categories = [
+    { id: 'all', label: 'All Topics', icon: <BookOpen />, count: faqData.length },
+    { id: 'cultivation', label: 'Cultivation', icon: <Sprout />, count: faqData.filter(f => f.category === 'cultivation').length },
+    { id: 'growth', label: 'Growth Cycle', icon: <TrendingUp />, count: faqData.filter(f => f.category === 'growth').length },
+    { id: 'varieties', label: 'Varieties', icon: <Coffee />, count: faqData.filter(f => f.category === 'varieties').length },
+    { id: 'challenges', label: 'Challenges', icon: <Shield />, count: faqData.filter(f => f.category === 'challenges').length },
+    { id: 'quality', label: 'Quality Factors', icon: <Target />, count: faqData.filter(f => f.category === 'quality').length },
+    { id: 'sustainability', label: 'Sustainability', icon: <Leaf />, count: faqData.filter(f => f.category === 'sustainability').length },
   ];
 
+  const filteredFaqs = faqData.filter(faq => {
+    const matchesSearch = searchQuery === '' || 
+      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.answer.props?.children?.toString().toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
-    <motion.div
-      className="max-w-4xl mx-auto my-16 p-8 bg-white rounded-2xl shadow-2xl"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-      <motion.header
-        className="bg-gradient-to-r from-amber-600 to-orange-500 text-white text-center py-12 px-6 rounded-xl shadow-lg mb-8"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <motion.h1
-          className="text-3xl font-bold mb-2 text-shadow-lg"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          Coffee Plantation FAQs
-        </motion.h1>
-        <motion.p
-          className="text-base opacity-90"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          Everything you need to know about coffee cultivation
-        </motion.p>
-      </motion.header>
+    <Box sx={{ 
+      py: { xs: 8, md: 12 }, 
+      px: { xs: 2, sm: 4 },
+      background: 'linear-gradient(135deg, #f0fdf4 0%, #fffbeb 50%, #fef3c7 100%)',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 left-1/4 w-64 h-64 bg-gradient-to-br from-emerald-300 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-gradient-to-br from-amber-300 to-transparent rounded-full blur-3xl" />
+      </div>
 
-      <motion.div
-        className="mb-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
-      >
-        <motion.h2
-          className="text-2xl font-semibold text-amber-800 mb-8 text-center"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1 }}
-        >
-          Frequently Asked Questions
-        </motion.h2>
-
-        <Accordion type="single" collapsible className="space-y-4">
-          {faqData.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 1.2 + index * 0.1 }}
-            >
-              <AccordionItem value={`item-${index}`} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border-0">
-                <AccordionTrigger className="px-6 py-4 bg-gradient-to-r from-amber-100 to-orange-100 hover:from-amber-200 hover:to-orange-200 transition-all duration-300 text-left">
-                  <span className="text-lg font-semibold text-amber-800">{faq.question}</span>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 bg-white text-gray-700 leading-relaxed">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            </motion.div>
-          ))}
-        </Accordion>
-
+      <Container maxWidth="lg">
+        {/* Header */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 2 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12 relative z-10"
         >
-          {coffeeTypes.map((type, index) => (
-            <motion.div
-              key={index}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 2.2 + index * 0.2 }}
-              whileHover={{ scale: 1.05, y: -10 }}
-              whileTap={{ scale: 0.95 }}
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl shadow-lg">
+              <BookOpen className="w-8 h-8 text-white" />
+            </div>
+            <Typography 
+              variant="h5" 
+              className="font-bold text-emerald-700"
+              sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
             >
-              <Card className="bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-lg transition-all duration-300 border-amber-200">
-                <CardHeader className="text-center">
-                  <CardTitle className="text-lg font-bold text-amber-800">{type.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 text-center whitespace-pre-line">{type.desc}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+              Coffee Farming Knowledge Base
+            </Typography>
+          </div>
+
+          <Typography 
+            variant="h1" 
+            className="text-3xl md:text-5xl font-black mb-4"
+            sx={{ color: 'grey.900' }}
+          >
+            Expert Answers for{' '}
+            <span className="bg-gradient-to-r from-emerald-600 to-amber-600 bg-clip-text text-transparent">
+              Coffee Farmers
+            </span>
+          </Typography>
+
+          <Typography 
+            variant="h6" 
+            className="text-lg md:text-xl text-grey-600 max-w-3xl mx-auto mb-8"
+            sx={{ fontWeight: 400 }}
+          >
+            Practical solutions and expert advice for successful coffee cultivation in East Africa
+          </Typography>
+
+          {/* Search Bar */}
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="max-w-2xl mx-auto"
+          >
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Search for coffee farming questions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search className="w-5 h-5 text-grey-400" />
+                  </InputAdornment>
+                ),
+                endAdornment: searchQuery && (
+                  <InputAdornment position="end">
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      className="p-1 hover:bg-grey-100 rounded-full"
+                    >
+                      ✕
+                    </button>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '16px',
+                  backgroundColor: 'white',
+                  borderColor: 'rgb(209, 213, 219)',
+                  '&:hover': {
+                    borderColor: 'rgb(16, 185, 129)',
+                  },
+                  '&.Mui-focused': {
+                    borderColor: 'rgb(16, 185, 129)',
+                    boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.1)',
+                  },
+                },
+              }}
+            />
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </motion.div>
+
+        {/* Categories */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mb-8 relative z-10"
+        >
+          <div className="flex flex-wrap gap-3 justify-center">
+            {categories.map((cat) => (
+              <motion.button
+                key={cat.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                  activeCategory === cat.id
+                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg'
+                    : 'bg-white text-grey-700 border border-grey-200 hover:border-emerald-300 hover:bg-emerald-50'
+                }`}
+              >
+                <span className="text-lg">{cat.icon}</span>
+                <span>{cat.label}</span>
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                  activeCategory === cat.id
+                    ? 'bg-white/20'
+                    : 'bg-grey-100 text-grey-600'
+                }`}>
+                  {cat.count}
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* FAQ Accordion */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="relative z-10"
+        >
+          <div className="space-y-4">
+            <AnimatePresence>
+              {filteredFaqs.map((faq, index) => (
+                <motion.div
+                  key={faq.id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className={`rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                    openItems.includes(faq.id)
+                      ? 'border-emerald-300 shadow-2xl'
+                      : 'border-grey-100 hover:border-emerald-200 hover:shadow-lg'
+                  }`}>
+                    <button
+                      onClick={() => toggleItem(faq.id)}
+                      className="w-full p-6 text-left bg-gradient-to-r from-white to-grey-50 hover:from-emerald-50 hover:to-emerald-50 transition-all duration-300"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={`p-3 rounded-xl ${
+                            openItems.includes(faq.id)
+                              ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white'
+                              : 'bg-emerald-100 text-emerald-600'
+                          }`}>
+                            {faq.icon}
+                          </div>
+                          <div>
+                            <Typography variant="h5" className="font-bold text-grey-900 mb-1">
+                              {faq.question}
+                            </Typography>
+                            <div className="flex items-center gap-3">
+                              <Chip
+                                label={faq.category.charAt(0).toUpperCase() + faq.category.slice(1)}
+                                size="small"
+                                className="bg-emerald-100 text-emerald-800"
+                              />
+                              {faq.priority === 'high' && (
+                                <Chip
+                                  label="Important"
+                                  size="small"
+                                  className="bg-amber-100 text-amber-800"
+                                />
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <motion.div
+                          animate={{ rotate: openItems.includes(faq.id) ? 180 : 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <ChevronDown className="w-6 h-6 text-grey-400" />
+                        </motion.div>
+                      </div>
+                    </button>
+
+                    <AnimatePresence>
+                      {openItems.includes(faq.id) && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <CardContent className="p-6 bg-white">
+                            {faq.answer}
+                          </CardContent>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            {filteredFaqs.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-12"
+              >
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-grey-100 to-grey-200 flex items-center justify-center">
+                  <Search className="w-10 h-10 text-grey-400" />
+                </div>
+                <Typography variant="h5" className="font-semibold text-grey-700 mb-2">
+                  No questions found
+                </Typography>
+                <Typography variant="body1" className="text-grey-500">
+                  Try a different search term or browse all categories
+                </Typography>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Quick Tips */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mt-12 relative z-10"
+        >
+          <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-3xl overflow-hidden">
+            <CardContent className="p-8">
+              <Grid container spacing={4} alignItems="center">
+                <Grid item xs={12} md={8}>
+                  <Typography variant="h3" className="text-2xl md:text-3xl font-bold text-white mb-4">
+                    Need Immediate Farming Advice?
+                  </Typography>
+                  <Typography variant="body1" className="text-emerald-100 mb-6">
+                    Connect with our agricultural experts for personalized guidance on your coffee farm.
+                  </Typography>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button className="px-6 py-3 bg-white text-emerald-700 font-semibold rounded-xl hover:bg-emerald-50 transition-all duration-300 shadow-lg">
+                      Contact Expert
+                    </button>
+                    <button className="px-6 py-3 border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300">
+                      Download Farming Guide
+                    </button>
+                  </div>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <div className="relative">
+                    <div className="absolute -inset-4 bg-white/10 rounded-3xl blur-xl" />
+                    <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-white/20 rounded-lg">
+                          <Users className="w-6 h-6 text-white" />
+                        </div>
+                        <Typography variant="h6" className="font-semibold text-white">
+                          Expert Support
+                        </Typography>
+                      </div>
+                      <Typography variant="body2" className="text-emerald-100">
+                        24/7 access to coffee farming specialists
+                      </Typography>
+                    </div>
+                  </div>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </Container>
+    </Box>
   );
 };
 

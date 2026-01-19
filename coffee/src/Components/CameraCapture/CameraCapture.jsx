@@ -1,141 +1,115 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { resizeImage } from '../../lib/imageUtils';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Camera, Upload, X, RotateCw, Download, 
+  Leaf, AlertCircle, CheckCircle, Loader2,
+  Image as ImageIcon, ScanLine, FileText,
+  ChevronRight, Shield, Zap, ThermometerSun
+} from 'lucide-react';
+import { 
+  Box, Typography, Grid, Container, Chip,
+  Alert, LinearProgress, IconButton
+} from '@mui/material';
 
-const TARGET_WIDTH = 224;
-const TARGET_HEIGHT = 224;
-const BACKEND_URL = 'https://healthycoffee.onrender.com';
-const LOCAL_FALLBACK = 'http://localhost:8000';
-
-
-
-export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-image`, onResult }) {
+const CameraCapture = ({ uploadUrl, onResult }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const cameraInputRef = useRef(null);
-  const galleryInputRef = useRef(null);
-
+  const fileInputRef = useRef(null);
+  
+  const [mode, setMode] = useState('idle'); // idle, camera, preview, loading, result
   const [stream, setStream] = useState(null);
   const [preview, setPreview] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [cameraActive, setCameraActive] = useState(false);
-  const [cameraLoading, setCameraLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [activeBackend, setActiveBackend] = useState(null);
-  const [backendChecking, setBackendChecking] = useState(false);
-  const [backendError, setBackendError] = useState(null);
-  const [lastFile, setLastFile] = useState(null);
+  const [error, setError] = useState(null);
+  const [backendStatus, setBackendStatus] = useState('checking');
+  const [uploadProgress, setUploadProgress] = useState(0);
 
+  // Step-by-step guide for proper leaf capture
+  const captureSteps = [
+    { icon: <Leaf />, text: "Select healthy leaf", tip: "Choose mature, representative leaf" },
+    { icon: <Camera />, text: "Clear background", tip: "Use solid color or soil background" },
+    { icon: <Shield />, text: "Good lighting", tip: "Natural daylight, no shadows" },
+    { icon: <ThermometerSun />, text: "Close-up shot", tip: "Focus on entire leaf surface" }
+  ];
+
+  // Initialize camera
   useEffect(() => {
+    checkBackendStatus();
     return () => {
       if (stream) {
-        stream.getTracks().forEach((t) => t.stop());
+        stream.getTracks().forEach(track => track.stop());
       }
     };
-  }, [stream]);
+  }, []);
+
+  const checkBackendStatus = async () => {
+    setBackendStatus('checking');
+    try {
+      const response = await fetch(`${uploadUrl}/health`, { timeout: 5000 });
+      if (response.ok) {
+        setBackendStatus('online');
+      } else {
+        setBackendStatus('offline');
+      }
+    } catch {
+      setBackendStatus('offline');
+    }
+  };
 
   const startCamera = async () => {
-    setCameraLoading(true);
     setError(null);
     try {
-      const s = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-        audio: false
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { 
+          facingMode: 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
       });
+      setStream(mediaStream);
       if (videoRef.current) {
-        videoRef.current.srcObject = s;
-        videoRef.current.play();
+        videoRef.current.srcObject = mediaStream;
       }
-      setStream(s);
-      setCameraActive(true);
+      setMode('camera');
     } catch (err) {
-      console.error('Camera access error:', err);
-      setError('Unable to access camera. Please check permissions.');
-    } finally {
-      setCameraLoading(false);
+      setError('Camera access denied. Please check permissions.');
+      setMode('idle');
     }
   };
 
   const stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach((t) => t.stop());
+      stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
-    setCameraActive(false);
+    setMode('idle');
   };
 
-  const capturePhoto = async () => {
+  const capturePhoto = () => {
     if (!videoRef.current) return;
 
-    setError(null);
-    setLoading(true);
-
-    try {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      if (!canvas) throw new Error('Canvas not available');
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Canvas context not available');
-
-      // Set canvas to target size
-      canvas.width = TARGET_WIDTH;
-      canvas.height = TARGET_HEIGHT;
-
-      // Calculate cropping to maintain aspect ratio
-      const videoAspect = video.videoWidth / video.videoHeight;
-      const targetAspect = TARGET_WIDTH / TARGET_HEIGHT;
-      let sx = 0, sy = 0, sWidth = video.videoWidth, sHeight = video.videoHeight;
-
-      if (videoAspect > targetAspect) {
-        sWidth = video.videoHeight * targetAspect;
-        sx = (video.videoWidth - sWidth) / 2;
-      } else {
-        sHeight = video.videoWidth / targetAspect;
-        sy = (video.videoHeight - sHeight) / 2;
-      }
-
-      ctx.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-
-      canvas.toBlob(async (blob) => {
-        if (!blob) throw new Error('Failed to create image blob');
-
-        const url = URL.createObjectURL(blob);
-        setPreview(url);
-        setLastFile(blob);
-
-        await uploadAndAnalyzeImage(blob);
-        stopCamera();
-      }, 'image/jpeg', 0.95);
-    } catch (err) {
-      console.error('Capture error:', err);
-      setError('Failed to capture photo');
-      setLoading(false);
-    }
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    
+    // Set canvas size
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    
+    // Draw video frame
+    context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    
+    // Get image data URL
+    const imageData = canvas.toDataURL('image/jpeg');
+    setPreview(imageData);
+    setMode('preview');
+    stopCamera();
   };
 
-  const openCameraFile = () => {
-    if (cameraInputRef.current) {
-      cameraInputRef.current.setAttribute('capture', 'environment');
-      cameraInputRef.current.click();
-    }
-  };
-
-  const openGallery = () => {
-    if (galleryInputRef.current) {
-      galleryInputRef.current.removeAttribute('capture');
-      galleryInputRef.current.click();
-    }
-  };
-
-  const handleFileSelect = async (e) => {
-    const file = e.target.files?.[0];
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
     if (!file) return;
 
-    e.target.value = '';
-
+    // Validate file
     if (!file.type.startsWith('image/')) {
       setError('Please select an image file');
       return;
@@ -146,710 +120,597 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
       return;
     }
 
-    const url = URL.createObjectURL(file);
-    setPreview(url);
-    setLastFile(file);
-    await uploadAndAnalyzeImage(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPreview(e.target.result);
+      setMode('preview');
+      // Store file for upload
+      fileInputRef.current.file = file;
+    };
+    reader.readAsDataURL(file);
+    event.target.value = ''; // Reset input
   };
 
-  const uploadAndAnalyzeImage = async (file) => {
+  const analyzeImage = async () => {
+    if (!preview) return;
+
+    setMode('loading');
     setError(null);
-    setLoading(true);
-    setResult(null);
+    setUploadProgress(0);
 
     try {
-      // Resize image to 224x224
-      const resizedBlob = await resizeImage(file);
-
-      // Ensure we have a working backend
-      let backendToUse = activeBackend;
-      if (!backendToUse) {
-        backendToUse = await ensureBackend();
-      }
-
-      if (!backendToUse && !uploadUrl) {
-        throw new Error('No backend available for analysis. Please check your connection and try again.');
-      }
-
-      // Build the final endpoint using the provided uploadUrl and the detected backend base if needed
-      const buildEndpoint = (backendBase) => {
-        try {
-          const parsed = new URL(uploadUrl);
-          if (backendBase) {
-            const base = new URL(backendBase);
-            return `${base.origin}${parsed.pathname}${parsed.search}`;
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
           }
-          return parsed.toString();
-        } catch (e) {
-          // uploadUrl might be a relative path like '/api/upload-image'
-          if (backendBase) return backendBase.replace(/\/$/, '') + (uploadUrl.startsWith('/') ? uploadUrl : '/' + uploadUrl);
-          return uploadUrl;
-        }
-      };
+          return prev + 10;
+        });
+      }, 200);
 
-      const endpoint = buildEndpoint(backendToUse);
-      if (!endpoint) throw new Error('Failed to build backend endpoint');
+      // Convert base64 to blob
+      const response = await fetch(preview);
+      const blob = await response.blob();
 
-      // Upload resized image as FormData
-      const fd = new FormData();
-      fd.append('image', resizedBlob, 'resized_image.jpg');
+      // Create form data
+      const formData = new FormData();
+      formData.append('image', blob, 'leaf-image.jpg');
 
-      const resp = await fetch(endpoint, {
+      // Upload to backend
+      const uploadResponse = await fetch(uploadUrl, {
         method: 'POST',
-        headers: {
-          Accept: 'application/json'
-        },
-        body: fd
+        body: formData
       });
 
-      if (!resp.ok) {
-        throw new Error(`Server responded with status: ${resp.status}`);
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (!uploadResponse.ok) {
+        throw new Error('Analysis failed');
       }
 
-      let json;
-      try {
-        json = await resp.json();
-      } catch (e) {
-        throw new Error('Invalid JSON response from server');
-      }
+      const data = await uploadResponse.json();
+      setResult(data);
+      setMode('result');
+      if (onResult) onResult(data);
 
-      if (json.error) throw new Error(json.error);
-
-      setResult(json);
-      if (onResult) onResult(json);
     } catch (err) {
-      console.error('Upload/analysis error:', err);
-      setError(err.message || 'Failed to analyze image');
-    } finally {
-      setLoading(false);
+      setError('Failed to analyze image. Please try again.');
+      setMode('preview');
+      setUploadProgress(0);
     }
   };
-
-  const checkBackend = async (baseUrl, timeoutMs = 4000) => {
-    try {
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const resp = await fetch(`${baseUrl}/health`, {
-          method: 'GET',
-          signal: controller.signal
-        });
-        clearTimeout(id);
-        return resp.ok;
-      } finally {
-        clearTimeout(id);
-      }
-    } catch (err) {
-      return false;
-    }
-  };
-
-  const ensureBackend = async () => {
-    setBackendChecking(true);
-    setBackendError(null);
-    try {
-      // In production, prioritize the Render backend
-      if (await checkBackend(BACKEND_URL)) {
-        setActiveBackend(BACKEND_URL);
-        return BACKEND_URL;
-      }
-
-      // Fallback to localhost for development
-      if (await checkBackend(LOCAL_FALLBACK)) {
-        setActiveBackend(LOCAL_FALLBACK);
-        return LOCAL_FALLBACK;
-      }
-
-      // Finally check explicit host from uploadUrl if it's absolute
-      try {
-        const parsed = new URL(uploadUrl);
-        const origin = parsed.origin;
-        if (await checkBackend(origin)) {
-          setActiveBackend(origin);
-          return origin;
-        }
-      } catch (e) {
-        // uploadUrl not absolute, fall back to defaults
-      }
-
-      setActiveBackend(null);
-      setBackendError('No reachable backend');
-      return null;
-    } finally {
-      setBackendChecking(false);
-    }
-  };
-
-  const retryBackend = async () => {
-    setError(null);
-    const selected = await ensureBackend();
-    if (selected && lastFile) {
-      await uploadAndAnalyzeImage(lastFile);
-    }
-  };
-
-
 
   const resetCapture = () => {
     setPreview('');
-    setError(null);
-    setLoading(false);
     setResult(null);
-    stopCamera();
-
-    if (cameraInputRef.current) cameraInputRef.current.value = '';
-    if (galleryInputRef.current) galleryInputRef.current.value = '';
+    setError(null);
+    setUploadProgress(0);
+    setMode('idle');
   };
 
-  const downloadPDF = async () => {
-    if (!result) return;
-
-    try {
-      // Create a temporary div to hold the content for PDF generation
-      const pdfContent = document.createElement('div');
-      pdfContent.style.width = '800px';
-      pdfContent.style.padding = '20px';
-      pdfContent.style.fontFamily = 'Arial, sans-serif';
-      pdfContent.style.backgroundColor = '#ffffff';
-      pdfContent.style.color = '#1f2937';
-
-      // Add header
-      pdfContent.innerHTML = `
-        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #10b981; padding-bottom: 20px;">
-          <h1 style="color: #10b981; font-size: 28px; margin: 0;">🌿 Leaf Analysis Report</h1>
-          <p style="color: #6b7280; margin: 10px 0 0 0;">Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-        </div>
-      `;
-
-      // Add deficiency prediction if exists
-      if (result.deficiency_prediction) {
-        pdfContent.innerHTML += `
-          <div style="margin-bottom: 25px; padding: 20px; background-color: #eff6ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
-            <h2 style="color: #1e40af; margin: 0 0 15px 0; font-size: 20px;">🧪 Nutrient Analysis</h2>
-            <div style="margin-bottom: 10px;">
-              <strong style="font-size: 18px; color: #1f2937;">${result.deficiency_prediction.class}</strong>
-            </div>
-            <div style="margin-bottom: 15px;">
-              <strong>Confidence:</strong> ${result.deficiency_prediction.confidence ? Math.round(result.deficiency_prediction.confidence * 100) : 'N/A'}%
-            </div>
-            ${result.deficiency_prediction.explanation ? `<p style="margin-bottom: 15px; color: #374151;">${result.deficiency_prediction.explanation}</p>` : ''}
-            ${result.deficiency_prediction.recommendation ? `<div style="background-color: #dbeafe; padding: 10px; border-radius: 6px;"><strong>Recommendation:</strong> ${result.deficiency_prediction.recommendation}</div>` : ''}
-          </div>
-        `;
-      }
-
-      // Add disease prediction if exists
-      if (result.disease_prediction) {
-        pdfContent.innerHTML += `
-          <div style="margin-bottom: 25px; padding: 20px; background-color: #fef2f2; border-radius: 8px; border-left: 4px solid #ef4444;">
-            <h2 style="color: #dc2626; margin: 0 0 15px 0; font-size: 20px;">🔬 Disease Detection</h2>
-            <div style="margin-bottom: 10px;">
-              <strong style="font-size: 18px; color: #1f2937;">${result.disease_prediction.class}</strong>
-            </div>
-            <div style="margin-bottom: 15px;">
-              <strong>Confidence:</strong> ${result.disease_prediction.confidence ? Math.round(result.disease_prediction.confidence * 100) : 'N/A'}%
-            </div>
-            ${result.disease_prediction.explanation ? `<p style="margin-bottom: 15px; color: #374151;">${result.disease_prediction.explanation}</p>` : ''}
-            ${result.disease_prediction.recommendation ? `<div style="background-color: #fee2e2; padding: 10px; border-radius: 6px;"><strong>Recommendation:</strong> ${result.disease_prediction.recommendation}</div>` : ''}
-          </div>
-        `;
-      }
-
-      // Add recommendations if exist
-      if (result.recommendations) {
-        if (result.recommendations.disease_recommendations) {
-          pdfContent.innerHTML += `
-            <div style="margin-bottom: 25px; padding: 20px; background-color: #faf5ff; border-radius: 8px; border-left: 4px solid #8b5cf6;">
-              <h2 style="color: #7c3aed; margin: 0 0 15px 0; font-size: 20px;">🛡️ Disease Management Plan</h2>
-              ${result.recommendations.disease_recommendations.overview ? `<p style="margin-bottom: 15px; color: #374151;"><strong>Overview:</strong> ${result.recommendations.disease_recommendations.overview}</p>` : ''}
-              ${result.recommendations.disease_recommendations.symptoms ? `
-                <div style="margin-bottom: 15px;">
-                  <strong>Symptoms:</strong>
-                  <ul style="margin: 5px 0; padding-left: 20px;">
-                    ${result.recommendations.disease_recommendations.symptoms.map(symptom => `<li>${symptom}</li>`).join('')}
-                  </ul>
-                </div>
-              ` : ''}
-              ${result.recommendations.disease_recommendations.integrated_management ? `
-                <div>
-                  <strong>Management Strategies:</strong>
-                  ${result.recommendations.disease_recommendations.integrated_management.cultural_practices ? `
-                    <div style="margin-top: 10px;">
-                      <em>Cultural Practices:</em>
-                      <ul style="margin: 5px 0; padding-left: 20px;">
-                        ${result.recommendations.disease_recommendations.integrated_management.cultural_practices.map(practice => `<li>${practice}</li>`).join('')}
-                      </ul>
-                    </div>
-                  ` : ''}
-                  ${result.recommendations.disease_recommendations.integrated_management.chemical_control ? `
-                    <div style="margin-top: 10px;">
-                      <em>Chemical Control:</em>
-                      <ul style="margin: 5px 0; padding-left: 20px;">
-                        ${result.recommendations.disease_recommendations.integrated_management.chemical_control.map(control => `<li>${control}</li>`).join('')}
-                      </ul>
-                    </div>
-                  ` : ''}
-                </div>
-              ` : ''}
-            </div>
-          `;
-        }
-
-        if (result.recommendations.deficiency_recommendations) {
-          pdfContent.innerHTML += `
-            <div style="margin-bottom: 25px; padding: 20px; background-color: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
-              <h2 style="color: #059669; margin: 0 0 15px 0; font-size: 20px;">🌱 Nutrition Management</h2>
-              ${result.recommendations.deficiency_recommendations.symptoms ? `
-                <div style="margin-bottom: 15px;">
-                  <strong>Symptoms:</strong>
-                  <ul style="margin: 5px 0; padding-left: 20px;">
-                    ${result.recommendations.deficiency_recommendations.symptoms.map(symptom => `<li>${symptom}</li>`).join('')}
-                  </ul>
-                </div>
-              ` : ''}
-              ${result.recommendations.deficiency_recommendations.basic ? `
-                <div>
-                  <strong>Basic Recommendations:</strong>
-                  <ul style="margin: 5px 0; padding-left: 20px;">
-                    ${result.recommendations.deficiency_recommendations.basic.map(rec => `<li>${rec}</li>`).join('')}
-                  </ul>
-                </div>
-              ` : ''}
-            </div>
-          `;
-        }
-      }
-
-      // Add footer
-      pdfContent.innerHTML += `
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #d1d5db; text-align: center; color: #6b7280; font-size: 12px;">
-          <p>This report was generated by Healthy Coffee Leaf Analysis System</p>
-          <p>For more information, visit our website or contact support</p>
-        </div>
-      `;
-
-      // Temporarily add to DOM for html2canvas
-      document.body.appendChild(pdfContent);
-
-      // Generate PDF
-      const canvas = await html2canvas(pdfContent, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff'
-      });
-
-      // Remove temporary element
-      document.body.removeChild(pdfContent);
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 295; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-
-      let position = 0;
-
-      // Add first page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      // Add additional pages if needed
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      // Download the PDF
-      const fileName = `leaf-analysis-report-${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(fileName);
-
-    } catch (error) {
-      console.error('PDF generation error:', error);
-      setError('Failed to generate PDF report');
-    }
+  const retryAnalysis = () => {
+    setResult(null);
+    setMode('preview');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 flex items-center justify-center">
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg hover:scale-105 transition-transform">
-            <span className="text-4xl text-white">🌿</span>
+    <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-8"
+      >
+        <div className="inline-flex items-center gap-3 mb-4">
+          <div className="p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl shadow-lg">
+            <ScanLine className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-800 mb-2">Leaf Analysis</h1>
-          <p className="text-slate-600">Capture or upload leaf image for analysis</p>
+          <Typography 
+            variant="h4" 
+            className="font-black"
+            sx={{ color: 'grey.900' }}
+          >
+            AI Leaf Analysis
+          </Typography>
         </div>
+        
+        <Typography variant="body1" className="text-grey-600 max-w-2xl mx-auto">
+          Capture or upload leaf images for instant disease and nutrient analysis
+        </Typography>
+      </motion.div>
 
-        {cameraActive && (
-          <div className="mb-8">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-black">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-80 object-contain"
-              />
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4">
-                <button
-                  onClick={capturePhoto}
-                  className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95"
-                >
-                  <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full border-4 border-white"></div>
-                </button>
-              </div>
-            </div>
-            <button
-              onClick={stopCamera}
-              className="mt-4 w-full py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
-            >
-              <span>✕</span>
-              Cancel Camera
-            </button>
-          </div>
-        )}
-
-        {preview && !cameraActive && (
-          <div className="mb-8">
-            <div className="relative rounded-2xl overflow-hidden shadow-xl">
-              <img
-                src={preview}
-                alt="Captured leaf"
-                className="w-full h-80 object-contain bg-slate-100"
-              />
-              <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-                Preview
-              </div>
-            </div>
-
-            {!loading && (
-              <button
-                onClick={resetCapture}
-                className="mt-4 w-full py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-              >
-                <span>🔄</span>
-                Capture New
-              </button>
-            )}
-          </div>
-        )}
-
-        {cameraLoading && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-emerald-200 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-slate-600 font-medium">Accessing camera...</p>
-          </div>
-        )}
-
-        {loading && (
-          <div className="text-center py-12">
-            <div className="relative mx-auto w-20 h-20 mb-6">
-              <div className="absolute inset-0 border-4 border-emerald-200 rounded-full animate-pulse"></div>
-              <div className="absolute inset-0 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-800 mb-2">Analyzing Image</h3>
-            <p className="text-slate-600">Connecting to AI analysis service...</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="bg-gradient-to-r from-rose-50 to-pink-50 rounded-2xl border border-rose-200 p-6 mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-rose-500 to-pink-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl text-white">⚠️</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-rose-700 font-medium">{error}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                {backendChecking ? (
-                  <div className="px-4 py-2 bg-white border border-rose-300 text-rose-700 rounded-lg font-medium">
-                    Checking backends...
-                  </div>
-                ) : (backendError || (error && error.includes('No backend'))) ? (
-                  <>
-                    <button
-                      onClick={retryBackend}
-                      className="px-3 py-2 bg-white border border-emerald-300 text-emerald-700 rounded-lg font-medium hover:bg-emerald-50 transition-colors"
+      {/* Main Content Grid */}
+      <Grid container spacing={4}>
+        {/* Left Column - Capture Guide */}
+        <Grid item xs={12} md={4}>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <Box className="sticky top-4">
+              {/* Capture Guide */}
+              <Box className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-3xl p-6 border border-emerald-200 mb-6">
+                <Typography variant="h6" className="font-bold text-emerald-800 mb-4 flex items-center gap-2">
+                  <Leaf className="w-5 h-5" />
+                  Capture Tips
+                </Typography>
+                <div className="space-y-4">
+                  {captureSteps.map((step, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-start gap-3 p-3 bg-white/80 rounded-xl"
                     >
-                      Retry Backend
-                    </button>
-                    <button
-                      onClick={resetCapture}
-                      className="px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={resetCapture}
-                    className="px-4 py-2 bg-white border border-rose-300 text-rose-700 rounded-lg font-medium hover:bg-rose-50 transition-colors"
-                  >
-                    OK
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {!preview && !loading && !cameraActive && !cameraLoading && !result && (
-          <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <button
-                onClick={startCamera}
-                className="group relative py-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg flex flex-col items-center justify-center gap-3 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <span className="text-4xl relative z-10">📷</span>
-                <span className="relative z-10">Use Camera</span>
-                <span className="text-sm font-normal opacity-90 relative z-10">Live capture</span>
-                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
-              </button>
-
-              <button
-                onClick={openGallery}
-                className="group relative py-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg flex flex-col items-center justify-center gap-3 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <span className="text-4xl relative z-10">🖼️</span>
-                <span className="relative z-10">From Gallery</span>
-                <span className="text-sm font-normal opacity-90 relative z-10">Upload image</span>
-                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
-              </button>
-            </div>
-
-            <div className="text-center">
-              <button
-                onClick={openCameraFile}
-                className="text-slate-600 hover:text-slate-800 text-sm font-medium hover:underline"
-              >
-                Can't access camera? Use file picker
-              </button>
-            </div>
-          </div>
-        )}
-
-        {result && !loading && (
-          <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
-              <span className="text-emerald-500">📊</span>
-              Analysis Results
-            </h2>
-
-            <div className="space-y-8">
-              {result.deficiency_prediction && (
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
-                  <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                    <span className="text-blue-500">🧪</span>
-                    Nutrient Analysis
-                  </h3>
-                  <div className="mb-4">
-                    <div className="text-xl font-bold text-slate-800 mb-2">
-                      {result.deficiency_prediction.class}
-                    </div>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="flex-1 bg-slate-200 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full"
-                          style={{ width: `${result.deficiency_prediction.confidence ? Math.round(result.deficiency_prediction.confidence * 100) : 0}%` }}
-                        ></div>
+                      <div className="p-2 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-lg">
+                        {step.icon}
                       </div>
-                      <span className="font-semibold text-slate-700">
-                        {result.deficiency_prediction.confidence ? Math.round(result.deficiency_prediction.confidence * 100) : 'N/A'}% confidence
-                      </span>
-                    </div>
-                    {result.deficiency_prediction.explanation && (
-                      <p className="text-slate-700 mb-3">{result.deficiency_prediction.explanation}</p>
-                    )}
-                    {result.deficiency_prediction.recommendation && (
-                      <div className="bg-blue-100/80 rounded-lg p-3">
-                        <div className="font-semibold text-blue-800 mb-1">Recommendation:</div>
-                        <p className="text-blue-700">{result.deficiency_prediction.recommendation}</p>
+                      <div>
+                        <Typography variant="body2" className="font-semibold text-grey-800">
+                          {step.text}
+                        </Typography>
+                        <Typography variant="caption" className="text-grey-600">
+                          {step.tip}
+                        </Typography>
                       </div>
-                    )}
-                  </div>
+                    </motion.div>
+                  ))}
                 </div>
-              )}
+              </Box>
 
-              {result.disease_prediction && (
-                <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl p-5 border border-rose-100">
-                  <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                    <span className="text-rose-500">🔬</span>
-                    Disease Detection
-                  </h3>
-                  <div className="mb-4">
-                    <div className="text-xl font-bold text-slate-800 mb-2">
-                      {result.disease_prediction.class}
+              {/* Backend Status */}
+              <Box className={`p-4 rounded-2xl border ${
+                backendStatus === 'online' 
+                  ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
+                  : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${
+                      backendStatus === 'online' ? 'bg-emerald-500' : 'bg-amber-500'
+                    }`} />
+                    <div>
+                      <Typography variant="body2" className="font-semibold text-grey-800">
+                        AI Service
+                      </Typography>
+                      <Typography variant="caption" className="text-grey-600">
+                        {backendStatus === 'online' ? 'Ready for analysis' : 'Checking connection'}
+                      </Typography>
                     </div>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="flex-1 bg-slate-200 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-rose-500 to-pink-600 h-2 rounded-full"
-                          style={{ width: `${result.disease_prediction.confidence ? Math.round(result.disease_prediction.confidence * 100) : 0}%` }}
-                        ></div>
-                      </div>
-                      <span className="font-semibold text-slate-700">
-                        {result.disease_prediction.confidence ? Math.round(result.disease_prediction.confidence * 100) : 'N/A'}% confidence
-                      </span>
-                    </div>
-                    {result.disease_prediction.explanation && (
-                      <p className="text-slate-700 mb-3">{result.disease_prediction.explanation}</p>
-                    )}
-                    {result.disease_prediction.recommendation && (
-                      <div className="bg-rose-100/80 rounded-lg p-3">
-                        <div className="font-semibold text-rose-800 mb-1">Recommendation:</div>
-                        <p className="text-rose-700">{result.disease_prediction.recommendation}</p>
-                      </div>
-                    )}
                   </div>
+                  <IconButton size="small" onClick={checkBackendStatus}>
+                    <RotateCw className="w-4 h-4" />
+                  </IconButton>
                 </div>
-              )}
+              </Box>
+            </Box>
+          </motion.div>
+        </Grid>
 
-              {result.recommendations && (
-                <div className="space-y-6">
-                  {result.recommendations.disease_recommendations && (
-                    <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 border border-purple-100">
-                      <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                        <span className="text-purple-500">🛡️</span>
-                        Disease Management Plan
-                      </h3>
+        {/* Right Column - Main Interface */}
+        <Grid item xs={12} md={8}>
+          <AnimatePresence mode="wait">
+            {/* IDLE MODE - Selection Screen */}
+            {mode === 'idle' && (
+              <motion.div
+                key="idle"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+              >
+                <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-8">
+                  <div className="text-center mb-8">
+                    <Typography variant="h5" className="font-bold text-grey-900 mb-2">
+                      Select Capture Method
+                    </Typography>
+                    <Typography variant="body2" className="text-grey-600">
+                      Get instant analysis for your coffee leaves
+                    </Typography>
+                  </div>
 
-                      {result.recommendations.disease_recommendations.overview && (
-                        <div className="mb-4">
-                          <div className="font-semibold text-purple-800 mb-2">Overview:</div>
-                          <p className="text-slate-700">{result.recommendations.disease_recommendations.overview}</p>
-                        </div>
-                      )}
-
-                      {result.recommendations.disease_recommendations.symptoms && (
-                        <div className="mb-4">
-                          <div className="font-semibold text-purple-800 mb-2">Symptoms:</div>
-                          <ul className="space-y-1">
-                            {result.recommendations.disease_recommendations.symptoms.map((symptom, idx) => (
-                              <li key={idx} className="flex items-start gap-2">
-                                <span className="text-purple-500 mt-1">•</span>
-                                <span className="text-slate-700">{symptom}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {result.recommendations.disease_recommendations.integrated_management && (
-                        <div>
-                          <div className="font-semibold text-purple-800 mb-2">Management Strategies:</div>
-                          <div className="grid md:grid-cols-2 gap-4">
-                            {result.recommendations.disease_recommendations.integrated_management.cultural_practices && (
-                              <div>
-                                <div className="font-medium text-slate-800 mb-1">Cultural:</div>
-                                <ul className="space-y-1">
-                                  {result.recommendations.disease_recommendations.integrated_management.cultural_practices.map((practice, idx) => (
-                                    <li key={idx} className="text-sm text-slate-700">• {practice}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {result.recommendations.disease_recommendations.integrated_management.chemical_control && (
-                              <div>
-                                <div className="font-medium text-slate-800 mb-1">Chemical:</div>
-                                <ul className="space-y-1">
-                                  {result.recommendations.disease_recommendations.integrated_management.chemical_control.map((control, idx) => (
-                                    <li key={idx} className="text-sm text-slate-700">• {control}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
+                  <Grid container spacing={4}>
+                    {/* Camera Option */}
+                    <Grid item xs={12} md={6}>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={startCamera}
+                        className="w-full group"
+                      >
+                        <Box className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 rounded-2xl p-8 text-center hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
+                          <div className="relative inline-flex mb-4">
+                            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full blur-lg opacity-30 group-hover:opacity-50" />
+                            <div className="relative p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full">
+                              <Camera className="w-8 h-8 text-white" />
+                            </div>
                           </div>
-                        </div>
-                      )}
+                          <Typography variant="h6" className="font-bold text-emerald-800 mb-2">
+                            Use Camera
+                          </Typography>
+                          <Typography variant="body2" className="text-grey-600">
+                            Real-time capture
+                          </Typography>
+                        </Box>
+                      </motion.button>
+                    </Grid>
+
+                    {/* Upload Option */}
+                    <Grid item xs={12} md={6}>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full group"
+                      >
+                        <Box className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-8 text-center hover:border-blue-300 hover:shadow-lg transition-all duration-300">
+                          <div className="relative inline-flex mb-4">
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full blur-lg opacity-30 group-hover:opacity-50" />
+                            <div className="relative p-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full">
+                              <Upload className="w-8 h-8 text-white" />
+                            </div>
+                          </div>
+                          <Typography variant="h6" className="font-bold text-blue-800 mb-2">
+                            Upload Image
+                          </Typography>
+                          <Typography variant="body2" className="text-grey-600">
+                            From gallery or files
+                          </Typography>
+                        </Box>
+                      </motion.button>
+                    </Grid>
+                  </Grid>
+
+                  {/* File Input */}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </Box>
+              </motion.div>
+            )}
+
+            {/* CAMERA MODE */}
+            {mode === 'camera' && (
+              <motion.div
+                key="camera"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <Box className="bg-black rounded-3xl overflow-hidden shadow-2xl">
+                  {/* Camera Feed */}
+                  <div className="relative aspect-video">
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      className="w-full h-full object-cover"
+                    />
+                    
+                    {/* Camera Overlay */}
+                    <div className="absolute inset-0">
+                      {/* Capture Frame */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-64 h-64 border-2 border-white/50 rounded-2xl" />
+                      </div>
+                      
+                      {/* Controls */}
+                      <div className="absolute bottom-8 left-0 right-0 flex justify-center items-center gap-6">
+                        <IconButton
+                          onClick={stopCamera}
+                          className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+                        >
+                          <X className="w-6 h-6" />
+                        </IconButton>
+                        
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
+                          onClick={capturePhoto}
+                          className="relative"
+                        >
+                          <div className="w-20 h-20 bg-white rounded-full p-1">
+                            <div className="w-full h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full" />
+                          </div>
+                        </motion.button>
+                        
+                        <IconButton
+                          onClick={() => {
+                            // Handle camera flip (front/back)
+                          }}
+                          className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+                        >
+                          <RotateCw className="w-6 h-6" />
+                        </IconButton>
+                      </div>
                     </div>
-                  )}
+                  </div>
+                </Box>
+              </motion.div>
+            )}
 
-                  {result.recommendations.deficiency_recommendations && (
-                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">
-                      <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                        <span className="text-emerald-500">🌱</span>
-                        Nutrition Management
-                      </h3>
-
-                      {result.recommendations.deficiency_recommendations.symptoms && (
-                        <div className="mb-4">
-                          <div className="font-semibold text-emerald-800 mb-2">Symptoms:</div>
-                          <ul className="space-y-1">
-                            {result.recommendations.deficiency_recommendations.symptoms.map((symptom, idx) => (
-                              <li key={idx} className="flex items-start gap-2">
-                                <span className="text-emerald-500 mt-1">•</span>
-                                <span className="text-slate-700">{symptom}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {result.recommendations.deficiency_recommendations.basic && (
-                        <div>
-                          <div className="font-semibold text-emerald-800 mb-2">Basic Recommendations:</div>
-                          <ul className="space-y-2">
-                            {result.recommendations.deficiency_recommendations.basic.map((rec, idx) => (
-                              <li key={idx} className="flex items-start gap-2">
-                                <span className="text-emerald-500 mt-1">•</span>
-                                <span className="text-slate-700">{rec}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+            {/* PREVIEW MODE */}
+            {mode === 'preview' && (
+              <motion.div
+                key="preview"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 overflow-hidden">
+                  {/* Preview Image */}
+                  <div className="relative">
+                    <img
+                      src={preview}
+                      alt="Leaf preview"
+                      className="w-full h-96 object-contain bg-grey-50"
+                    />
+                    <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                      Preview
                     </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+                  </div>
 
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          style={{ display: 'none' }}
-          ref={cameraInputRef}
-          onChange={handleFileSelect}
-        />
-        <input
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-          ref={galleryInputRef}
-          onChange={handleFileSelect}
-        />
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
+                  {/* Action Buttons */}
+                  <Box className="p-6">
+                    <Grid container spacing={3}>
+                      <Grid item xs={12} md={6}>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={analyzeImage}
+                          disabled={backendStatus !== 'online'}
+                          className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold ${
+                            backendStatus === 'online'
+                              ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:shadow-lg'
+                              : 'bg-grey-100 text-grey-400 cursor-not-allowed'
+                          }`}
+                        >
+                          <Zap className="w-5 h-5" />
+                          {backendStatus === 'online' ? 'Analyze Now' : 'Service Offline'}
+                        </motion.button>
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={resetCapture}
+                          className="w-full flex items-center justify-center gap-3 px-6 py-4 border-2 border-grey-300 text-grey-700 font-semibold rounded-xl hover:bg-grey-50"
+                        >
+                          <X className="w-5 h-5" />
+                          Capture New
+                        </motion.button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Box>
+              </motion.div>
+            )}
 
-        {result && (
-          <div className="space-y-4">
-            <button
-              onClick={downloadPDF}
-              className="w-full py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-3 shadow-lg"
+            {/* LOADING MODE */}
+            {mode === 'loading' && (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-8 text-center">
+                  {/* Animated Loader */}
+                  <div className="relative w-24 h-24 mx-auto mb-6">
+                    <div className="absolute inset-0 border-4 border-emerald-200 rounded-full animate-pulse" />
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-4 border-4 border-emerald-500 border-t-transparent rounded-full"
+                    />
+                    <Leaf className="w-12 h-12 text-emerald-500 absolute inset-0 m-auto" />
+                  </div>
+
+                  <Typography variant="h5" className="font-bold text-grey-900 mb-2">
+                    Analyzing Leaf
+                  </Typography>
+                  
+                  <Typography variant="body2" className="text-grey-600 mb-6">
+                    AI is examining disease patterns and nutrient levels
+                  </Typography>
+
+                  {/* Progress Bar */}
+                  <Box className="max-w-md mx-auto">
+                    <LinearProgress 
+                      variant="determinate" 
+                      value={uploadProgress}
+                      sx={{ 
+                        height: 8,
+                        borderRadius: 4,
+                        backgroundColor: 'rgb(209, 213, 219)',
+                        '& .MuiLinearProgress-bar': {
+                          backgroundColor: '#10b981',
+                          borderRadius: 4
+                        }
+                      }}
+                    />
+                    <Typography variant="caption" className="text-grey-500 mt-2 block">
+                      {uploadProgress}% complete
+                    </Typography>
+                  </Box>
+                </Box>
+              </motion.div>
+            )}
+
+            {/* RESULT MODE */}
+            {mode === 'result' && result && (
+              <motion.div
+                key="result"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <Box className="space-y-6">
+                  {/* Results Summary */}
+                  <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <Typography variant="h5" className="font-bold text-grey-900">
+                        Analysis Results
+                      </Typography>
+                      <Chip 
+                        label="AI Powered"
+                        className="bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800"
+                        icon={<Zap className="w-4 h-4" />}
+                      />
+                    </div>
+
+                    <Grid container spacing={4}>
+                      {/* Disease Detection */}
+                      {result.disease_prediction && (
+                        <Grid item xs={12} md={6}>
+                          <Box className={`p-4 rounded-2xl border ${
+                            result.disease_prediction.class === 'Healthy' 
+                              ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
+                              : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'
+                          }`}>
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className={`p-2 rounded-lg ${
+                                result.disease_prediction.class === 'Healthy' 
+                                  ? 'bg-emerald-100 text-emerald-600'
+                                  : 'bg-amber-100 text-amber-600'
+                              }`}>
+                                <Shield className="w-5 h-5" />
+                              </div>
+                              <Typography variant="h6" className="font-bold">
+                                Disease Status
+                              </Typography>
+                            </div>
+                            <Typography variant="h4" className={`font-black mb-2 ${
+                              result.disease_prediction.class === 'Healthy' 
+                                ? 'text-emerald-700'
+                                : 'text-amber-700'
+                            }`}>
+                              {result.disease_prediction.class}
+                            </Typography>
+                            <div className="flex items-center justify-between">
+                              <Typography variant="body2" className="text-grey-600">
+                                Confidence
+                              </Typography>
+                              <Typography variant="body2" className="font-semibold text-grey-800">
+                                {Math.round(result.disease_prediction.confidence * 100)}%
+                              </Typography>
+                            </div>
+                          </Box>
+                        </Grid>
+                      )}
+
+                      {/* Nutrient Analysis */}
+                      {result.deficiency_prediction && (
+                        <Grid item xs={12} md={6}>
+                          <Box className={`p-4 rounded-2xl border ${
+                            result.deficiency_prediction.class === 'Healthy' 
+                              ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
+                              : 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'
+                          }`}>
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className={`p-2 rounded-lg ${
+                                result.deficiency_prediction.class === 'Healthy' 
+                                  ? 'bg-emerald-100 text-emerald-600'
+                                  : 'bg-blue-100 text-blue-600'
+                              }`}>
+                                <Leaf className="w-5 h-5" />
+                              </div>
+                              <Typography variant="h6" className="font-bold">
+                                Nutrient Status
+                              </Typography>
+                            </div>
+                            <Typography variant="h4" className={`font-black mb-2 ${
+                              result.deficiency_prediction.class === 'Healthy' 
+                                ? 'text-emerald-700'
+                                : 'text-blue-700'
+                            }`}>
+                              {result.deficiency_prediction.class}
+                            </Typography>
+                            <div className="flex items-center justify-between">
+                              <Typography variant="body2" className="text-grey-600">
+                                Confidence
+                              </Typography>
+                              <Typography variant="body2" className="font-semibold text-grey-800">
+                                {Math.round(result.deficiency_prediction.confidence * 100)}%
+                              </Typography>
+                            </div>
+                          </Box>
+                        </Grid>
+                      )}
+                    </Grid>
+                  </Box>
+
+                  {/* Action Buttons */}
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={4}>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={resetCapture}
+                        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold rounded-xl hover:shadow-lg"
+                      >
+                        <Leaf className="w-5 h-5" />
+                        New Analysis
+                      </motion.button>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {/* Download PDF */}}
+                        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg"
+                      >
+                        <FileText className="w-5 h-5" />
+                        PDF Report
+                      </motion.button>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={retryAnalysis}
+                        className="w-full flex items-center justify-center gap-3 px-6 py-4 border-2 border-grey-300 text-grey-700 font-semibold rounded-xl hover:bg-grey-50"
+                      >
+                        <RotateCw className="w-5 h-5" />
+                        Retry Analysis
+                      </motion.button>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Error Display */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6"
             >
-              <span>📄</span>
-              Download PDF Report
-            </button>
-            <button
-              onClick={resetCapture}
-              className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-3 shadow-lg"
-            >
-              <span>🌿</span>
-              Analyze Another Leaf
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+              <Alert 
+                severity="error"
+                onClose={() => setError(null)}
+                className="rounded-2xl"
+              >
+                {error}
+              </Alert>
+            </motion.div>
+          )}
+        </Grid>
+      </Grid>
+
+      {/* Hidden Canvas for Capture */}
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+    </Container>
   );
-}
+};
+
+export default CameraCapture;
