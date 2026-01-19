@@ -32,6 +32,7 @@ const AnimatedCounter = ({ from, to, duration = 2, suffix = '' }) => {
 
 const Stat = () => {
   const [activeStat, setActiveStat] = useState(null);
+  const [touchActive, setTouchActive] = useState(null);
 
   // Enhanced stats with farmer-relevant data
   const stats = [
@@ -53,8 +54,8 @@ const Stat = () => {
       icon: Coffee,
       value: 850,
       suffix: 'K',
-      label: "Tonnes Produced Annually",
-      description: "Total coffee production in East Africa",
+      label: "Tonnes Produced",
+      description: "Total coffee production annually",
       color: "amber",
       details: [
         "Arabica: 600K tonnes",
@@ -67,11 +68,11 @@ const Stat = () => {
       icon: Shield,
       value: 95,
       suffix: '%',
-      label: "Disease Prevention Success",
+      label: "Disease Prevention",
       description: "Effective treatment and prevention",
       color: "blue",
       details: [
-        "Coffee Berry Disease: 92% success",
+        "Coffee Berry Disease: 92%",
         "Leaf Rust: 96% success",
         "Wilt Disease: 97% success"
       ],
@@ -89,28 +90,28 @@ const Stat = () => {
         "Organic farming: +55%",
         "Direct trade: +60%"
       ],
-      growth: "Sustainable growth trajectory"
+      growth: "Sustainable growth"
     },
     {
       icon: Users,
       value: 200,
       suffix: 'K+',
       label: "Cooperative Members",
-      description: "Farmers in registered cooperatives",
+      description: "Farmers in cooperatives",
       color: "purple",
       details: [
         "Better pricing through unity",
         "Collective bargaining power",
-        "Shared resources & knowledge"
+        "Shared resources"
       ],
-      growth: "+12K new members this year"
+      growth: "+12K new members"
     },
     {
       icon: Activity,
       value: 98,
       suffix: '%',
       label: "Crop Survival Rate",
-      description: "Healthy plant maintenance success",
+      description: "Healthy plant maintenance",
       color: "teal",
       details: [
         "Proper pruning: 99% success",
@@ -173,22 +174,35 @@ const Stat = () => {
     }
   };
 
+  // Handle touch interactions for mobile
+  const handleTouchStart = (index) => {
+    setTouchActive(index);
+    setActiveStat(index);
+  };
+
+  const handleTouchEnd = () => {
+    setTimeout(() => {
+      setTouchActive(null);
+      setActiveStat(null);
+    }, 300);
+  };
+
   return (
     <Box sx={{ 
-      py: { xs: 12, md: 16 }, 
-      px: { xs: 2, sm: 4 },
+      py: { xs: 8, sm: 10, md: 16 }, 
+      px: { xs: 1, sm: 2, md: 4 },
       background: 'linear-gradient(135deg, #f0fdf4 0%, #fffbeb 50%, #f0f9ff 100%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
       {/* Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-64 h-64 bg-gradient-to-br from-emerald-200/20 to-transparent rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-gradient-to-br from-amber-200/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute -top-12 sm:-top-20 -left-12 sm:-left-20 w-48 h-48 sm:w-64 sm:h-64 bg-gradient-to-br from-emerald-200/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute -bottom-12 sm:-bottom-20 -right-12 sm:-right-20 w-48 h-48 sm:w-64 sm:h-64 bg-gradient-to-br from-amber-200/20 to-transparent rounded-full blur-3xl" />
         
         {/* Pattern */}
         <div className="absolute inset-0 opacity-10">
-          {[...Array(20)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <div
               key={i}
               className="absolute w-2 h-2 bg-emerald-400 rounded-full"
@@ -201,23 +215,25 @@ const Stat = () => {
         </div>
       </div>
 
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2 } }}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-12 md:mb-16 relative z-10"
+          className="text-center mb-8 sm:mb-12 md:mb-16 relative z-10"
         >
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl">
-              <BarChart className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl sm:rounded-2xl">
+              <BarChart className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
             </div>
             <Typography 
               variant="h5" 
-              className="font-bold text-emerald-700"
-              sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}
+              className="font-bold text-emerald-700 whitespace-nowrap"
+              sx={{ 
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.25rem' }
+              }}
             >
               Coffee Farming Statistics
             </Typography>
@@ -225,8 +241,12 @@ const Stat = () => {
 
           <Typography 
             variant="h2" 
-            className="text-3xl md:text-5xl font-black mb-4"
-            sx={{ color: 'grey.900' }}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-3 sm:mb-4"
+            sx={{ 
+              color: 'grey.900',
+              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+              px: { xs: 1, sm: 0 }
+            }}
           >
             East Africa's Coffee{' '}
             <span className="bg-gradient-to-r from-emerald-600 to-amber-600 bg-clip-text text-transparent">
@@ -236,31 +256,40 @@ const Stat = () => {
 
           <Typography 
             variant="h6" 
-            className="text-lg md:text-xl text-grey-600 max-w-3xl mx-auto"
-            sx={{ fontWeight: 400 }}
+            className="text-sm sm:text-base md:text-lg lg:text-xl text-grey-600 mx-auto"
+            sx={{ 
+              fontWeight: 400,
+              maxWidth: '95%',
+              lineHeight: 1.5,
+              px: { xs: 1, sm: 0 }
+            }}
           >
-            Real data showing the growth, success, and opportunities in coffee farming across our region
+            Real data showing growth, success, and opportunities in coffee farming
           </Typography>
         </motion.div>
 
         {/* Stats Grid */}
-        <Grid container spacing={3} className="relative z-10">
+        <Grid container spacing={2} sm={3} className="relative z-10">
           {stats.map((stat, index) => {
             const colors = colorConfig[stat.color];
+            const isActive = activeStat === index || touchActive === index;
             
             return (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  whileHover={{ y: -8 }}
+                  viewport={{ once: true, margin: "-30px" }}
+                  whileHover={{ y: -4 }}
+                  whileTap={{ scale: 0.98 }}
+                  onTouchStart={() => handleTouchStart(index)}
+                  onTouchEnd={handleTouchEnd}
+                  onMouseEnter={() => setActiveStat(index)}
+                  onMouseLeave={() => setActiveStat(null)}
                 >
                   <Card
-                    className={`bg-gradient-to-br ${colors.bg} border-2 ${colors.border} rounded-3xl p-6 h-full transition-all duration-300 ${colors.hoverBorder} shadow-xl hover:shadow-2xl cursor-pointer relative overflow-hidden group`}
-                    onMouseEnter={() => setActiveStat(index)}
-                    onMouseLeave={() => setActiveStat(null)}
+                    className={`bg-gradient-to-br ${colors.bg} border-2 ${colors.border} rounded-2xl sm:rounded-3xl p-4 sm:p-6 h-full transition-all duration-300 shadow-lg hover:shadow-xl relative overflow-hidden group touch-pan-y`}
                   >
                     {/* Animated Border */}
                     <motion.div
@@ -273,26 +302,32 @@ const Stat = () => {
 
                     {/* Content */}
                     <CardContent className="p-0">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className={`p-3 rounded-2xl bg-white/80 ${colors.text}`}>
-                          <stat.icon className="w-8 h-8" />
+                      <div className="flex items-start justify-between mb-3 sm:mb-4">
+                        <div className={`p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/80 ${colors.text}`}>
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8">
+                            <stat.icon className="w-full h-full" />
+                          </div>
                         </div>
                         
                         {/* Growth Indicator */}
-                        <div className="flex items-center gap-1 px-3 py-1 bg-white/90 rounded-full">
-                          <TrendingUp className="w-4 h-4 text-green-500" />
-                          <span className="text-sm font-semibold text-green-600">
+                        <div className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-white/90 rounded-full">
+                          <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
+                          <span className="text-xs sm:text-sm font-semibold text-green-600 whitespace-nowrap">
                             {stat.growth}
                           </span>
                         </div>
                       </div>
 
                       {/* Main Value */}
-                      <div className="mb-3">
-                        <div className="flex items-baseline gap-2">
+                      <div className="mb-2 sm:mb-3">
+                        <div className="flex items-baseline gap-1 sm:gap-2">
                           <Typography 
                             variant="h2" 
-                            className={`text-4xl md:text-5xl font-black ${colors.accent}`}
+                            className={`font-black ${colors.accent}`}
+                            sx={{ 
+                              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                              lineHeight: 1
+                            }}
                           >
                             <AnimatedCounter 
                               from={0} 
@@ -303,7 +338,10 @@ const Stat = () => {
                           {stat.suffix && (
                             <Typography 
                               variant="h4" 
-                              className={`text-2xl font-bold ${colors.accent}`}
+                              className={`font-bold ${colors.accent}`}
+                              sx={{ 
+                                fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' }
+                              }}
                             >
                               {stat.suffix}
                             </Typography>
@@ -314,8 +352,11 @@ const Stat = () => {
                       {/* Label */}
                       <Typography 
                         variant="h5" 
-                        className={`font-bold mb-2 ${colors.text}`}
-                        sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}
+                        className={`font-bold mb-1 sm:mb-2 ${colors.text}`}
+                        sx={{ 
+                          fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+                          lineHeight: 1.2
+                        }}
                       >
                         {stat.label}
                       </Typography>
@@ -323,33 +364,56 @@ const Stat = () => {
                       {/* Description */}
                       <Typography 
                         variant="body2" 
-                        className="text-grey-600 mb-4"
+                        className="text-grey-600 mb-3 sm:mb-4"
+                        sx={{ 
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                          lineHeight: 1.3
+                        }}
                       >
                         {stat.description}
                       </Typography>
 
-                      {/* Details (Shown on Hover) */}
+                      {/* Tap indicator for mobile */}
+                      <div className="sm:hidden flex justify-center mb-2">
+                        <Typography 
+                          variant="caption" 
+                          className="text-grey-500 text-xs flex items-center gap-1"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                          Tap for details
+                        </Typography>
+                      </div>
+
+                      {/* Details (Shown on Hover/Tap) */}
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ 
-                          height: activeStat === index ? 'auto' : 0,
-                          opacity: activeStat === index ? 1 : 0
+                          height: isActive ? 'auto' : 0,
+                          opacity: isActive ? 1 : 0
                         }}
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="pt-4 border-t border-white/50">
+                        <div className="pt-3 sm:pt-4 border-t border-white/50">
                           <Typography 
                             variant="body2" 
-                            className="font-semibold text-grey-700 mb-2"
+                            className="font-semibold text-grey-700 mb-1 sm:mb-2"
+                            sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
                           >
                             Details:
                           </Typography>
                           <ul className="space-y-1">
                             {stat.details.map((detail, i) => (
                               <li key={i} className="flex items-start gap-2">
-                                <div className={`w-1.5 h-1.5 rounded-full mt-2 ${colors.accent.replace('text', 'bg')}`} />
-                                <Typography variant="body2" className="text-grey-600">
+                                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${colors.accent.replace('text', 'bg')}`} />
+                                <Typography 
+                                  variant="body2" 
+                                  className="text-grey-600"
+                                  sx={{ 
+                                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                                    lineHeight: 1.3
+                                  }}
+                                >
                                   {detail}
                                 </Typography>
                               </li>
@@ -359,7 +423,7 @@ const Stat = () => {
                       </motion.div>
 
                       {/* Pulse Animation */}
-                      <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-md group-hover:scale-150 transition-transform duration-300" />
+                      <div className="absolute -bottom-1 -right-1 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-md group-hover:scale-150 transition-transform duration-300" />
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -374,50 +438,56 @@ const Stat = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
           viewport={{ once: true }}
-          className="mt-12 relative z-10"
+          className="mt-8 sm:mt-12 relative z-10"
         >
-          <div className="bg-gradient-to-r from-emerald-500/10 via-amber-500/10 to-emerald-500/10 rounded-3xl p-6 md:p-8 border border-emerald-200/50 backdrop-blur-sm">
-            <Grid container spacing={4} alignItems="center">
-              <Grid item xs={12} md={4}>
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl">
-                    <Target className="w-8 h-8 text-white" />
+          <div className="bg-gradient-to-r from-emerald-500/10 via-amber-500/10 to-emerald-500/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-emerald-200/50 backdrop-blur-sm">
+            <Grid container spacing={3} sm={2} alignItems="center">
+              <Grid item xs={12} sm={4}>
+                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-0">
+                  <div className="p-2 sm:p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl sm:rounded-2xl flex-shrink-0">
+                    <Target className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
                   </div>
-                  <div>
-                    <Typography variant="h6" className="font-bold text-emerald-800">
+                  <div className="min-w-0">
+                    <Typography variant="h6" className="font-bold text-emerald-800 truncate"
+                      sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                       Key Insight
                     </Typography>
-                    <Typography variant="body2" className="text-grey-600">
+                    <Typography variant="body2" className="text-grey-600"
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                       Farmers in cooperatives earn 30% more
                     </Typography>
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} md={4}>
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl">
-                    <Leaf className="w-8 h-8 text-white" />
+              <Grid item xs={12} sm={4}>
+                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-0">
+                  <div className="p-2 sm:p-3 bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl sm:rounded-2xl flex-shrink-0">
+                    <Leaf className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
                   </div>
-                  <div>
-                    <Typography variant="h6" className="font-bold text-amber-800">
+                  <div className="min-w-0">
+                    <Typography variant="h6" className="font-bold text-amber-800 truncate"
+                      sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                       Sustainable Growth
                     </Typography>
-                    <Typography variant="body2" className="text-grey-600">
+                    <Typography variant="body2" className="text-grey-600"
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                       Organic farming adoption up by 45%
                     </Typography>
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} md={4}>
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl">
-                    <TreePine className="w-8 h-8 text-white" />
+              <Grid item xs={12} sm={4}>
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl flex-shrink-0">
+                    <TreePine className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
                   </div>
-                  <div>
-                    <Typography variant="h6" className="font-bold text-blue-800">
+                  <div className="min-w-0">
+                    <Typography variant="h6" className="font-bold text-blue-800 truncate"
+                      sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                       Future Projection
                     </Typography>
-                    <Typography variant="body2" className="text-grey-600">
+                    <Typography variant="body2" className="text-grey-600"
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                       Expected 25% growth in next 5 years
                     </Typography>
                   </div>
@@ -433,21 +503,27 @@ const Stat = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
           viewport={{ once: true }}
-          className="mt-12 text-center relative z-10"
+          className="mt-8 sm:mt-12 text-center relative z-10"
         >
           <Typography 
             variant="body1" 
-            className="text-grey-600 mb-6 max-w-2xl mx-auto"
+            className="text-grey-600 mb-4 sm:mb-6 mx-auto"
+            sx={{ 
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              maxWidth: { xs: '95%', sm: '2xl' },
+              lineHeight: 1.5,
+              px: { xs: 1, sm: 0 }
+            }}
           >
             These numbers show the incredible potential of coffee farming in East Africa. 
             Join thousands of successful farmers today.
           </Typography>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <button className="px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm sm:text-base">
               Start Your Coffee Farm
             </button>
-            <button className="px-8 py-3 border-2 border-emerald-600 text-emerald-700 font-semibold rounded-xl hover:bg-emerald-50 transition-all duration-300">
+            <button className="px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 border-2 border-emerald-600 text-emerald-700 font-semibold rounded-lg sm:rounded-xl hover:bg-emerald-50 transition-all duration-300 text-sm sm:text-base">
               View Market Analysis
             </button>
           </div>
