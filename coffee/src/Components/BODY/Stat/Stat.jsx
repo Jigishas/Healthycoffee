@@ -1,14 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Activity, Users, Sprout, Coffee, TrendingUp } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Card, CardContent } from '../../ui/card';
+
+// Counter animation component
+const AnimatedCounter = ({ from, to, duration = 2 }) => {
+  const [count, setCount] = useState(from);
+
+  useEffect(() => {
+    const controls = animate(from, to, {
+      duration,
+      onUpdate: (value) => setCount(Math.floor(value)),
+      ease: "easeOut"
+    });
+
+    return controls.stop;
+  }, [from, to, duration]);
+
+  return <span>{count.toLocaleString()}{to >= 1000 ? '+' : ''}</span>;
+};
 
 const Stat = () => {
   const stats = [
     {
       icon: Activity,
-      value: "5K+",
+      value: 5000,
       label: "Diseases Solved",
       color: "text-emerald-600",
       bgColor: "from-emerald-50 to-emerald-100",
@@ -17,7 +34,7 @@ const Stat = () => {
     },
     {
       icon: Users,
-      value: "10K+",
+      value: 10000,
       label: "Farmers Helped",
       color: "text-blue-600",
       bgColor: "from-blue-50 to-blue-100",
@@ -26,7 +43,7 @@ const Stat = () => {
     },
     {
       icon: Sprout,
-      value: "15K+",
+      value: 15000,
       label: "Coffee Planted",
       color: "text-green-600",
       bgColor: "from-green-50 to-green-100",
@@ -35,7 +52,7 @@ const Stat = () => {
     },
     {
       icon: Coffee,
-      value: "20K+",
+      value: 20000,
       label: "Cups of Coffee",
       color: "text-amber-600",
       bgColor: "from-amber-50 to-amber-100",

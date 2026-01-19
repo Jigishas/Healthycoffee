@@ -28,8 +28,8 @@ function Body() {
             transition={{ duration: 2, ease: "easeOut" }}
           />
 
-          {/* Subtle Gradient Overlay (reduced vertical coverage) */}
-          <div className="absolute left-0 right-0 top-6 bottom-6 md:top-12 md:bottom-12 mx-auto rounded-2xl bg-gradient-to-br from-black/30 via-emerald-900/12 to-amber-900/18 pointer-events-none" />
+          {/* Enhanced Gradient Overlay for better text readability */}
+          <div className="absolute left-0 right-0 top-6 bottom-6 md:top-12 md:bottom-12 mx-auto rounded-2xl bg-gradient-to-br from-black/40 via-emerald-900/20 to-amber-900/25 pointer-events-none" />
         </div>
 
         {/* Main Content - Hero Section */}
@@ -57,7 +57,7 @@ function Body() {
                 />
 
                 <motion.h1
-                  className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 md:mb-6 relative z-10 leading-tight"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 md:mb-6 relative z-10 leading-tight"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 1, delay: 0.8 }}
@@ -73,7 +73,7 @@ function Body() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 1, delay: 1 }}
                 >
-                  <h3 className="text-lg md:text-xl lg:text-2xl text-white leading-relaxed font-medium drop-shadow-2xl max-w-3xl mx-auto pl-1 blur-left-card">
+                  <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl text-white leading-relaxed font-medium drop-shadow-2xl max-w-3xl mx-auto pl-1 blur-left-card">
   Coffee is one of the easiest plants to grow and sell and also the leading export product in Kenya and East Africa. It is grown in many parts of the Region and farmers profit from it a lot.
 </h3>
 
@@ -89,25 +89,37 @@ function Body() {
           </motion.div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Enhanced Scroll Indicator */}
         <motion.div
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 2 }}
         >
-          <div className="text-white text-center">
+          <motion.div
+            className="text-white text-center cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
+          >
             <motion.div
-              className="w-6 h-10 border-2 border-white rounded-full flex justify-center"
-              whileHover={{ scale: 1.1 }}
+              className="w-6 h-10 border-2 border-white/80 rounded-full flex justify-center backdrop-blur-sm bg-white/10"
+              whileHover={{ borderColor: 'rgba(255,255,255,1)', backgroundColor: 'rgba(255,255,255,0.2)' }}
             >
               <motion.div
                 className="w-1 h-3 bg-white rounded-full mt-2"
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                animate={{ opacity: [1, 0.3, 1], y: [0, 2, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
               />
             </motion.div>
-            <ChevronDown className="w-4 h-4 text-white mx-auto mt-2" />
-          </div>
+            <motion.div
+              animate={{ y: [0, 3, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+            >
+              <ChevronDown className="w-4 h-4 text-white/90 mx-auto mt-2" />
+            </motion.div>
+          </motion.div>
         </motion.div>
       </motion.div>
 

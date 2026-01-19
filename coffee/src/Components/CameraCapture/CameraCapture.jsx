@@ -604,20 +604,24 @@ export default function CameraCapture({ uploadUrl = `${BACKEND_URL}/api/upload-i
             <div className="grid md:grid-cols-2 gap-4">
               <button
                 onClick={startCamera}
-                className="group py-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg flex flex-col items-center justify-center gap-3"
+                className="group relative py-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg flex flex-col items-center justify-center gap-3 overflow-hidden"
               >
-                <span className="text-4xl">📷</span>
-                <span>Use Camera</span>
-                <span className="text-sm font-normal opacity-90">Live capture</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="text-4xl relative z-10">📷</span>
+                <span className="relative z-10">Use Camera</span>
+                <span className="text-sm font-normal opacity-90 relative z-10">Live capture</span>
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
               </button>
 
               <button
                 onClick={openGallery}
-                className="group py-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg flex flex-col items-center justify-center gap-3"
+                className="group relative py-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-semibold hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg flex flex-col items-center justify-center gap-3 overflow-hidden"
               >
-                <span className="text-4xl">🖼️</span>
-                <span>From Gallery</span>
-                <span className="text-sm font-normal opacity-90">Upload image</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="text-4xl relative z-10">🖼️</span>
+                <span className="relative z-10">From Gallery</span>
+                <span className="text-sm font-normal opacity-90 relative z-10">Upload image</span>
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
               </button>
             </div>
 

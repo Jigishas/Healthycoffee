@@ -1,38 +1,30 @@
-# Deployment Fixes for Render.com
+# UI Improvement Tasks
 
-## Issues Identified
-- Render.com couldn't detect open ports despite Flask app running
-- App initialization completed successfully but server binding failed
-- CORS configuration blocked frontend-backend communication
-- Connection timeout error for POST https://healthycoffee.onrender.com:10000/api/upload-image
+## Hero Section Refinement (Body.jsx)
+- [ ] Enhance text readability by adjusting background overlay gradient for better contrast
+- [ ] Improve mobile responsiveness with refined breakpoints and text sizing
+- [ ] Add subtle animations like staggered text reveals and enhanced scroll indicator
 
-## Fixes Applied
-- [x] Updated render.yaml to use correct `runtime: python` property instead of `env: python`
-- [x] Changed startCommand to use gunicorn for production deployment: `cd model && gunicorn --bind 0.0.0.0:$PORT app:app --workers 1 --threads 2 --timeout 120`
-- [x] Added print statement in app.py before app.run() to help Render detect port binding
-- [x] Fixed CORS configuration to allow requests from Render.com domain (https://healthycoffee.onrender.com)
-- [x] Updated BACKEND_URL in CameraCapture.jsx to include port 10000: 'https://healthycoffee.onrender.com:10000'
-- [x] Increased confidence threshold to 0.5 for higher accuracy in production
-- [x] Set model type to 'production_optimized'
-- [x] Ensured production mode settings (debug=False, threaded=True)
+## Statistics Section Animation (Stat.jsx)
+- [ ] Implement counter animations using Framer Motion to animate stat numbers from 0 to target values
+- [ ] Add hover effects and improved visual hierarchy
 
-## Current Status
-- ✅ Frontend is working: https://healthycoffee.vercel.app (200 OK)
-- ❌ Backend is hibernating: https://healthycoffee.onrender.com/health (503 Service Unavailable)
-- ❌ Image upload fails due to backend hibernation
+## Navigation Bar Polish (Navbar.jsx)
+- [ ] Enhance search input with better styling, placeholder text, and potential functionality
+- [ ] Smooth out mobile menu animations with improved transitions and backdrop effects
 
-## Next Steps
-- [ ] Redeploy backend on Render.com with updated gunicorn configuration
-- [ ] Wake up the service or trigger a new deployment
-- [ ] Test backend health endpoint: https://healthycoffee.onrender.com/health
-- [ ] Test image upload functionality from frontend
-- [ ] Verify CORS issues are resolved
-- [ ] Confirm high accuracy predictions with 0.5 confidence threshold
+## Camera Capture UI Improvements (CameraCapture.jsx)
+- [ ] Improve button styling and hover effects for camera/gallery selection
+- [ ] Enhance loading states with better animations and feedback
+- [ ] Refine result display layout and visual hierarchy
+- [ ] Add smooth transitions between different states (capture, preview, results)
 
-## Expected Outcome
-- Render should now detect the port and mark the service as healthy
-- Flask app should start successfully and bind to the PORT environment variable
-- Frontend can successfully communicate with backend API without CORS errors
-- All API endpoints should be accessible
-- Image upload should work with the correct port
-- Higher accuracy predictions due to increased confidence threshold
+## Overall Visual Consistency
+- [ ] Refine color gradients across components for cohesion
+- [ ] Improve shadows and spacing for better depth and readability
+- [ ] Ensure consistent border radius and hover effects
+
+## Followup Steps
+- [ ] Test responsiveness across different screen sizes
+- [ ] Verify animations work smoothly on various devices
+- [ ] Ensure accessibility standards are maintained
