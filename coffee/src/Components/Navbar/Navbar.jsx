@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
@@ -140,62 +139,65 @@ function Navbar() {
               <div className="py-2">
                 {/* Camera Shortcuts */}
                 <div className="px-4 py-3 border-b border-amber-100">
-                  <h3 className="text-sm font-semibold text-amber-800 mb-3 flex items-center gap-2">
-                    <div className="py-2">
-                      <div className="px-4 py-3 border-b border-amber-100">
-                        <ul className="space-y-2">
-                          <li>
-                            <a href="#home" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Home</a>
-                          </li>
-                          <li>
-                            <a href="#gallery" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Gallery</a>
-                          </li>
-                          <li>
-                            <a href="#features" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
-                          </li>
-                          <li>
-                            <a href="#stats" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Stats</a>
-                          </li>
-                          <li>
-                            <a href="#askme" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Ask</a>
-                          </li>
-                        </ul>
+                  <h3 className="text-sm font-semibold text-amber-800 mb-3 flex items-center gap-2">Camera Shortcuts</h3>
+                  <div className="py-2">
+                    <ul className="space-y-2">
+                      <li>
+                        <a href="#home" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Home</a>
+                      </li>
+                      <li>
+                        <a href="#gallery" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Gallery</a>
+                      </li>
+                      <li>
+                        <a href="#features" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
+                      </li>
+                      <li>
+                        <a href="#stats" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Stats</a>
+                      </li>
+                      <li>
+                        <a href="#askme" className="w-full block text-amber-700 hover:bg-amber-50 rounded-lg px-3 py-2" onClick={() => setIsMobileMenuOpen(false)}>Ask</a>
+                      </li>
+                    </ul>
 
-                        <div className="mt-3">
-                          <motion.button
-                            onClick={triggerCameraCapture}
-                            className="w-full flex items-center gap-3 px-3 py-2 text-left text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
-                              <span className="text-white text-sm">📷</span>
-                            </div>
-                            <div>
-                              <div className="font-medium">Open Camera</div>
-                              <div className="text-xs text-amber-600">Take photo directly</div>
-                            </div>
-                          </motion.button>
-
-                          <motion.button
-                            onClick={triggerGalleryUpload}
-                            className="w-full mt-2 flex items-center gap-3 px-3 py-2 text-left text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                              <span className="text-white text-sm">🖼️</span>
-                            </div>
-                            <div>
-                              <div className="font-medium">From Gallery</div>
-                              <div className="text-xs text-amber-600">Select existing photo</div>
-                            </div>
-                          </motion.button>
+                    <div className="mt-3">
+                      <motion.button
+                        onClick={triggerCameraCapture}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-left text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-sm">📷</span>
                         </div>
-                      </div>
-                    </div>
+                        <div>
+                          <div className="font-medium">Open Camera</div>
+                          <div className="text-xs text-amber-600">Take photo directly</div>
+                        </div>
+                      </motion.button>
 
-      {/* Animated Background Elements */}
+                      <motion.button
+                        onClick={triggerGalleryUpload}
+                        className="w-full mt-2 flex items-center gap-3 px-3 py-2 text-left text-amber-700 hover:bg-amber-50 rounded-lg transition-colors duration-200"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-sm">🖼️</span>
+                        </div>
+                        <div>
+                          <div className="font-medium">From Gallery</div>
+                          <div className="text-xs text-amber-600">Select existing photo</div>
+                        </div>
+                      </motion.button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <motion.div
           className="absolute top-2 right-20 w-2 h-2 bg-amber-400 rounded-full"
