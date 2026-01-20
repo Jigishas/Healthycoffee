@@ -1215,3 +1215,4 @@
 2026-01-13 16:13:00,251 - __main__ - INFO - File saved: uploads\resized_image.jpg
 2026-01-13 16:13:01,814 - __main__ - INFO - Prediction completed in 1.5535s
 2026-01-13 16:13:01,817 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 16:13:01] "POST /api/upload-image HTTP/1.1" 200 -
+2026-01-20 13:20:37,191 - __main__ - INFO - Interactive learning system initialized successfully

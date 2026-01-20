@@ -3,5 +3,5 @@ services:
     type: web
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r model/requirements.txt
     startCommand: cd model && gunicorn --bind 0.0.0.0:$PORT app:app --workers 1 --threads 2 --timeout 120
