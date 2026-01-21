@@ -159,17 +159,17 @@ const Whatsapp = () => {
                   <div>
                     <Typography 
                       variant="h3" 
-                      className="text-xl sm:text-2xl md:text-3xl font-black text-grey-900"
-                      sx={{ lineHeight: { xs: 1.3, sm: 1.4 } }}
+                      className="text-lg sm:text-xl md:text-2xl font-bold text-grey-900"
+                      sx={{ lineHeight: { xs: 1.2, sm: 1.3 } }}
                     >
-                      Connect with{' '}
+                      Expert{' '}
                       <span className="bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">
-                        Coffee Experts
+                        Support
                       </span>
                     </Typography>
-                    <Typography variant="body1" className="text-grey-600"
-                      sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                      Get instant help from our agricultural specialists
+                    <Typography variant="body2" className="text-grey-500"
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                      Get instant help
                     </Typography>
                   </div>
                 </div>
@@ -206,75 +206,47 @@ const Whatsapp = () => {
                 </div>
 
                 {/* Benefits */}
-                <Box className="mb-6 sm:mb-8">
-                  <Typography variant="h6" className="font-semibold text-grey-800 mb-3 sm:mb-4 flex items-center gap-2"
-                    sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
-                    Why Connect With Us?
-                  </Typography>
-                  <div className="space-y-2 sm:space-y-3">
+                <Box className="mb-4 sm:mb-6">
+                  <div className="space-y-1.5 sm:space-y-2">
                     {[
-                      { icon: <Shield />, text: 'Expert advice from certified agriculturists' },
-                      { icon: <Leaf />, text: 'Sustainable farming solutions' },
-                      { icon: <TrendingUp />, text: 'Market insights and price updates' },
-                      { icon: <Coffee />, text: 'Specialized coffee cultivation guidance' }
+                      { icon: <Shield />, text: 'Expert advice' },
+                      { icon: <Leaf />, text: 'Sustainable farming' },
+                      { icon: <TrendingUp />, text: 'Market updates' },
+                      { icon: <Coffee />, text: 'Coffee guidance' }
                     ].map((benefit, index) => (
-                      <motion.div
+                      <div
                         key={index}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                        className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-white/50 rounded-lg sm:rounded-xl"
+                        className="flex items-center gap-2 sm:gap-2.5 p-1.5 sm:p-2"
                       >
-                        <div className="p-1.5 sm:p-2 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-lg flex-shrink-0">
-                          <div className="w-4 h-4 sm:w-5 sm:h-5">
+                        <div className="p-1 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-lg flex-shrink-0">
+                          <div className="w-3.5 h-3.5 sm:w-4 sm:h-4">
                             {React.cloneElement(benefit.icon, { className: "w-full h-full text-emerald-600" })}
                           </div>
                         </div>
-                        <Typography variant="body2" className="text-grey-700"
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' }, lineHeight: 1.4 }}>
+                        <Typography variant="body2" className="text-grey-700 text-xs sm:text-sm">
                           {benefit.text}
                         </Typography>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </Box>
 
                 {/* Business Hours */}
-                <Box className="bg-gradient-to-r from-emerald-500/10 to-amber-500/10 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-emerald-200/50">
-                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
-                    <Typography variant="h6" className="font-semibold text-emerald-800"
-                      sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                      Available Hours
+                <Box className="bg-gradient-to-r from-emerald-500/10 to-amber-500/10 p-3 sm:p-4 rounded-lg sm:rounded-xl border border-emerald-200/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                    <Typography className="font-medium text-emerald-800 text-sm sm:text-base">
+                      Hours
                     </Typography>
                   </div>
-                  <div className="space-y-1.5 sm:space-y-2">
-                    <div className="flex justify-between items-center">
-                      <Typography variant="body2" className="text-grey-700"
-                        sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        Mon - Fri
-                      </Typography>
-                      <Typography variant="body2" className="font-semibold text-emerald-700"
-                        sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        {BUSINESS_HOURS.weekdays}
-                      </Typography>
+                  <div className="space-y-1 text-xs sm:text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-grey-700">Mon - Fri:</span>
+                      <span className="font-medium text-emerald-700">{BUSINESS_HOURS.weekdays}</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <Typography variant="body2" className="text-grey-700"
-                        sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        Sat - Sun
-                      </Typography>
-                      <Typography variant="body2" className="font-semibold text-emerald-700"
-                        sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        {BUSINESS_HOURS.weekends}
-                      </Typography>
-                    </div>
-                    <div className="pt-2 border-t border-emerald-200">
-                      <Typography variant="caption" className="text-grey-600"
-                        sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
-                        Timezone: {BUSINESS_HOURS.timezone}
-                      </Typography>
+                    <div className="flex justify-between">
+                      <span className="text-grey-700">Sat - Sun:</span>
+                      <span className="font-medium text-emerald-700">{BUSINESS_HOURS.weekends}</span>
                     </div>
                   </div>
                 </Box>
@@ -291,34 +263,28 @@ const Whatsapp = () => {
             >
               <Box className="bg-white rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-2xl border border-grey-200 overflow-hidden">
                 {/* Form Header */}
-                <Box className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-4 sm:p-6 md:p-8">
+                <Box className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-3 sm:p-4 md:p-6">
                   <Typography 
-                    variant="h2" 
-                    className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2"
+                    variant="h3" 
+                    className="text-base sm:text-lg md:text-xl font-bold text-white"
                   >
-                    Send Your Inquiry
-                  </Typography>
-                  <Typography variant="body1" className="text-emerald-100"
-                    sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                    Get personalized advice for your coffee farming needs
+                    Send Message
                   </Typography>
                 </Box>
 
                 <Box className="p-4 sm:p-6 md:p-8">
                   {/* Quick Replies */}
-                  <Box className="mb-4 sm:mb-6">
-                    <Typography variant="h6" className="font-semibold text-grey-800 mb-3 sm:mb-4 flex items-center gap-2"
-                      sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                      <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                      Common Questions
+                  <Box className="mb-3 sm:mb-4">
+                    <Typography variant="body2" className="font-medium text-grey-700 mb-2 text-xs sm:text-sm">
+                      Topics
                     </Typography>
-                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {commonQuestions.map((question, index) => (
                         <motion.button
                           key={index}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleQuickReply(question)}
-                          className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 text-emerald-700 rounded-lg sm:rounded-xl font-medium hover:border-emerald-300 transition-all duration-300 text-xs sm:text-sm whitespace-nowrap"
+                          className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 text-emerald-700 rounded-lg font-medium hover:border-emerald-300 transition-all text-xs whitespace-nowrap"
                         >
                           {question}
                         </motion.button>
@@ -327,63 +293,58 @@ const Whatsapp = () => {
                   </Box>
 
                   {/* Contact Form */}
-                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                     {/* Personal Info */}
-                    <Grid container spacing={2} sm={3}>
+                    <Grid container spacing={1.5} sm={2}>
                       <Grid item xs={12} sm={6}>
-                        <div className="relative">
-                          <TextField
-                            fullWidth
-                            label="Your Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            variant="outlined"
-                            size="small"
-                            InputProps={{
-                              startAdornment: (
-                                <User className="w-4 h-4 sm:w-5 sm:h-5 text-grey-400 mr-2" />
-                              ),
-                            }}
-                            sx={{
-                              '& .MuiOutlinedInput-root': {
-                                borderRadius: '10px',
-                                fontSize: { xs: '0.875rem', sm: '1rem' }
-                              },
-                            }}
-                          />
-                        </div>
+                        <TextField
+                          fullWidth
+                          placeholder="Name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          variant="outlined"
+                          size="small"
+                          InputProps={{
+                            startAdornment: (
+                              <User className="w-3.5 h-3.5 text-grey-400 mr-1.5" />
+                            ),
+                          }}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: '8px',
+                              fontSize: { xs: '0.8125rem', sm: '0.875rem' }
+                            },
+                          }}
+                        />
                       </Grid>
                       <Grid item xs={12} sm={6}>
-                        <div className="relative">
-                          <TextField
-                            fullWidth
-                            label="Email (Optional)"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            variant="outlined"
-                            size="small"
-                            InputProps={{
-                              startAdornment: (
-                                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-grey-400 mr-2" />
-                              ),
-                            }}
-                            sx={{
-                              '& .MuiOutlinedInput-root': {
-                                borderRadius: '10px',
-                                fontSize: { xs: '0.875rem', sm: '1rem' }
-                              },
-                            }}
-                          />
-                        </div>
+                        <TextField
+                          fullWidth
+                          placeholder="Email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          variant="outlined"
+                          size="small"
+                          InputProps={{
+                            startAdornment: (
+                              <Mail className="w-3.5 h-3.5 text-grey-400 mr-1.5" />
+                            ),
+                          }}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: '8px',
+                              fontSize: { xs: '0.8125rem', sm: '0.875rem' }
+                            },
+                          }}
+                        />
                       </Grid>
                     </Grid>
 
                     {/* Category - Mobile Optimized */}
                     <Box>
-                      <Typography variant="body2" className="font-medium text-grey-700 mb-2"
-                        sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                        What do you need help with?
+                      <Typography variant="body2" className="font-medium text-grey-700 mb-2 text-xs sm:text-sm">
+                        Category
                       </Typography>
                       <div className="relative">
                         {/* Mobile Dropdown */}
@@ -391,14 +352,14 @@ const Whatsapp = () => {
                           <button
                             type="button"
                             onClick={() => setShowCategoryMenu(!showCategoryMenu)}
-                            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 ${
                               category
-                                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg'
+                                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md'
                                 : 'bg-grey-100 text-grey-700'
                             }`}
                           >
-                            <span>{category || 'Select Category'}</span>
-                            <ChevronRight className={`w-4 h-4 transform transition-transform ${showCategoryMenu ? 'rotate-90' : ''}`} />
+                            <span>{category || 'Select'}</span>
+                            <ChevronRight className={`w-3.5 h-3.5 transform transition-transform ${showCategoryMenu ? 'rotate-90' : ''}`} />
                           </button>
                           
                           <AnimatePresence>
@@ -407,7 +368,7 @@ const Whatsapp = () => {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                className="absolute z-10 w-full mt-2 bg-white rounded-xl shadow-lg border border-grey-200 overflow-hidden"
+                                className="absolute z-10 w-full mt-1.5 bg-white rounded-lg shadow-md border border-grey-200 overflow-hidden"
                               >
                                 {categories.map((cat) => (
                                   <button
@@ -417,7 +378,7 @@ const Whatsapp = () => {
                                       setCategory(cat);
                                       setShowCategoryMenu(false);
                                     }}
-                                    className="w-full px-4 py-3 text-left hover:bg-grey-50 transition-colors border-b border-grey-100 last:border-b-0"
+                                    className="w-full px-3 py-2 text-left text-sm hover:bg-emerald-50 transition-colors border-b border-grey-100 last:border-b-0"
                                   >
                                     {cat}
                                   </button>
@@ -428,15 +389,15 @@ const Whatsapp = () => {
                         </div>
                         
                         {/* Desktop Buttons */}
-                        <div className="hidden sm:flex flex-wrap gap-2 sm:gap-3">
+                        <div className="hidden sm:flex flex-wrap gap-1.5">
                           {categories.map((cat) => (
                             <button
                               key={cat}
                               type="button"
                               onClick={() => setCategory(cat)}
-                              className={`px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl font-medium transition-all duration-300 ${
+                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
                                 category === cat
-                                  ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg'
+                                  ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md'
                                   : 'bg-grey-100 text-grey-700 hover:bg-grey-200'
                               }`}
                             >
@@ -449,52 +410,34 @@ const Whatsapp = () => {
 
                     {/* Message Box */}
                     <Box>
-                      <div className="relative mb-2">
+                      <div className="relative">
                         <TextareaAutosize
-                          minRows={4}
-                          maxRows={8}
+                          minRows={3}
+                          maxRows={6}
                           value={message}
                           onChange={(e) => setMessage(e.target.value)}
-                          placeholder="Describe your coffee farming question or challenge..."
-                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-grey-900 bg-grey-50 border border-grey-300 rounded-lg sm:rounded-xl focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all duration-200 resize-none placeholder-grey-500 text-sm sm:text-base"
+                          placeholder="Your message..."
+                          className="w-full px-3 py-2 text-grey-900 bg-grey-50 border border-grey-300 rounded-lg focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all duration-200 resize-none placeholder-grey-400 text-sm"
                           maxLength={1000}
                         />
                         <div className="absolute bottom-2 right-2">
-                          <div className="flex items-center gap-1 sm:gap-2">
-                            {isTyping && (
-                              <motion.div
-                                animate={{ opacity: [0.5, 1, 0.5] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                              >
-                                <div className="flex items-center gap-1">
-                                  <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                                  <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                                  <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                                </div>
-                              </motion.div>
-                            )}
-                            <span className="text-xs text-grey-400 bg-white/90 px-2 py-1 rounded-full">
-                              {message.length}/1000
-                            </span>
-                          </div>
+                          <span className="text-xs text-grey-400 bg-white/90 px-2 py-0.5 rounded">
+                            {message.length}/1000
+                          </span>
                         </div>
                       </div>
-                      <Typography variant="caption" className="text-grey-500"
-                        sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        Include details like location, plant age, symptoms, or photos for better assistance
-                      </Typography>
                     </Box>
 
                     {/* Action Buttons */}
-                    <Grid container spacing={2} sm={3}>
+                    <Grid container spacing={1.5} sm={2}>
                       <Grid item xs={12} sm={6}>
                         <motion.button
                           type="submit"
                           whileTap={{ scale: 0.98 }}
-                          className="w-full flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-md hover:shadow-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 text-sm sm:text-base"
+                          className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 text-sm"
                         >
-                          <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-                          <span>Save Message</span>
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Save</span>
                         </motion.button>
                       </Grid>
                       <Grid item xs={12} sm={6}>
@@ -502,30 +445,28 @@ const Whatsapp = () => {
                           type="button"
                           whileTap={{ scale: 0.98 }}
                           onClick={handleWhatsAppClick}
-                          className="w-full flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg sm:rounded-xl shadow-md hover:shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 text-sm sm:text-base"
+                          className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 text-sm"
                         >
-                          <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-                          <span>Chat on WhatsApp</span>
-                          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          <span>WhatsApp</span>
                         </motion.button>
                       </Grid>
                     </Grid>
                   </form>
 
                   {/* Additional Contact Options */}
-                  <Box className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-grey-200">
-                    <Typography variant="body2" className="text-grey-600 mb-3 sm:mb-4 text-center"
-                      sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                      Prefer other contact methods?
+                  <Box className="mt-4 pt-4 border-t border-grey-200">
+                    <Typography variant="body2" className="text-grey-600 mb-2.5 text-center text-xs sm:text-sm">
+                      Other contacts
                     </Typography>
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-                      <button className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 text-blue-700 rounded-lg sm:rounded-xl hover:border-blue-300 transition-all duration-300 text-sm sm:text-base">
-                        <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span>Call: +254 743 121 169</span>
+                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                      <button className="flex items-center justify-center gap-1.5 px-3 py-2 text-sm bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 text-blue-700 rounded-lg hover:border-blue-300 transition-all duration-300 whitespace-nowrap">
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>+254 743 121 169</span>
                       </button>
-                      <button className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 text-orange-700 rounded-lg sm:rounded-xl hover:border-orange-300 transition-all duration-300 text-sm sm:text-base">
-                        <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span>Email Us</span>
+                      <button className="flex items-center justify-center gap-1.5 px-3 py-2 text-sm bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 text-orange-700 rounded-lg hover:border-orange-300 transition-all duration-300">
+                        <Mail className="w-3.5 h-3.5" />
+                        <span>Email</span>
                       </button>
                     </div>
                   </Box>
