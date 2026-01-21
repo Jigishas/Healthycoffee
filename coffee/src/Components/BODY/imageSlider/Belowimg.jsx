@@ -206,14 +206,14 @@ const Belowimg = () => {
             <Typography 
               variant="h1"
               sx={{
-                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem', lg: '3.5rem' },
-                fontWeight: 900,
-                mb: 3,
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
+                fontWeight: 800,
+                mb: 2,
                 color: '#111827',
                 lineHeight: 1.2
               }}
             >
-              The Foundation of{' '}
+              Quality{' '}
               <Box
                 component="span"
                 sx={{
@@ -223,23 +223,23 @@ const Belowimg = () => {
                   backgroundClip: 'text'
                 }}
               >
-                Quality Coffee
+                Coffee Starts Here
               </Box>
             </Typography>
 
             <Typography 
               variant="body1"
               sx={{
-                fontSize: { xs: '1rem', md: '1.125rem' },
+                fontSize: { xs: '0.875rem', md: '1rem' },
                 color: '#6b7280',
                 maxWidth: '800px',
                 mx: 'auto',
-                mb: 6,
+                mb: 4,
                 fontWeight: 400,
-                lineHeight: 1.6
+                lineHeight: 1.5
               }}
             >
-              Healthy coffee plants ensure premium quality beans, sustainable yields, and resilient farming practices across East Africa
+              Healthy plants = premium beans & sustainable yields
             </Typography>
           </Box>
         </motion.div>
@@ -261,33 +261,31 @@ const Belowimg = () => {
             {/* Card Header */}
             <Box sx={{
               background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-              p: { xs: 4, md: 6, lg: 8 }
+              p: { xs: 3, md: 4 }
             }}>
-              <Grid container spacing={4} alignItems="center">
+              <Grid container spacing={3} alignItems="center">
                 <Grid item xs={12} md={8}>
                   <Typography 
                     variant="h2"
                     sx={{
-                      fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2.25rem' },
-                      fontWeight: 800,
+                      fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
+                      fontWeight: 700,
                       color: 'white',
-                      mb: 3,
+                      mb: 2,
                       lineHeight: 1.2
                     }}
                   >
-                    Why Plant Health Matters
+                    Plant Health Matters
                   </Typography>
                   <Typography 
-                    variant="body1"
+                    variant="body2"
                     sx={{
                       color: 'rgba(255, 255, 255, 0.95)',
-                      fontSize: { xs: '0.95rem', md: '1.1rem' },
-                      lineHeight: 1.6
+                      fontSize: { xs: '0.85rem', md: '0.95rem' },
+                      lineHeight: 1.5
                     }}
                   >
-                    A healthy coffee plant is the foundation of the entire industry. It ensures high yields of quality 
-                    beans, supports farmer livelihoods, and provides natural resistance against pests and diseases—vital 
-                    for sustainable coffee production in East Africa.
+                    Healthy plants ensure high yields, quality beans & disease resistance
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={4}>
