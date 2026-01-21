@@ -1216,3 +1216,12 @@
 2026-01-13 16:13:01,814 - __main__ - INFO - Prediction completed in 1.5535s
 2026-01-13 16:13:01,817 - werkzeug - INFO - 127.0.0.1 - - [13/Jan/2026 16:13:01] "POST /api/upload-image HTTP/1.1" 200 -
 2026-01-20 13:20:37,191 - __main__ - INFO - Interactive learning system initialized successfully
+2026-01-20 13:20:37,812 - __main__ - INFO - Disease classifier initialized successfully
+2026-01-20 13:20:38,451 - __main__ - INFO - Deficiency classifier initialized successfully
+2026-01-20 13:20:38,452 - __main__ - INFO - All models initialized successfully
+2026-01-20 13:20:38,462 - __main__ - INFO - Starting combined Flask server on port 8000...
+2026-01-20 13:20:38,543 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.2.2.218:8000
+2026-01-20 13:20:38,544 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
