@@ -335,27 +335,27 @@ const Belowimg = () => {
             {/* Content Section */}
             <Box sx={{ p: { xs: 3, sm: 4, md: 6, lg: 8 } }}>
               {/* Benefits Section */}
-              <Box sx={{ mb: { xs: 8, md: 10 } }}>
+              <Box sx={{ mb: { xs: 6, md: 8 } }}>
                 <Box sx={{ 
                   display: 'flex',
                   alignItems: 'center',
                   gap: 2,
-                  mb: 4
+                  mb: 3
                 }}>
                   <CheckCircle sx={{ 
                     color: '#10b981',
-                    width: { xs: 24, md: 28 },
-                    height: { xs: 24, md: 28 }
+                    width: { xs: 20, md: 24 },
+                    height: { xs: 20, md: 24 }
                   }} />
                   <Typography 
                     variant="h3"
                     sx={{
-                      fontSize: { xs: '1.25rem', md: '1.5rem' },
+                      fontSize: { xs: '1.1rem', md: '1.25rem' },
                       fontWeight: 700,
                       color: '#111827'
                     }}
                   >
-                    Key Benefits of Healthy Coffee Plants
+                    Key Benefits
                   </Typography>
                 </Box>
 
@@ -373,29 +373,29 @@ const Belowimg = () => {
                           height: '100%',
                           background: benefit.bgColor,
                           border: `2px solid ${benefit.color}20`,
-                          borderRadius: '20px',
-                          p: 3,
+                          borderRadius: '16px',
+                          p: 2.5,
                           transition: 'all 0.3s ease',
                           '&:hover': {
-                            boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.15)',
-                            transform: 'translateY(-5px)'
+                            boxShadow: '0 15px 30px -10px rgba(0, 0, 0, 0.1)',
+                            transform: 'translateY(-4px)'
                           }
                         }}>
                           <Box sx={{ 
                             display: 'flex',
                             alignItems: 'flex-start',
                             justifyContent: 'space-between',
-                            mb: 3
+                            mb: 2
                           }}>
                             <Box sx={{
-                              p: 2,
+                              p: 1.5,
                               background: `linear-gradient(135deg, ${benefit.color} 0%, ${benefit.color}cc 100%)`,
-                              borderRadius: '16px'
+                              borderRadius: '12px'
                             }}>
                               <Box sx={{ color: 'white' }}>
                                 {React.cloneElement(benefit.icon, {
-                                  width: isMobile ? 20 : 24,
-                                  height: isMobile ? 20 : 24
+                                  width: 18,
+                                  height: 18
                                 })}
                               </Box>
                             </Box>
@@ -405,8 +405,8 @@ const Belowimg = () => {
                                 background: `${benefit.color}15`,
                                 color: benefit.color,
                                 fontWeight: 600,
-                                fontSize: '0.75rem',
-                                height: '24px'
+                                fontSize: '0.65rem',
+                                height: '22px'
                               }}
                               size="small"
                             />
@@ -415,10 +415,10 @@ const Belowimg = () => {
                           <Typography 
                             variant="h6"
                             sx={{
-                              fontSize: { xs: '1rem', sm: '1.125rem' },
+                              fontSize: { xs: '0.95rem', sm: '1rem' },
                               fontWeight: 700,
                               color: benefit.color,
-                              mb: 1.5
+                              mb: 1
                             }}
                           >
                             {benefit.title}
@@ -428,9 +428,9 @@ const Belowimg = () => {
                             variant="body2"
                             sx={{
                               color: '#6b7280',
-                              mb: 3,
-                              fontSize: '0.875rem',
-                              lineHeight: 1.5
+                              mb: 2,
+                              fontSize: '0.8rem',
+                              lineHeight: 1.4
                             }}
                           >
                             {benefit.description}
@@ -439,7 +439,7 @@ const Belowimg = () => {
                           <Box sx={{ 
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: 1.5
+                            gap: 1
                           }}>
                             {benefit.details.map((detail, i) => (
                               <Box 
@@ -447,21 +447,22 @@ const Belowimg = () => {
                                 sx={{
                                   display: 'flex',
                                   alignItems: 'center',
-                                  gap: 1.5
+                                  gap: 1
                                 }}
                               >
                                 <Box sx={{
-                                  width: '6px',
-                                  height: '6px',
+                                  width: '4px',
+                                  height: '4px',
                                   borderRadius: '50%',
-                                  background: benefit.color
+                                  background: benefit.color,
+                                  flexShrink: 0
                                 }} />
                                 <Typography 
                                   variant="caption"
                                   sx={{
                                     color: '#374151',
-                                    fontSize: '0.75rem',
-                                    lineHeight: 1.4
+                                    fontSize: '0.7rem',
+                                    lineHeight: 1.3
                                   }}
                                 >
                                   {detail}
