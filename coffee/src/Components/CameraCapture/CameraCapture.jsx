@@ -320,6 +320,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                         whileTap={{ scale: 0.98 }}
                         onClick={startCamera}
                         className="w-full group"
+                        data-camera-button
                       >
                         <Box className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 rounded-2xl p-8 text-center hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
                           <div className="relative inline-flex mb-4">
@@ -345,6 +346,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                         whileTap={{ scale: 0.98 }}
                         onClick={() => fileInputRef.current?.click()}
                         className="w-full group"
+                        data-gallery-button
                       >
                         <Box className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-8 text-center hover:border-blue-300 hover:shadow-lg transition-all duration-300">
                           <div className="relative inline-flex mb-4">
