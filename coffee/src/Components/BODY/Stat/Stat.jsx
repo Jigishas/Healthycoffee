@@ -520,10 +520,16 @@ const Stat = () => {
           </Typography>
           
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <button className="px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm sm:text-base">
+            <button
+              onClick={() => document.getElementById('camera')?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm sm:text-base"
+            >
               Start Your Coffee Farm
             </button>
-            <button className="px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 border-2 border-emerald-600 text-emerald-700 font-semibold rounded-lg sm:rounded-xl hover:bg-emerald-50 transition-all duration-300 text-sm sm:text-base">
+            <button
+              onClick={() => window.open('/market-analysis', '_blank')}
+              className="px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 border-2 border-emerald-600 text-emerald-700 font-semibold rounded-lg sm:rounded-xl hover:bg-emerald-50 transition-all duration-300 text-sm sm:text-base"
+            >
               View Market Analysis
             </button>
           </div>

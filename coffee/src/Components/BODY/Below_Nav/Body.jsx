@@ -224,6 +224,7 @@ function Body() {
               <Button
                 variant="outlined"
                 fullWidth
+                onClick={() => document.getElementById('askme')?.scrollIntoView({ behavior: 'smooth' })}
                 sx={{
                   borderColor: 'white',
                   borderWidth: 2,

@@ -68,13 +68,25 @@ const Footer = () => {
               Empowering farmers with AI-driven insights for healthier coffee plants and sustainable cultivation practices.
             </p>
             <div className="flex gap-4">
-              <button className="cta-ghost w-12 h-12 flex items-center justify-center" aria-label="Facebook">
+              <button
+                onClick={() => window.open('https://facebook.com/coffeefarmingai', '_blank')}
+                className="cta-ghost w-12 h-12 flex items-center justify-center"
+                aria-label="Facebook"
+              >
                 <span className="text-xl">📘</span>
               </button>
-              <button className="cta-ghost w-12 h-12 flex items-center justify-center" aria-label="Twitter">
+              <button
+                onClick={() => window.open('https://twitter.com/coffeefarmingai', '_blank')}
+                className="cta-ghost w-12 h-12 flex items-center justify-center"
+                aria-label="Twitter"
+              >
                 <span className="text-xl">🐦</span>
               </button>
-              <button className="cta-ghost w-12 h-12 flex items-center justify-center" aria-label="Instagram">
+              <button
+                onClick={() => window.open('https://instagram.com/coffeefarmingai', '_blank')}
+                className="cta-ghost w-12 h-12 flex items-center justify-center"
+                aria-label="Instagram"
+              >
                 <span className="text-xl">📷</span>
               </button>
             </div>

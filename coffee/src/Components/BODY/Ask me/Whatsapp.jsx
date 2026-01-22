@@ -460,11 +460,17 @@ const Whatsapp = () => {
                       Other contacts
                     </Typography>
                     <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                      <button className="flex items-center justify-center gap-1.5 px-3 py-2 text-sm bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 text-blue-700 rounded-lg hover:border-blue-300 transition-all duration-300 whitespace-nowrap">
+                      <button
+                        onClick={() => window.open('tel:+254743121169', '_self')}
+                        className="flex items-center justify-center gap-1.5 px-3 py-2 text-sm bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 text-blue-700 rounded-lg hover:border-blue-300 transition-all duration-300 whitespace-nowrap"
+                      >
                         <Phone className="w-3.5 h-3.5" />
                         <span>+254 743 121 169</span>
                       </button>
-                      <button className="flex items-center justify-center gap-1.5 px-3 py-2 text-sm bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 text-orange-700 rounded-lg hover:border-orange-300 transition-all duration-300">
+                      <button
+                        onClick={() => window.open('mailto:support@coffeefarmingai.com', '_blank')}
+                        className="flex items-center justify-center gap-1.5 px-3 py-2 text-sm bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 text-orange-700 rounded-lg hover:border-orange-300 transition-all duration-300"
+                      >
                         <Mail className="w-3.5 h-3.5" />
                         <span>Email</span>
                       </button>

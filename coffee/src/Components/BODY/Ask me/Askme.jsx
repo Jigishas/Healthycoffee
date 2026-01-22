@@ -599,10 +599,16 @@ const Askme = () => {
                     Connect with our agricultural experts for personalized guidance on your coffee farm.
                   </Typography>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <button className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-emerald-700 font-semibold rounded-lg sm:rounded-xl hover:bg-emerald-50 transition-all duration-300 shadow-md sm:shadow-lg text-sm sm:text-base">
+                    <button
+                      onClick={() => document.getElementById('askme')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-emerald-700 font-semibold rounded-lg sm:rounded-xl hover:bg-emerald-50 transition-all duration-300 shadow-md sm:shadow-lg text-sm sm:text-base"
+                    >
                       Contact Expert
                     </button>
-                    <button className="px-4 sm:px-6 py-2.5 sm:py-3 border-2 border-white text-white font-semibold rounded-lg sm:rounded-xl hover:bg-white/10 transition-all duration-300 text-sm sm:text-base">
+                    <button
+                      onClick={() => window.open('/farming-guide.pdf', '_blank')}
+                      className="px-4 sm:px-6 py-2.5 sm:py-3 border-2 border-white text-white font-semibold rounded-lg sm:rounded-xl hover:bg-white/10 transition-all duration-300 text-sm sm:text-base"
+                    >
                       Download Farming Guide
                     </button>
                   </div>
