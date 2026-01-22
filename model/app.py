@@ -36,25 +36,44 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-# Allow CORS from any origin for now (helps Render / local testing).
-# In production, restrict this to the frontend origin(s).
-from flask_cors import CORS as _CORS
-_CORS(app, resources={r"/*": {"origins": [
-    "https://healthycoffee.vercel.app",
-    "https://healthycoffee.vercel.app/",
-    "https://healthycoffee.onrender.com",
-    "https://healthycoffee.onrender.com/"
-]}})
-from flask_cors import CORS as _CORS
-# During troubleshooting allow all origins; lock down in production to specific origins.
-_CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
+# Configure CORS properly
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "http://localhost:5173",  # Vite dev server
+            "http://localhost:3000",  # Alternative dev port
+            "https://healthycoffee.vercel.app",
+            "https://healthycoffee.onrender.com"
+        ],
+        "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+        "supports_credentials": False,  # Set to False since we're not using cookies/auth
+        "expose_headers": ["Content-Type", "X-Custom-Header"]
+    }
+})
 
 @app.after_request
 def add_cors_headers(response):
-    response.headers.setdefault('Access-Control-Allow-Origin', '*')
-    response.headers.setdefault('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-    response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    """Ensure CORS headers are properly set for all responses"""
+    allowed_origins = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://healthycoffee.vercel.app",
+        "https://healthycoffee.onrender.com"
+    ]
+
+    origin = request.headers.get('Origin')
+    if origin in allowed_origins:
+        response.headers.setdefault('Access-Control-Allow-Origin', origin)
+    else:
+        # For development/testing, allow localhost
+        if origin and ('localhost' in origin or '127.0.0.1' in origin):
+            response.headers.setdefault('Access-Control-Allow-Origin', origin)
+
+    response.headers.setdefault('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,DELETE')
+    response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
+    response.headers.setdefault('Access-Control-Allow-Credentials', 'false')
     return response
 
 # Configuration
