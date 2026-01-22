@@ -16,28 +16,28 @@ function Navbar() {
   };
 
   const triggerCameraCapture = () => {
-    // Try to find and click the camera button in CameraCapture component
-    const cameraButton = document.querySelector('button[onclick*="openCamera"]') ||
-                        document.querySelector('button:has(.text-2xl):has(.📷)');
-    if (cameraButton) {
-      cameraButton.click();
-    } else {
-      // Fallback: scroll to camera section
-      scrollToCameraSection();
-    }
+    // Scroll to camera section first
+    scrollToCameraSection();
+    // Wait a bit for scroll, then click the camera button
+    setTimeout(() => {
+      const cameraButton = document.querySelector('[data-camera-button]');
+      if (cameraButton) {
+        cameraButton.click();
+      }
+    }, 500);
     setIsMobileMenuOpen(false);
   };
 
   const triggerGalleryUpload = () => {
-    // Try to find and click the gallery button in CameraCapture component
-    const galleryButton = document.querySelector('button[onclick*="openGallery"]') ||
-                         document.querySelector('button:has(.text-2xl):has(.🖼️)');
-    if (galleryButton) {
-      galleryButton.click();
-    } else {
-      // Fallback: scroll to camera section
-      scrollToCameraSection();
-    }
+    // Scroll to camera section first
+    scrollToCameraSection();
+    // Wait a bit for scroll, then click the gallery button
+    setTimeout(() => {
+      const galleryButton = document.querySelector('[data-gallery-button]');
+      if (galleryButton) {
+        galleryButton.click();
+      }
+    }, 500);
     setIsMobileMenuOpen(false);
   };
 

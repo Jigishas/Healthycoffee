@@ -31,7 +31,7 @@ function App() {
         <div id="askme">
           <Askme />
         </div>
-        <div id="camera">
+        <div id="camera" data-camera-section>
           <CameraCapture />
         </div>
       </main>
