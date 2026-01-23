@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -20,6 +21,11 @@ def add_cors_headers(response):
     response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     return response
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint for frontend status verification"""
+    return jsonify({'status': 'healthy', 'service': 'leaf-analysis-api'})
+
 @app.route('/api/upload-image', methods=['POST'])
 def upload_image():
     try:
@@ -37,7 +43,7 @@ def upload_image():
             # Return a JSON error if analysis fails
             return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
 
-        return jsonify({'results': result})
+        return jsonify(result)
     except Exception as e:
         return jsonify({'error': f'Internal server error: {str(e)}'}), 500
 

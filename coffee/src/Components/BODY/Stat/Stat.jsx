@@ -193,7 +193,11 @@ const Stat = () => {
       px: { xs: 1, sm: 2, md: 4 },
       background: 'linear-gradient(135deg, #f0fdf4 0%, #fffbeb 50%, #f0f9ff 100%)',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'column'
     }}>
       {/* Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -215,7 +219,7 @@ const Stat = () => {
         </div>
       </div>
 
-      <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2 } }}>
+      <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2 }, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -269,7 +273,7 @@ const Stat = () => {
         </motion.div>
 
         {/* Stats Grid */}
-        <Grid container spacing={2} sm={3} className="relative z-10">
+        <Grid container spacing={2} sm={3} className="relative z-10" sx={{ justifyContent: 'center' }}>
           {stats.map((stat, index) => {
             const colors = colorConfig[stat.color];
             const isActive = activeStat === index || touchActive === index;
@@ -519,7 +523,7 @@ const Stat = () => {
             Join thousands of successful farmers today.
           </Typography>
           
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
             <button
               onClick={() => document.getElementById('camera')?.scrollIntoView({ behavior: 'smooth' })}
               className="px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm sm:text-base"
