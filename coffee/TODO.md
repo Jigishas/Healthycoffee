@@ -1,14 +1,15 @@
-# Mobile Centering Fix Tasks
+# Frontend Upload Connection Task
 
 ## Completed Tasks
-- [x] Create TODO.md file
-- [x] Update coffee/src/index.css for global mobile centering utilities
-- [x] Update coffee/src/Components/BODY/Below_Nav/Body.jsx for hero section and stats centering
-- [x] Update coffee/src/Components/Navbar/Navbar.jsx for mobile menu alignment
+- [x] Analyzed existing configuration and upload setup
+- [x] Verified backend URL configuration in config.js
+- [x] Updated CameraCapture component to use correct API endpoint (/api/upload-image)
+- [x] Confirmed frontend is connected to https://healthycoffee.onrender.com
 
-## Pending Tasks
-- [ ] Update coffee/src/Components/footer/Footer.jsx for footer content centering
-- [ ] Update coffee/src/Components/BODY/Ask me/Askme.jsx for FAQ cards and search centering
-- [ ] Update coffee/src/Components/BODY/imageSlider/ImageSlider.jsx for slider container centering
-- [ ] Test mobile responsiveness
-- [ ] Verify no layout breaks on different screen sizes
+## Summary
+The frontend was already configured to upload to the production URL https://healthycoffee.onrender.com via the config.js file. The main change needed was updating the upload endpoint from the base URL to the specific API endpoint `/api/upload-image` to match the backend implementation.
+
+The connection is now properly established:
+- Production URL: https://healthycoffee.onrender.com
+- Upload endpoint: /api/upload-image
+- Full upload URL: https://healthycoffee.onrender.com/api/upload-image

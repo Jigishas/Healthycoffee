@@ -10,8 +10,11 @@ import Belowimg from './Components/BODY/imageSlider/Belowimg'
 import Askme from './Components/BODY/Ask me/Askme'
 import CameraCapture from './Components/CameraCapture/CameraCapture'
 import PWAInstallPrompt from './Components/PWAInstallPrompt'
+import { getBackendUrl } from './config'
 
 function App() {
+  const backendUrl = getBackendUrl();
+
   return (
     <div className="app-container min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50">
       <Navbar />
@@ -32,7 +35,7 @@ function App() {
           <Askme />
         </div>
         <div id="camera" data-camera-section>
-          <CameraCapture />
+          <CameraCapture uploadUrl={backendUrl} />
         </div>
       </main>
       <Whatsapp />

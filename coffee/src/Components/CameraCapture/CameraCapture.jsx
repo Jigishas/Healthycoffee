@@ -159,7 +159,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       formData.append('image', blob, 'leaf-image.jpg');
 
       // Upload to backend
-      const uploadResponse = await fetch(uploadUrl, {
+      const uploadResponse = await fetch(`${uploadUrl}/api/upload-image`, {
         method: 'POST',
         body: formData
       });
