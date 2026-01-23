@@ -6,9 +6,9 @@
 - [x] Add /health endpoint for frontend status checks
 
 ## Connection Verification
-- [ ] Test the backend health endpoint
+- [x] Test the backend health endpoint
 - [ ] Test image upload functionality
-- [ ] Verify frontend can connect to https://healthycoffee.onrender.com
+- [x] Verify frontend can connect to https://healthycoffee.onrender.com
 
 ## Deployment
 - [ ] Deploy updated backend to Render
