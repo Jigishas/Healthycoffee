@@ -323,16 +323,16 @@ const Askme = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8 sm:mb-12 relative z-10"
+          className="text-center mb-8 sm:mb-12 relative z-10 mobile-center"
         >
-          <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <div className="p-2 sm:p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl sm:rounded-2xl shadow-lg">
+          <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 mobile-center">
+            <div className="p-2 sm:p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl sm:rounded-2xl shadow-lg mobile-center">
               <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
             </div>
-            <Typography 
-              variant="h5" 
-              className="font-bold text-emerald-700"
-              sx={{ 
+            <Typography
+              variant="h5"
+              className="font-bold text-emerald-700 mobile-center-text"
+              sx={{
                 fontSize: { xs: '0.875rem', sm: '1rem', md: '1.25rem' },
                 whiteSpace: 'nowrap'
               }}
@@ -341,10 +341,10 @@ const Askme = () => {
             </Typography>
           </div>
 
-          <Typography 
-            variant="h1" 
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-3 sm:mb-4"
-            sx={{ 
+          <Typography
+            variant="h1"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-3 sm:mb-4 mobile-center-text"
+            sx={{
               color: 'grey.900',
               lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
               px: { xs: 1, sm: 0 }
@@ -356,10 +356,10 @@ const Askme = () => {
             </span>
           </Typography>
 
-          <Typography 
-            variant="h6" 
-            className="text-sm sm:text-base md:text-lg lg:text-xl text-grey-600 max-w-3xl mx-auto mb-6 sm:mb-8"
-            sx={{ 
+          <Typography
+            variant="h6"
+            className="text-sm sm:text-base md:text-lg lg:text-xl text-grey-600 max-w-3xl mx-auto mb-6 sm:mb-8 mobile-center-text"
+            sx={{
               fontWeight: 400,
               lineHeight: 1.5,
               px: { xs: 1, sm: 0 }
@@ -373,7 +373,7 @@ const Askme = () => {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="max-w-2xl mx-auto px-2 sm:px-0"
+            className="max-w-2xl mx-auto px-2 sm:px-0 mobile-center"
           >
             <TextField
               fullWidth

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, MapPin, Phone } from 'lucide-react';
 
-const BACKEND_URL = 'http://localhost:8000';
+const BACKEND_URL = 'https://healthycoffee.onrender.com';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -57,19 +57,19 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
           
           {/* Brand Section */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-3 mb-4 sm:mb-6">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+          <div className="sm:col-span-2 lg:col-span-1 mobile-center">
+            <div className="flex items-center gap-3 mb-4 sm:mb-6 mobile-center">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 mobile-center">
                 <span className="text-xl sm:text-2xl">☕</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-200 to-amber-100 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-200 to-amber-100 bg-clip-text text-transparent mobile-center-text">
                 Coffee AI
               </h2>
             </div>
-            <p className="text-xs sm:text-sm leading-relaxed text-amber-100 mb-4 sm:mb-6">
+            <p className="text-xs sm:text-sm leading-relaxed text-amber-100 mb-4 sm:mb-6 mobile-center-text">
               Empowering farmers with AI-driven insights for healthier coffee plants and sustainable practices.
             </p>
-            <div className="flex gap-2 sm:gap-3">
+            <div className="flex gap-2 sm:gap-3 mobile-center">
               <button
                 onClick={() => window.open('https://facebook.com/coffeefarmingai', '_blank')}
                 className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 touch-target"

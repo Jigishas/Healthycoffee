@@ -45,8 +45,8 @@ const ImageSlider = () => {
   };
 
   return (
-    <div className="w-full px-3 sm:px-4 md:px-6 my-8 sm:my-10 md:my-12">
-      <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden max-w-4xl mx-auto">
+    <div className="w-full px-3 sm:px-4 md:px-6 my-8 sm:my-10 md:my-12 mobile-center">
+      <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden max-w-4xl mx-auto mobile-center">
         {/* Image Container */}
         <div className="relative w-full h-48 sm:h-64 md:h-80 lg:h-96 bg-gray-200 overflow-hidden">
           <AnimatePresence mode="wait">
