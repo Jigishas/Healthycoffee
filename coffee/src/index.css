@@ -266,6 +266,19 @@ a:focus, button:focus, input:focus {
 }
 
 /* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+/* Touch target sizes for mobile (minimum 44x44px) */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
    RESPONSIVE NAVBAR STYLES
    ============================================ */
 
