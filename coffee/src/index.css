@@ -278,6 +278,44 @@ a:focus, button:focus, input:focus {
   justify-content: center;
 }
 
+/* Mobile centering utilities */
+@media (max-width: 640px) {
+  .mobile-center {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mobile-center-text {
+    text-align: center;
+  }
+
+  .mobile-center-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mobile-center-grid {
+    display: grid;
+    place-items: center;
+  }
+
+  /* Ensure buttons and interactive elements are centered on mobile */
+  .mobile-center-button {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Center containers on mobile */
+  .mobile-container-center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}
+
 /* ============================================
    RESPONSIVE NAVBAR STYLES
    ============================================ */

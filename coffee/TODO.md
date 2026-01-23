@@ -1,23 +1,14 @@
-# Navbar Responsiveness and Functionality Fixes
+# Mobile Centering Fix Tasks
 
 ## Completed Tasks
-- [x] Analyzed Navbar.jsx for responsiveness issues
-- [x] Identified broken triggerCameraCapture and triggerGalleryUpload functions
-- [x] Added data-camera-button and data-gallery-button attributes to CameraCapture component buttons
-- [x] Updated navbar functions to use data attributes instead of non-existent selectors
-- [x] Added data-camera-section attribute to camera div in App.jsx for proper scrolling
-- [x] Verified responsive design with Tailwind classes (hidden md:flex, md:hidden)
-- [x] Tested development server startup
+- [x] Create TODO.md file
+- [x] Update coffee/src/index.css for global mobile centering utilities
+- [x] Update coffee/src/Components/BODY/Below_Nav/Body.jsx for hero section and stats centering
 
-## Summary
-The navbar is now fully responsive and functional:
-- Desktop view: Shows full navigation menu with search bar and Analyze button
-- Mobile view: Shows hamburger menu with dropdown containing navigation links and camera shortcuts
-- Camera shortcuts now properly trigger CameraCapture component functions
-- Smooth scrolling to camera section works correctly
-- All animations and hover effects preserved
-
-## Testing
-- Development server running on http://localhost:5173/
-- Responsive breakpoints working (mobile < md, desktop >= md)
-- Camera and gallery buttons functional via navbar triggers
+## Pending Tasks
+- [ ] Update coffee/src/Components/Navbar/Navbar.jsx for mobile menu alignment
+- [ ] Update coffee/src/Components/footer/Footer.jsx for footer content centering
+- [ ] Update coffee/src/Components/BODY/Ask me/Askme.jsx for FAQ cards and search centering
+- [ ] Update coffee/src/Components/BODY/imageSlider/ImageSlider.jsx for slider container centering
+- [ ] Test mobile responsiveness
+- [ ] Verify no layout breaks on different screen sizes

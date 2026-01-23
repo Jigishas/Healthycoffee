@@ -149,37 +149,39 @@ function Body() {
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mb-8"
+            className="mb-8 mobile-center"
           >
-            <Grid container spacing={2}>
+            <Grid container spacing={2} className="mobile-center">
               {stats.map((stat, index) => (
-                <Grid item xs={6} key={index}>
+                <Grid item xs={6} key={index} className="mobile-center">
                   <motion.div
                     whileTap={{ scale: 0.95 }}
-                    className="h-full"
+                    className="h-full mobile-center"
                   >
-                    <Card className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-3 h-full">
-                      <CardContent className="p-0">
-                        <div className="flex flex-col items-center text-center space-y-2">
-                          <div className={`p-2 rounded-xl bg-${stat.color}-500/30`}>
+                    <Card className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-3 h-full mobile-center">
+                      <CardContent className="p-0 mobile-center">
+                        <div className="flex flex-col items-center text-center space-y-2 mobile-center">
+                          <div className={`p-2 rounded-xl bg-${stat.color}-500/30 mobile-center`}>
                             <stat.icon className={`w-6 h-6 text-${stat.color}-300`} />
                           </div>
-                          <Typography 
-                            variant="h6" 
-                            sx={{ 
+                          <Typography
+                            variant="h6"
+                            sx={{
                               fontSize: { xs: '1rem', sm: '1.125rem' },
                               fontWeight: 700,
                               color: 'white'
                             }}
+                            className="mobile-center-text"
                           >
                             {stat.value}
                           </Typography>
-                          <Typography 
-                            variant="caption" 
-                            sx={{ 
+                          <Typography
+                            variant="caption"
+                            sx={{
                               color: 'rgba(255, 255, 255, 0.8)',
                               fontSize: { xs: '0.75rem', sm: '0.875rem' }
                             }}
+                            className="mobile-center-text"
                           >
                             {stat.label}
                           </Typography>
