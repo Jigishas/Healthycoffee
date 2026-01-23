@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Menu, X, Camera, Image } from 'lucide-react';
 import logo from '../../assets/coffee.webp';
-
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -283,6 +282,54 @@ function Navbar() {
                   </ul>
                 </div>
 
+                {/* Analyze Button & Camera Shortcuts */}
+                <div className="pt-4 mobile-center">
+                  <motion.button
+                    onClick={triggerCameraCapture}
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-3 px-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium text-sm mb-4 touch-target mobile-center-button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    aria-label="Open camera to analyze"
+                  >
+                    Analyze Photo
+                  </motion.button>
+
+                  <h3 className="text-sm font-semibold text-amber-800 mb-3 flex items-center gap-2 mobile-center">
+                    <Camera className="h-4 w-4" />
+                    Quick Actions
+                  </h3>
+                  <div className="space-y-2 mobile-center">
+                    <motion.button
+                      onClick={triggerCameraCapture}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg transition-all duration-300 touch-target mobile-center"
+                      whileHover={{ scale: 1.02, x: 5 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0 mobile-center">
+                        <Camera className="h-5 w-5 text-white" />
+                      </div>
+                      <div className="min-w-0 mobile-center">
+                        <div className="font-medium text-sm mobile-center-text">Open Camera</div>
+                        <div className="text-xs text-amber-600 mobile-center-text">Take photo directly</div>
+                      </div>
+                    </motion.button>
+
+                    <motion.button
+                      onClick={triggerGalleryUpload}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg transition-all duration-300 touch-target mobile-center"
+                      whileHover={{ scale: 1.02, x: 5 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0 mobile-center">
+                        <Image className="h-5 w-5 text-white" />
+                      </div>
+                      <div className="min-w-0 mobile-center">
+                        <div className="font-medium text-sm mobile-center-text">From Gallery</div>
+                        <div className="text-xs text-amber-600 mobile-center-text">Select existing photo</div>
+                      </div>
+                    </motion.button>
+                  </div>
+                </div>
                 {/* Analyze Button & Camera Shortcuts */}
                 <div className="pt-4">
                   <motion.button
