@@ -37,49 +37,27 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Configure CORS properly for production
+# Configure CORS properly for production - simplified and robust
 CORS(app, resources={
     r"/*": {
-        "origins": [
-            "http://localhost:5173",  # Vite dev server
-            "http://localhost:3000",  # Alternative dev port
-            "https://healthycoffee.vercel.app",  # Production frontend
-            "https://healthycoffee.onrender.com",  # Production backend (for health checks)
-            "*"  # Allow all origins for now to fix the issue
-        ],
+        "origins": "*",
         "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
         "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
         "supports_credentials": False,
         "expose_headers": ["Content-Type", "X-Custom-Header"],
-        "max_age": 86400  # Cache preflight for 24 hours
+        "max_age": 86400
     }
 })
 
 @app.after_request
 def add_cors_headers(response):
     """Ensure CORS headers are properly set for all responses"""
-    allowed_origins = [
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://healthycoffee.vercel.app",
-        "https://healthycoffee.onrender.com"
-    ]
-
-    origin = request.headers.get('Origin')
-    if origin in allowed_origins:
-        response.headers['Access-Control-Allow-Origin'] = origin
-    elif origin and ('localhost' in origin or '127.0.0.1' in origin):
-        # Allow localhost for development
-        response.headers['Access-Control-Allow-Origin'] = origin
-    else:
-        # For production, allow the Vercel origin explicitly
-        response.headers['Access-Control-Allow-Origin'] = 'https://healthycoffee.vercel.app'
-
-    # Ensure these headers are always set
+    # Set CORS headers explicitly for all responses
+    response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS,PUT,DELETE'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,X-Requested-With,Accept'
     response.headers['Access-Control-Allow-Credentials'] = 'false'
-    response.headers['Access-Control-Max-Age'] = '86400'  # Cache preflight for 24 hours
+    response.headers['Access-Control-Max-Age'] = '86400'
 
     return response
 
@@ -157,7 +135,7 @@ if not disease_classifier_loaded or not deficiency_classifier_loaded:
 else:
     logger.info("All models initialized successfully")
 
-@app.route('/api/upload-image', methods=['POST'])
+@app.route('/api/upload-image', methods=['POST', 'OPTIONS'])
 def upload_image():
     """Enhanced image upload endpoint with optimized models"""
     try:
