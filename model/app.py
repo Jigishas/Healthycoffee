@@ -37,19 +37,21 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Configure CORS properly
+# Configure CORS properly for production
 CORS(app, resources={
     r"/*": {
         "origins": [
             "http://localhost:5173",  # Vite dev server
             "http://localhost:3000",  # Alternative dev port
-            "https://healthycoffee.vercel.app",
-            "https://healthycoffee.onrender.com"
+            "https://healthycoffee.vercel.app",  # Production frontend
+            "https://healthycoffee.onrender.com",  # Production backend (for health checks)
+            "*"  # Allow all origins for now to fix the issue
         ],
         "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
-        "supports_credentials": False,  # Set to False since we're not using cookies/auth
-        "expose_headers": ["Content-Type", "X-Custom-Header"]
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+        "supports_credentials": False,
+        "expose_headers": ["Content-Type", "X-Custom-Header"],
+        "max_age": 86400  # Cache preflight for 24 hours
     }
 })
 
@@ -65,15 +67,20 @@ def add_cors_headers(response):
 
     origin = request.headers.get('Origin')
     if origin in allowed_origins:
-        response.headers.setdefault('Access-Control-Allow-Origin', origin)
+        response.headers['Access-Control-Allow-Origin'] = origin
+    elif origin and ('localhost' in origin or '127.0.0.1' in origin):
+        # Allow localhost for development
+        response.headers['Access-Control-Allow-Origin'] = origin
     else:
-        # For development/testing, allow localhost
-        if origin and ('localhost' in origin or '127.0.0.1' in origin):
-            response.headers.setdefault('Access-Control-Allow-Origin', origin)
+        # For production, allow the Vercel origin explicitly
+        response.headers['Access-Control-Allow-Origin'] = 'https://healthycoffee.vercel.app'
 
-    response.headers.setdefault('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,DELETE')
-    response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
-    response.headers.setdefault('Access-Control-Allow-Credentials', 'false')
+    # Ensure these headers are always set
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS,PUT,DELETE'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,X-Requested-With,Accept'
+    response.headers['Access-Control-Allow-Credentials'] = 'false'
+    response.headers['Access-Control-Max-Age'] = '86400'  # Cache preflight for 24 hours
+
     return response
 
 # Configuration
