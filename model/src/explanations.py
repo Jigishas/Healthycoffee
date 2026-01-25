@@ -1,147 +1,41 @@
-# simple explanation provider — extend as needed or load from files
-DEFAULT_EXPLANATIONS = {
-    # Deficiency explanations
-    "healthy": {
-        "description": {
-            "en": "Leaf shows no visible nutrient deficiency symptoms.",
-            "sw": "Jani halina dalili za upungufu wa virutubisho."
-        },
-        "recommendation": {
-            "en": "Maintain balanced fertilization and good agronomic practices.",
-            "sw": "Endelea na mbolea iliyosawazishwa na mazoea mazuri ya kilimo."
-        }
-    },
-    "boron deficiency": {
-        "description": {
-            "en": "Deformed or brittle young leaves, poor flowering and fruit set.",
-            "sw": "Majani mapya yameharibika au kavu, maua na matunda habadiliki vizuri."
-        },
-        "recommendation": {
-            "en": "Apply boron-containing fertilizers such as borax in recommended doses.",
-            "sw": "Tumia mbolea zenye boron kama borax kwa kipimo kilichopendekezwa."
-        }
-    },
-    "calcium deficiency": {
-        "description": {
-            "en": "Young leaves are distorted or hook-shaped, with necrotic tips.",
-            "sw": "Majani mapya yamepinduka au kama ndoano, ncha zimekufa."
-        },
-        "recommendation": {
-            "en": "Apply agricultural lime or gypsum to improve calcium levels.",
-            "sw": "Tumia chokaa ya kilimo au gypsum ili kuongeza kiwango cha kalsiamu."
-        }
-    },
-    "iron deficiency": {
-        "description": {
-            "en": "Interveinal chlorosis on young leaves while veins remain green.",
-            "sw": "Kupungua kwa rangi kati ya mishipa kwenye majani mapya, mishipa inabaki kijani."
-        },
-        "recommendation": {
-            "en": "Apply iron chelates or foliar sprays; ensure proper soil pH.",
-            "sw": "Tumia chelates za chuma au dawa za kunyunyizia; hakikisha pH ya udongo ni sahihi."
-        }
-    },
-    "magnesium deficiency": {
-        "description": {
-            "en": "Yellowing between veins on older leaves, veins remain green.",
-            "sw": "Kupungua kwa rangi kati ya mishipa kwenye majani ya zamani, mishipa inabaki kijani."
-        },
-        "recommendation": {
-            "en": "Apply magnesium sulfate (Epsom salts) or dolomitic lime.",
-            "sw": "Tumia magnesium sulfate (chumvi ya Epsom) au chokaa ya dolomiti."
-        }
-    },
-    "manganese deficiency": {
-        "description": {
-            "en": "Interveinal chlorosis with small necrotic spots on young leaves.",
-            "sw": "Kupungua kwa rangi kati ya mishipa na madoa madogo ya kufa kwenye majani mapya."
-        },
-        "recommendation": {
-            "en": "Apply manganese sulfate or foliar sprays.",
-            "sw": "Tumia manganese sulfate au dawa za kunyunyizia."
-        }
-    },
-    "nitrogen deficiency": {
-        "description": {
-            "en": "Older leaves turn pale yellow starting from the tip.",
-            "sw": "Majani ya zamani hupungua rangi na kuwa njano kuanzia ncha."
-        },
-        "recommendation": {
-            "en": "Apply nitrogen-rich fertilizers such as urea or CAN.",
-            "sw": "Tumia mbolea zenye nitrojeni nyingi kama urea au CAN."
-        }
-    },
-    "phosphorus deficiency": {
-        "description": {
-            "en": "Dark green foliage with purplish tinge, stunted growth.",
-            "sw": "Majani ya kijani giza yenye rangi ya zambarau, ukuaji umepungua."
-        },
-        "recommendation": {
-            "en": "Apply phosphorus fertilizers such as DAP or rock phosphate.",
-            "sw": "Tumia mbolea za fosforasi kama DAP au fosforasi ya mwamba."
-        }
-    },
-    "potassium deficiency": {
-        "description": {
-            "en": "Leaf edges turn brown and curl, plants more disease-prone.",
-            "sw": "Makali ya majani hupungua rangi na kukunja, mimea huwa rahisi kupatwa na magonjwa."
-        },
-        "recommendation": {
-            "en": "Apply muriate of potash (MOP) or potassium sulphate.",
-            "sw": "Tumia muriate of potash (MOP) au potassium sulphate."
-        }
-    },
-    # Disease explanations
-    "cerscospora": {
-        "description": {
-            "en": "Small brown or grey spots with light centers, often enlarging and merging, caused by Cercospora coffeicola.",
-            "sw": "Madoa madogo ya kahawia au kijivu yenye vituo vyeupe, mara nyingi hukua na kuungana."
-        },
-        "recommendation": {
-            "en": "Remove infected leaves, maintain proper spacing, and apply protective fungicides.",
-            "sw": "Ondoa majani yaliyoambukizwa, weka nafasi sahihi, na tumia dawa za kuzuia ukungu."
-        }
-    },
-    "leaf rust": {
-        "description": {
-            "en": "Orange or yellow powdery spots, usually on the underside of leaves, caused by Hemileia vastatrix.",
-            "sw": "Madoa ya rangi ya chungwa au njano yenye unga, kawaida upande wa chini wa majani."
-        },
-        "recommendation": {
-            "en": "Remove and destroy infected leaves, improve air circulation, and apply recommended fungicides.",
-            "sw": "Ondoa na uharibu majani yaliyoambukizwa, boresha mzunguko wa hewa, na tumia dawa za kuzuia ukungu zilizopendekezwa."
-        }
-    },
-    "phoma": {
-        "description": {
-            "en": "Dark brown to black lesions, often with yellow halos, caused by Phoma spp.",
-            "sw": "Vidonda vya kahawia giza hadi nyeusi, mara nyingi na mduara wa njano."
-        },
-        "recommendation": {
-            "en": "Prune affected branches, avoid overhead irrigation, and apply copper-based fungicides.",
-            "sw": "Kata matawi yaliyoathirika, epuka kumwagilia juu, na tumia dawa za kuzuia ukungu zenye shaba."
-        }
-    },
-}
+"""
+Explanations and recommendations for coffee leaf diseases and deficiencies
+"""
 
+def get_explanation(disease_class, language='en'):
+    """
+    Get explanation for a disease class
+    """
+    explanations = {
+        "Cercospora Leaf Spot (Cercospora coffeicola)": "Cercospora leaf spot is a widespread fungal disease that affects coffee plants globally, particularly in regions with high humidity and frequent rainfall. The disease manifests as small, circular brown to grey spots on leaves that gradually enlarge and coalesce, forming irregular patches of dead tissue. In severe infections, this can lead to premature defoliation, significantly reducing the plant's photosynthetic capacity and causing yield losses of up to 30-50% in untreated coffee plantations. The fungus thrives in warm, humid conditions and can spread rapidly during prolonged wet periods.",
+        "Healthy": "Leaf shows no visible disease symptoms. Uniform green color and normal texture.",
+        "Phoma Leaf Blight (Phoma spp.)": "A fungal disease causing dark brown to black lesions on coffee leaves, often with yellow halos, leading to leaf necrosis and defoliation.",
+        "Coffee Leaf Rust (Hemileia vastatrix)": "A devastating fungal disease causing orange-yellow powdery spots on leaves, leading to defoliation and significant yield loss.",
+        "Coffee Berry Disease (Colletotrichum kahawae)": "A destructive fungal disease affecting coffee berries, causing dark sunken lesions and significant crop loss.",
+        "Root Rot Complex (Multiple Pathogens)": "A complex of fungal pathogens causing root system destruction, leading to plant decline and death.",
+        "Bacterial Blight (Pseudomonas syringae)": "A bacterial disease causing leaf spots, twig dieback, and cankers, often exacerbated by wet conditions.",
+        "Anthracnose (Colletotrichum gloeosporioides)": "A fungal disease causing leaf spots, berry rot, and dieback, particularly in humid conditions.",
+        "Nematode Infestation (Multiple Species)": "Microscopic worms attacking coffee roots, causing gall formation, reduced vigor, and yield decline.",
+        "Uncertain": "Model confidence too low for reliable prediction. Please try with a clearer image or consult an expert."
+    }
 
-def get_explanation(class_name: str, lang: str = "en") -> str:
-    """Return a human readable description for a predicted class."""
-    if not class_name:
-        return ""
-    entry = DEFAULT_EXPLANATIONS.get(class_name.lower())
-    if entry:
-        desc = entry.get("description", {})
-        return desc.get(lang, desc.get("en", "No description available."))
-    return f"No description available for '{class_name}'."
+    return explanations.get(disease_class, "No explanation available for this condition.")
 
+def get_recommendation(disease_class, language='en'):
+    """
+    Get recommendation for a disease class
+    """
+    recommendations = {
+        "Cercospora Leaf Spot (Cercospora coffeicola)": "Apply copper-based fungicides preventively. Improve air circulation through proper pruning. Remove and destroy infected leaves. Maintain proper plant spacing.",
+        "Healthy": "Continue good agronomic practices including balanced fertilization, proper pruning, and regular monitoring for early disease detection.",
+        "Phoma Leaf Blight (Phoma spp.)": "Apply benzimidazole fungicides like thiophanate-methyl. Prune infected branches and remove fallen leaves. Avoid mechanical injury during cultivation.",
+        "Coffee Leaf Rust (Hemileia vastatrix)": "Apply systemic fungicides like triazoles. Plant resistant varieties. Improve shade management. Regular monitoring during wet season.",
+        "Coffee Berry Disease (Colletotrichum kahawae)": "Apply copper-based fungicides before flowering. Plant resistant varieties like Batian or Ruiru 11. Remove and destroy infected berries.",
+        "Root Rot Complex (Multiple Pathogens)": "Improve soil drainage. Use certified disease-free planting material. Apply fungicides as soil drenches. Avoid waterlogging.",
+        "Bacterial Blight (Pseudomonas syringae)": "Apply copper-based bactericides. Use pathogen-free planting material. Avoid overhead irrigation. Prune during dry weather.",
+        "Anthracnose (Colletotrichum gloeosporioides)": "Apply protective fungicides like chlorothalonil. Prune to improve air circulation. Remove infected plant debris.",
+        "Nematode Infestation (Multiple Species)": "Use resistant rootstocks. Apply nematicides. Practice crop rotation. Improve soil health with organic matter.",
+        "Uncertain": "Please try with a clearer image or consult an agricultural expert for accurate diagnosis and treatment recommendations."
+    }
 
-def get_recommendation(class_name: str, lang: str = "en") -> str:
-    """Return a recommendation for a predicted class."""
-    if not class_name:
-        return ""
-    entry = DEFAULT_EXPLANATIONS.get(class_name.lower())
-    if entry:
-        rec = entry.get("recommendation", {})
-        return rec.get(lang, rec.get("en", "No recommendation available."))
-    return f"No recommendation available for '{class_name}'."
+    return recommendations.get(disease_class, "Consult agricultural extension services for specific recommendations.")
