@@ -190,33 +190,50 @@ def upload_image():
             # Get predictions with timing
             start_time = time.time()
 
-            # Run predictions in parallel for faster response
+            # Run predictions in parallel using ThreadPoolExecutor for better resource management
+            from concurrent.futures import ThreadPoolExecutor, as_completed
             import threading
+
             results = {}
             errors = {}
 
             def predict_disease():
                 try:
-                    results['disease'] = disease_classifier.predict(filepath)
+                    result = disease_classifier.predict(filepath)
+                    results['disease'] = result
+                    return result
                 except Exception as e:
                     errors['disease'] = str(e)
+                    raise e
 
             def predict_deficiency():
                 try:
-                    results['deficiency'] = deficiency_classifier.predict(filepath)
+                    result = deficiency_classifier.predict(filepath)
+                    results['deficiency'] = result
+                    return result
                 except Exception as e:
                     errors['deficiency'] = str(e)
+                    raise e
 
-            # Start threads
-            disease_thread = threading.Thread(target=predict_disease)
-            deficiency_thread = threading.Thread(target=predict_deficiency)
+            # Use ThreadPoolExecutor with timeout for better control
+            with ThreadPoolExecutor(max_workers=2, thread_name_prefix="prediction") as executor:
+                # Submit tasks
+                disease_future = executor.submit(predict_disease)
+                deficiency_future = executor.submit(predict_deficiency)
 
-            disease_thread.start()
-            deficiency_thread.start()
+                # Wait for completion with timeout (30 seconds max)
+                try:
+                    # Wait for both to complete
+                    for future in as_completed([disease_future, deficiency_future], timeout=30.0):
+                        pass  # Results are stored in the results dict by the functions
 
-            # Wait for both to complete
-            disease_thread.join()
-            deficiency_thread.join()
+                except TimeoutError:
+                    logger.error("Prediction timeout - cancelling remaining tasks")
+                    # Cancel remaining futures
+                    for future in [disease_future, deficiency_future]:
+                        if not future.done():
+                            future.cancel()
+                    raise Exception("Prediction timeout - analysis took too long")
 
             total_time = time.time() - start_time
 
@@ -225,6 +242,10 @@ def upload_image():
                 raise Exception(f"Disease prediction failed: {errors['disease']}")
             if 'deficiency' in errors:
                 raise Exception(f"Deficiency prediction failed: {errors['deficiency']}")
+
+            # Ensure both results are available
+            if 'disease' not in results or 'deficiency' not in results:
+                raise Exception("Incomplete prediction results")
 
             disease_result = results['disease']
             deficiency_result = results['deficiency']
