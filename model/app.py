@@ -115,22 +115,13 @@ def validate_image_file(file):
 
     return True, None
 
-# Initialize interactive learning system
-try:
-    interactive_system = InteractiveCoffeeDiagnosis(
-        'models/leaf_diseases/efficientnet_disease_balanced.pth',
-        'models/leaf_diseases/class_mapping_diseases.json',
-        'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-        'models/leaf_deficiencies/class_mapping_deficiencies.json'
-    )
-    interactive_system_loaded = True
-    logger.info("Interactive learning system initialized successfully")
-except Exception as e:
-    logger.error(f"Failed to initialize interactive learning system: {str(e)}")
-    interactive_system = None
-    interactive_system_loaded = False
+# Memory-optimized initialization - only load essential models
+# Skip interactive learning system to save memory on Render free tier
+interactive_system = None
+interactive_system_loaded = False
+logger.info("Skipping interactive learning system to optimize memory usage")
 
-# Keep legacy classifiers for backward compatibility
+# Load optimized classifiers for production use
 try:
     disease_classifier = OptimizedTorchClassifier(
         'models/leaf_diseases/efficientnet_disease_balanced.pth',
