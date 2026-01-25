@@ -128,10 +128,11 @@ class InteractiveMemory:
 
 class AdaptiveClassifier:
     """Uses feature embeddings to find similar past cases and boost confidence"""
-    def __init__(self, base_model):
+    def __init__(self, base_model, max_memory_per_class=50):
         self.base_model = base_model
         self.feature_memory = {}  # disease_class -> list of feature vectors
         self.confidence_boost = 0.1  # Boost for familiar patterns
+        self.max_memory_per_class = max_memory_per_class  # Limit memory per class
 
     def predict_with_memory(self, image_path):
         # Get base prediction
@@ -202,7 +203,7 @@ class AdaptiveClassifier:
         self.feature_memory[confirmed_diagnosis].append(feature_vector)
 
         # Keep only recent examples to prevent memory bloat
-        if len(self.feature_memory[confirmed_diagnosis]) > 100:
+        if len(self.feature_memory[confirmed_diagnosis]) > self.max_memory_per_class:
             self.feature_memory[confirmed_diagnosis].pop(0)
 
 
