@@ -7,7 +7,6 @@ import Footer from './Components/footer/Footer'
 import Whatsapp from './Components/BODY/Ask me/Whatsapp'
 import Stat from './Components/BODY/Stat/Stat'
 import Belowimg from './Components/BODY/imageSlider/Belowimg'
-import Askme from './Components/BODY/Ask me/Askme'
 import CameraCapture from './Components/CameraCapture/CameraCapture'
 import PWAInstallPrompt from './Components/PWAInstallPrompt'
 import { getBackendUrl } from './config'
@@ -31,9 +30,7 @@ function App() {
         <div id="stats">
           <Stat />
         </div>
-        <div id="askme">
-          <Askme />
-        </div>
+       
         <div id="camera" data-camera-section>
           <CameraCapture uploadUrl={backendUrl} />
         </div>

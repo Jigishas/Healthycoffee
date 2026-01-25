@@ -6,37 +6,49 @@ import json
 import os
 from pathlib import Path
 import time
+import gc
 
-class OptimizedTorchClassifier:
+class LightweightTorchClassifier:
+    """Memory-optimized classifier for Render free tier (512MB limit)"""
     def __init__(self, model_path, classes_path, confidence_threshold=0.3):
-        self.model, self.classes = self.load_model_and_mapping(model_path, classes_path)
+        self.model_path = model_path
+        self.classes_path = classes_path
         self.confidence_threshold = confidence_threshold
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model.to(self.device)
-        self.model.eval()
+        self.device = torch.device('cpu')  # Force CPU to save memory
+        self.model = None
+        self.classes = None
 
-        # Optimized transform with normalization
+        # Lightweight transform
         self.transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
-    def load_model_and_mapping(self, weights_path, mapping_path):
-        with open(mapping_path, "r", encoding="utf-8") as f:
-            mapping = json.load(f)
-        num_classes = len(mapping)
+    def load_model(self):
+        """Lazy load model only when needed"""
+        if self.model is None:
+            with open(self.classes_path, "r", encoding="utf-8") as f:
+                self.classes = json.load(f)
+            num_classes = len(self.classes)
 
-        # Load EfficientNet-B0 with pretrained weights
-        model = models.efficientnet_b0(weights="IMAGENET1K_V1")
-        model.classifier[1] = nn.Linear(model.classifier[1].in_features, num_classes)
+            # Use MobileNetV2 instead of EfficientNet for lower memory usage
+            self.model = models.mobilenet_v2(weights="IMAGENET1K_V1")
+            self.model.classifier[1] = nn.Linear(self.model.classifier[1].in_features, num_classes)
 
-        # Load trained weights
-        state_dict = torch.load(weights_path, map_location="cpu")
-        model.load_state_dict(state_dict)
-        model.eval()
+            # Load trained weights
+            state_dict = torch.load(self.model_path, map_location="cpu")
+            self.model.load_state_dict(state_dict)
+            self.model.to(self.device)
+            self.model.eval()
 
-        return model, mapping
+    def unload_model(self):
+        """Unload model to free memory"""
+        if self.model is not None:
+            del self.model
+            self.model = None
+            gc.collect()
+            torch.cuda.empty_cache() if torch.cuda.is_available() else None
 
     def predict(self, image_path):
         start_time = time.time()
