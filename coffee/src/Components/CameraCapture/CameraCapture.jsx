@@ -277,191 +277,84 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
               </motion.div>
             )}
 
-            {/* LOADING MODE */}
             {mode === 'loading' && (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
+              <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-8 text-center">
-                  {/* Animated Loader */}
                   <div className="relative w-24 h-24 mx-auto mb-6">
                     <div className="absolute inset-0 border-4 border-emerald-200 rounded-full animate-pulse" />
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-4 border-4 border-emerald-500 border-t-transparent rounded-full"
-                    />
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="absolute inset-4 border-4 border-emerald-500 border-t-transparent rounded-full" />
                     <Leaf className="w-12 h-12 text-emerald-500 absolute inset-0 m-auto" />
                   </div>
-
-                  <Typography variant="h5" className="font-bold text-grey-900 mb-2">
-                    Analyzing Leaf
-                  </Typography>
-                  
-                  <Typography variant="body2" className="text-grey-600 mb-6">
-                    AI is examining disease patterns and nutrient levels
-                  </Typography>
-
-                  {/* Progress Bar */}
+                  <Typography variant="h5" className="font-bold text-grey-900 mb-2">Analyzing Leaf</Typography>
+                  <Typography variant="body2" className="text-grey-600 mb-6">AI is examining disease patterns and nutrient levels</Typography>
                   <Box className="max-w-md mx-auto">
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={uploadProgress}
-                      sx={{ 
-                        height: 8,
-                        borderRadius: 4,
-                        backgroundColor: 'rgb(209, 213, 219)',
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: '#10b981',
-                          borderRadius: 4
-                        }
-                      }}
-                    />
-                    <Typography variant="caption" className="text-grey-500 mt-2 block">
-                      {uploadProgress}% complete
-                    </Typography>
+                    <LinearProgress variant="determinate" value={uploadProgress} sx={{ height: 8, borderRadius: 4, backgroundColor: 'rgb(209, 213, 219)', '& .MuiLinearProgress-bar': { backgroundColor: '#10b981', borderRadius: 4 } }} />
+                    <Typography variant="caption" className="text-grey-500 mt-2 block">{uploadProgress}% complete</Typography>
                   </Box>
                 </Box>
               </motion.div>
             )}
 
-            {/* RESULT MODE */}
             {mode === 'result' && result && (
-              <motion.div
-                key="result"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-              >
+              <motion.div key="result" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                 <Box className="space-y-6">
-                  {/* Results Summary */}
                   <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
                     <div className="flex items-center justify-between mb-6">
-                      <Typography variant="h5" className="font-bold text-grey-900">
-                        Analysis Results
-                      </Typography>
-                      <Chip 
-                        label="AI Powered"
-                        className="bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800"
-                        icon={<Zap className="w-4 h-4" />}
-                      />
+                      <Typography variant="h5" className="font-bold text-grey-900">Analysis Results</Typography>
+                      <Chip label="AI Powered" className="bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800" icon={<Zap className="w-4 h-4" />} />
                     </div>
-
                     <Grid container spacing={4}>
-                      {/* Disease Detection */}
                       {result.disease_prediction && (
                         <Grid item xs={12} md={6}>
-                          <Box className={`p-4 rounded-2xl border ${
-                            result.disease_prediction.class === 'Healthy' 
-                              ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
-                              : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'
-                          }`}>
+                          <Box className={`p-4 rounded-2xl border ${result.disease_prediction.class === 'Healthy' ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200' : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'}`}>
                             <div className="flex items-center gap-3 mb-3">
-                              <div className={`p-2 rounded-lg ${
-                                result.disease_prediction.class === 'Healthy' 
-                                  ? 'bg-emerald-100 text-emerald-600'
-                                  : 'bg-amber-100 text-amber-600'
-                              }`}>
+                              <div className={`p-2 rounded-lg ${result.disease_prediction.class === 'Healthy' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
                                 <Shield className="w-5 h-5" />
                               </div>
-                              <Typography variant="h6" className="font-bold">
-                                Disease Status
-                              </Typography>
+                              <Typography variant="h6" className="font-bold">Disease Status</Typography>
                             </div>
-                            <Typography variant="h4" className={`font-black mb-2 ${
-                              result.disease_prediction.class === 'Healthy' 
-                                ? 'text-emerald-700'
-                                : 'text-amber-700'
-                            }`}>
-                              {result.disease_prediction.class}
-                            </Typography>
+                            <Typography variant="h4" className={`font-black mb-2 ${result.disease_prediction.class === 'Healthy' ? 'text-emerald-700' : 'text-amber-700'}`}>{result.disease_prediction.class}</Typography>
                             <div className="flex items-center justify-between">
-                              <Typography variant="body2" className="text-grey-600">
-                                Confidence
-                              </Typography>
-                              <Typography variant="body2" className="font-semibold text-grey-800">
-                                {Math.round(result.disease_prediction.confidence * 100)}%
-                              </Typography>
+                              <Typography variant="body2" className="text-grey-600">Confidence</Typography>
+                              <Typography variant="body2" className="font-semibold text-grey-800">{Math.round(result.disease_prediction.confidence * 100)}%</Typography>
                             </div>
                           </Box>
                         </Grid>
                       )}
-
-                      {/* Nutrient Analysis */}
                       {result.deficiency_prediction && (
                         <Grid item xs={12} md={6}>
-                          <Box className={`p-4 rounded-2xl border ${
-                            result.deficiency_prediction.class === 'Healthy' 
-                              ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
-                              : 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'
-                          }`}>
+                          <Box className={`p-4 rounded-2xl border ${result.deficiency_prediction.class === 'Healthy' ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200' : 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'}`}>
                             <div className="flex items-center gap-3 mb-3">
-                              <div className={`p-2 rounded-lg ${
-                                result.deficiency_prediction.class === 'Healthy' 
-                                  ? 'bg-emerald-100 text-emerald-600'
-                                  : 'bg-blue-100 text-blue-600'
-                              }`}>
+                              <div className={`p-2 rounded-lg ${result.deficiency_prediction.class === 'Healthy' ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600'}`}>
                                 <Leaf className="w-5 h-5" />
                               </div>
-                              <Typography variant="h6" className="font-bold">
-                                Nutrient Status
-                              </Typography>
+                              <Typography variant="h6" className="font-bold">Nutrient Status</Typography>
                             </div>
-                            <Typography variant="h4" className={`font-black mb-2 ${
-                              result.deficiency_prediction.class === 'Healthy' 
-                                ? 'text-emerald-700'
-                                : 'text-blue-700'
-                            }`}>
-                              {result.deficiency_prediction.class}
-                            </Typography>
+                            <Typography variant="h4" className={`font-black mb-2 ${result.deficiency_prediction.class === 'Healthy' ? 'text-emerald-700' : 'text-blue-700'}`}>{result.deficiency_prediction.class}</Typography>
                             <div className="flex items-center justify-between">
-                              <Typography variant="body2" className="text-grey-600">
-                                Confidence
-                              </Typography>
-                              <Typography variant="body2" className="font-semibold text-grey-800">
-                                {Math.round(result.deficiency_prediction.confidence * 100)}%
-                              </Typography>
+                              <Typography variant="body2" className="text-grey-600">Confidence</Typography>
+                              <Typography variant="body2" className="font-semibold text-grey-800">{Math.round(result.deficiency_prediction.confidence * 100)}%</Typography>
                             </div>
                           </Box>
                         </Grid>
                       )}
                     </Grid>
                   </Box>
-
-                  {/* Action Buttons */}
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={4}>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={resetCapture}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold rounded-xl hover:shadow-lg"
-                      >
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={resetCapture} className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold rounded-xl hover:shadow-lg">
                         <Leaf className="w-5 h-5" />
                         New Analysis
                       </motion.button>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {/* Download PDF */}}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg"
-                      >
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg">
                         <FileText className="w-5 h-5" />
                         PDF Report
                       </motion.button>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={retryAnalysis}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-4 border-2 border-grey-300 text-grey-700 font-semibold rounded-xl hover:bg-grey-50"
-                      >
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={retryAnalysis} className="w-full flex items-center justify-center gap-3 px-6 py-4 border-2 border-grey-300 text-grey-700 font-semibold rounded-xl hover:bg-grey-50">
                         <RotateCw className="w-5 h-5" />
                         Retry Analysis
                       </motion.button>
@@ -472,26 +365,13 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
             )}
           </AnimatePresence>
 
-          {/* Error Display */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6"
-            >
-              <Alert 
-                severity="error"
-                onClose={() => setError(null)}
-                className="rounded-2xl"
-              >
-                {error}
-              </Alert>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
+              <Alert severity="error" onClose={() => setError(null)} className="rounded-2xl">{error}</Alert>
             </motion.div>
           )}
         </Grid>
       </Grid>
-
-      {/* Hidden Canvas for Capture */}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
     </Container>
   );

@@ -8,6 +8,7 @@ and error handling for the coffee leaf disease and deficiency detection system.
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_caching import Cache
 import os
 import sys
 import tempfile
@@ -36,6 +37,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# Configure Redis caching
+cache = Cache(app, config={
+    'CACHE_TYPE': 'redis',
+    'CACHE_REDIS_URL': os.environ.get('REDIS_URL', 'redis://default:AdddRk3O6J4zWhPEG5AACpCvxsoQbwWF@redis-17844.c341.af-south-1-1.ec2.cloud.redislabs.com:17844'),
+    'CACHE_DEFAULT_TIMEOUT': 300  # 5 minutes default
+})
 
 # Configure CORS properly for production - simplified and robust
 CORS(app, resources={
@@ -254,6 +262,7 @@ def index():
     return jsonify({'status': 'ok', 'message': 'HealthyCoffee backend running', 'routes': ['/health', '/api/upload-image']}), 200
 
 @app.route('/api/model-info', methods=['GET'])
+@cache.cached(timeout=300)  # Cache for 5 minutes
 def model_info():
     """Get detailed information about loaded models"""
     try:
