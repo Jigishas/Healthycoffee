@@ -57,7 +57,7 @@ const Stat = () => {
           <Typography variant="h6" className="text-sm sm:text-base md:text-lg lg:text-xl text-grey-600 mx-auto" sx={{ fontWeight: 400, maxWidth: '95%', lineHeight: 1.5, px: { xs: 1, sm: 0 } }}>Real data showing growth, success, and opportunities in coffee farming</Typography>
         </motion.div>
 
-        <Grid container spacing={2} sm={3} className="relative z-10" sx={{ justifyContent: 'center' }}>
+        <Grid container spacing={2} className="relative z-10" sx={{ justifyContent: 'center' }}>
           {STATS.map((stat, index) => {
             const colors = COLOR_CONFIG[stat.color];
             const isActive = activeStat === index || touchActive === index;
@@ -111,7 +111,7 @@ const Stat = () => {
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }} viewport={{ once: true }} className="mt-8 sm:mt-12 relative z-10">
           <div className="bg-gradient-to-r from-emerald-500/10 via-amber-500/10 to-emerald-500/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-emerald-200/50 backdrop-blur-sm">
-            <Grid container spacing={3} sm={2} alignItems="center">
+            <Grid container spacing={3} alignItems="center">
               {[{ icon: Target, color: 'emerald', title: 'Key Insight', text: 'Farmers in cooperatives earn 30% more' }, { icon: Leaf, color: 'amber', title: 'Sustainable Growth', text: 'Organic farming adoption up by 45%' }, { icon: TreePine, color: 'blue', title: 'Future Projection', text: 'Expected 25% growth in next 5 years' }].map((item, i) => (
                 <Grid item xs={12} sm={4} key={i}>
                   <div className={`flex items-center gap-3 sm:gap-4 ${i > 0 ? 'mb-4 sm:mb-0' : ''}`}>
