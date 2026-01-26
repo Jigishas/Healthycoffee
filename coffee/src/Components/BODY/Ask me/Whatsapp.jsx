@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Phone, Mail, Clock, CheckCircle, Send, User, Coffee, Shield, Leaf, TrendingUp, ChevronRight, Award, Users } from 'lucide-react';
+import { MessageCircle, Phone, Mail, Clock, CheckCircle, Send, User, Coffee, Shield, Leaf, TrendingUp, ChevronRight, Star, Users } from 'lucide-react';
 import { Box, Typography, Grid, Container, TextField, TextareaAutosize, Alert, Snackbar } from '@mui/material';
 
 const WHATSAPP_NUMBER = '254743121169';
@@ -17,7 +17,7 @@ const STATS = [
   { icon: Clock, label: 'Response Time', value: '<15 mins' },
   { icon: CheckCircle, label: 'Success Rate', value: '98%' },
   { icon: Users, label: 'Farmers Helped', value: '10K+' },
-  { icon: Award, label: 'Rating', value: '4.9/5' }
+  { icon: Star, label: 'Rating', value: '4.9/5' }
 ];
 
 const Whatsapp = () => {
@@ -113,9 +113,7 @@ const Whatsapp = () => {
                       <Box className="bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-grey-200 shadow-md hover:shadow-lg transition-all duration-300">
                         <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
                           <div className="p-1.5 sm:p-2 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-lg">
-                            <div className="w-4 h-4 sm:w-5 sm:h-5">
-                              {React.cloneElement(stat.icon, { className: "w-full h-full text-emerald-600" })}
-                            </div>
+                            <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
                           </div>
                           <Typography variant="body2" className="font-semibold text-grey-700"
                             sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
@@ -137,9 +135,7 @@ const Whatsapp = () => {
                     {BENEFITS.map((benefit, index) => (
                       <div key={index} className="flex items-center gap-2 sm:gap-2.5 p-1.5 sm:p-2">
                         <div className="p-1 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-lg flex-shrink-0">
-                          <div className="w-3.5 h-3.5 sm:w-4 sm:h-4">
-                            {React.createElement(benefit.icon, { className: "w-full h-full text-emerald-600" })}
-                          </div>
+                          <benefit.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
                         </div>
                         <Typography variant="body2" className="text-grey-700 text-xs sm:text-sm">{benefit.text}</Typography>
                       </div>

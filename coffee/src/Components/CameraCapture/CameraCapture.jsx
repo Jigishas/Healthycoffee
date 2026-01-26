@@ -110,7 +110,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                   Capture Tips
                 </Typography>
                 <div className="space-y-4">
-                  {CAPTURE_STEPS.map((step, index) => {
+                  {CAPTURE_STEPS.map((step, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, x: -10 }}
@@ -119,7 +119,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                       className="flex items-start gap-3 p-3 bg-white/80 rounded-xl"
                     >
                       <div className="p-2 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-lg">
-                        {step.icon}
+                        {React.createElement(step.icon, { className: "w-5 h-5" })}
                       </div>
                       <div>
                         <Typography variant="body2" className="font-semibold text-grey-800">
