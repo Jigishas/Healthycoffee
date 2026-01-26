@@ -1,6 +1,9 @@
 // Custom Service Worker for Healthy Coffee PWA
 // Simplified version without external dependencies for compatibility
 
+// Inject manifest placeholder for Workbox
+self.__WB_MANIFEST
+
 // Cache names
 const STATIC_CACHE = 'static-assets-cache-v1';
 const IMAGES_CACHE = 'images-cache-v1';

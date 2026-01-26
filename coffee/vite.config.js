@@ -40,9 +40,7 @@ export default defineConfig({
           }
         ]
       },
-      strategies: 'injectManifest',
-      srcDir: 'public',
-      filename: 'sw.js',
+      strategies: 'generateSW',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
