@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { usePWAInstall } from '../hooks/usePWAInstall'
-import { Button } from './ui/button'
+import { Button } from './ui/button.tsx'
 import { Download, Smartphone, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -61,4 +61,4 @@ const PWAInstallPrompt = () => {
   )
 }
 
-export default PWAInstallPrompt
+export default PWAInstallPrompt;
