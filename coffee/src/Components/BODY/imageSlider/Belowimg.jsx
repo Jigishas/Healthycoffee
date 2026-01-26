@@ -161,7 +161,7 @@ const Belowimg = () => {
                 </Box>
 
                 <Grid container spacing={3}>
-                  {benefits.map((benefit, index) => (
+                  {BENEFITS.map((benefit, index) => (
                     <Grid item xs={12} sm={6} md={3} key={index}>
                       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: index * 0.1 }} viewport={{ once: true }} whileHover={{ y: -5 }}>
                         <Box sx={{ height: '100%', background: benefit.bgColor, border: `2px solid ${benefit.color}20`, borderRadius: '16px', p: 2.5, transition: 'all 0.3s ease', '&:hover': { boxShadow: '0 15px 30px -10px rgba(0, 0, 0, 0.1)', transform: 'translateY(-4px)' } }}>
@@ -214,7 +214,7 @@ const Belowimg = () => {
                 </Box>
                 
                 <Grid container spacing={2}>
-                  {growingConditions.map((condition, index) => (
+                  {GROWING_CONDITIONS.map((condition, index) => (
                     <Grid item xs={6} sm={3} key={index}>
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -300,7 +300,7 @@ const Belowimg = () => {
                 </Box>
 
                 <Grid container spacing={3}>
-                  {aiImpact.map((impact, index) => (
+                  {AI_IMPACT.map((impact, index) => (
                     <Grid item xs={12} sm={6} md={3} key={index}>
                       <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: index * 0.1 }} viewport={{ once: true }} whileHover={{ x: 3 }}>
                         <Box sx={{ background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', border: '1px solid rgba(16, 185, 129, 0.1)', borderRadius: '16px', p: 3, height: '100%', transition: 'all 0.3s ease', '&:hover': { boxShadow: '0 15px 40px -15px rgba(0, 0, 0, 0.1)' } }}>
