@@ -1,98 +1,33 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Leaf, Heart, Shield, WandSparkles, Sprout, Coffee,
-  TrendingUp, Target, BarChart, Users, Zap, CheckCircle,
-  Droplets, Thermometer, Sun, Clock
-} from 'lucide-react';
-import { 
-  Box, 
-  Typography, 
-  Grid, 
-  Container, 
-  Chip,
-  Button,
-  useTheme,
-  useMediaQuery
-} from '@mui/material';
+import { Leaf, Heart, Shield, WandSparkles, Sprout, Coffee, TrendingUp, Target, BarChart, Users, Zap, CheckCircle, Droplets, Thermometer, Sun, Clock } from 'lucide-react';
+import { Box, Typography, Grid, Container, Chip, Button, useTheme, useMediaQuery } from '@mui/material';
+
+const BENEFITS = [
+  { icon: Sprout, title: "Higher Yield Potential", description: "Healthy plants produce 30-50% more cherries", stats: "40% Increase", color: "#10b981", bgColor: "#ecfdf5", details: ["Better nutrient absorption", "Stronger root systems", "Optimal photosynthesis"] },
+  { icon: Coffee, title: "Premium Quality Beans", description: "Improved bean density and flavor complexity", stats: "Grade AA Quality", color: "#f59e0b", bgColor: "#fffbeb", details: ["Higher cupping scores", "Better market price", "Export grade quality"] },
+  { icon: Shield, title: "Disease Resistance", description: "Natural immunity against common pathogens", stats: "95% Prevention", color: "#3b82f6", bgColor: "#eff6ff", details: ["Leaf rust resistance", "Berry disease immunity", "Root rot prevention"] },
+  { icon: TrendingUp, title: "Sustainable Income", description: "Stable yields ensure consistent farmer revenue", stats: "25% More Profit", color: "#22c55e", bgColor: "#f0fdf4", details: ["Reduced input costs", "Higher market value", "Long-term sustainability"] }
+];
+
+const AI_IMPACT = [
+  { icon: WandSparkles, title: "Predictive Analysis", description: "AI forecasts disease outbreaks 2 weeks in advance", improvement: "90% Accuracy" },
+  { icon: Target, title: "Precision Farming", description: "Optimal fertilizer and water recommendations", improvement: "40% Resource Saving" },
+  { icon: BarChart, title: "Yield Optimization", description: "Data-driven pruning and harvesting schedules", improvement: "35% Yield Increase" },
+  { icon: Zap, title: "Real-time Monitoring", description: "24/7 plant health tracking and alerts", improvement: "60% Faster Response" }
+];
+
+const GROWING_CONDITIONS = [
+  { icon: Thermometer, label: "Temperature", value: "15-24°C", ideal: "Optimal for Arabica" },
+  { icon: Droplets, label: "Rainfall", value: "1500-2500mm", ideal: "Well distributed" },
+  { icon: Sun, label: "Sunlight", value: "Partial Shade", ideal: "4-6 hours daily" },
+  { icon: Clock, label: "Maturation", value: "3-4 Years", ideal: "First harvest" }
+];
 
 const Belowimg = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
-
-  const benefits = [
-    {
-      icon: <Sprout />,
-      title: "Higher Yield Potential",
-      description: "Healthy plants produce 30-50% more cherries",
-      stats: "40% Increase",
-      color: "#10b981", // emerald
-      bgColor: "#ecfdf5",
-      details: ["Better nutrient absorption", "Stronger root systems", "Optimal photosynthesis"]
-    },
-    {
-      icon: <Coffee />,
-      title: "Premium Quality Beans",
-      description: "Improved bean density and flavor complexity",
-      stats: "Grade AA Quality",
-      color: "#f59e0b", // amber
-      bgColor: "#fffbeb",
-      details: ["Higher cupping scores", "Better market price", "Export grade quality"]
-    },
-    {
-      icon: <Shield />,
-      title: "Disease Resistance",
-      description: "Natural immunity against common pathogens",
-      stats: "95% Prevention",
-      color: "#3b82f6", // blue
-      bgColor: "#eff6ff",
-      details: ["Leaf rust resistance", "Berry disease immunity", "Root rot prevention"]
-    },
-    {
-      icon: <TrendingUp />,
-      title: "Sustainable Income",
-      description: "Stable yields ensure consistent farmer revenue",
-      stats: "25% More Profit",
-      color: "#22c55e", // green
-      bgColor: "#f0fdf4",
-      details: ["Reduced input costs", "Higher market value", "Long-term sustainability"]
-    }
-  ];
-
-  const aiImpact = [
-    {
-      icon: <WandSparkles />,
-      title: "Predictive Analysis",
-      description: "AI forecasts disease outbreaks 2 weeks in advance",
-      improvement: "90% Accuracy"
-    },
-    {
-      icon: <Target />,
-      title: "Precision Farming",
-      description: "Optimal fertilizer and water recommendations",
-      improvement: "40% Resource Saving"
-    },
-    {
-      icon: <BarChart />,
-      title: "Yield Optimization",
-      description: "Data-driven pruning and harvesting schedules",
-      improvement: "35% Yield Increase"
-    },
-    {
-      icon: <Zap />,
-      title: "Real-time Monitoring",
-      description: "24/7 plant health tracking and alerts",
-      improvement: "60% Faster Response"
-    }
-  ];
-
-  const growingConditions = [
-    { icon: <Thermometer />, label: "Temperature", value: "15-24°C", ideal: "Optimal for Arabica" },
-    { icon: <Droplets />, label: "Rainfall", value: "1500-2500mm", ideal: "Well distributed" },
-    { icon: <Sun />, label: "Sunlight", value: "Partial Shade", ideal: "4-6 hours daily" },
-    { icon: <Clock />, label: "Maturation", value: "3-4 Years", ideal: "First harvest" }
-  ];
 
   return (
     <Box sx={{ 
@@ -104,143 +39,29 @@ const Belowimg = () => {
       minHeight: '100vh'
     }}>
       {/* Background Elements */}
-      <Box sx={{
-        position: 'absolute',
-        inset: 0,
-        overflow: 'hidden',
-        zIndex: 0
-      }}>
-        <Box sx={{
-          position: 'absolute',
-          top: { xs: '-100px', md: '-80px' },
-          left: { xs: '-100px', md: '-80px' },
-          width: { xs: '200px', md: '300px', lg: '400px' },
-          height: { xs: '200px', md: '300px', lg: '400px' },
-          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%)',
-          borderRadius: '50%',
-          filter: 'blur(40px)'
-        }} />
-        <Box sx={{
-          position: 'absolute',
-          bottom: { xs: '-100px', md: '-80px' },
-          right: { xs: '-100px', md: '-80px' },
-          width: { xs: '200px', md: '300px', lg: '400px' },
-          height: { xs: '200px', md: '300px', lg: '400px' },
-          background: 'radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%)',
-          borderRadius: '50%',
-          filter: 'blur(40px)'
-        }} />
+      <Box sx={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0 }}>
+        <Box sx={{ position: 'absolute', top: { xs: '-100px', md: '-80px' }, left: { xs: '-100px', md: '-80px' }, width: { xs: '200px', md: '300px', lg: '400px' }, height: { xs: '200px', md: '300px', lg: '400px' }, background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)' }} />
+        <Box sx={{ position: 'absolute', bottom: { xs: '-100px', md: '-80px' }, right: { xs: '-100px', md: '-80px' }, width: { xs: '200px', md: '300px', lg: '400px' }, height: { xs: '200px', md: '300px', lg: '400px' }, background: 'radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(40px)' }} />
         
         {/* Coffee Leaf Pattern */}
-        <Box sx={{
-          position: 'absolute',
-          inset: 0,
-          opacity: 0.1,
-          pointerEvents: 'none'
-        }}>
+        <Box sx={{ position: 'absolute', inset: 0, opacity: 0.1, pointerEvents: 'none' }}>
           {[...Array(isMobile ? 8 : isTablet ? 12 : 15)].map((_, i) => (
-            <Box
-              key={i}
-              sx={{
-                position: 'absolute',
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: `${Math.random() * (isMobile ? 20 : 30) + (isMobile ? 10 : 20)}px`,
-                height: `${Math.random() * (isMobile ? 20 : 30) + (isMobile ? 10 : 20)}px`,
-                transform: `rotate(${Math.random() * 360}deg)`,
-                opacity: Math.random() * 0.3 + 0.1,
-                color: '#10b981'
-              }}
-            >
+            <Box key={i} sx={{ position: 'absolute', top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`, width: `${Math.random() * (isMobile ? 20 : 30) + (isMobile ? 10 : 20)}px`, height: `${Math.random() * (isMobile ? 20 : 30) + (isMobile ? 10 : 20)}px`, transform: `rotate(${Math.random() * 360}deg)`, opacity: Math.random() * 0.3 + 0.1, color: '#10b981' }}>
               <Leaf style={{ width: '100%', height: '100%' }} />
             </Box>
           ))}
         </Box>
       </Box>
 
-      <Container 
-        maxWidth="xl" 
-        sx={{ 
-          position: 'relative',
-          zIndex: 1 
-        }}
-      >
-        {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true, margin: "-50px" }}
-        >
-          <Box sx={{
-            textAlign: 'center',
-            mb: { xs: 6, md: 8 }
-          }}>
-            <Box sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: { xs: 2, md: 3 },
-              mb: 4,
-              p: { xs: 2, md: 3 },
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-              borderRadius: { xs: '16px', md: '20px' },
-              boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.3)'
-            }}>
-              <Leaf sx={{ 
-                color: 'white',
-                width: { xs: 24, md: 32 },
-                height: { xs: 24, md: 32 }
-              }} />
-              <Typography 
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  color: 'white',
-                  fontSize: { xs: '0.875rem', md: '1rem' }
-                }}
-              >
-                Coffee Plant Health
-              </Typography>
+      <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-50px" }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: { xs: 2, md: 3 }, mb: 4, p: { xs: 2, md: 3 }, background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', borderRadius: { xs: '16px', md: '20px' }, boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.3)' }}>
+              <Leaf sx={{ color: 'white', width: { xs: 24, md: 32 }, height: { xs: 24, md: 32 } }} />
+              <Typography variant="h6" sx={{ fontWeight: 700, color: 'white', fontSize: { xs: '0.875rem', md: '1rem' } }}>Coffee Plant Health</Typography>
             </Box>
-
-            <Typography 
-              variant="h1"
-              sx={{
-                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
-                fontWeight: 800,
-                mb: 2,
-                color: '#111827',
-                lineHeight: 1.2
-              }}
-            >
-              Quality{' '}
-              <Box
-                component="span"
-                sx={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #d97706 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}
-              >
-                Coffee Starts Here
-              </Box>
-            </Typography>
-
-            <Typography 
-              variant="body1"
-              sx={{
-                fontSize: { xs: '0.875rem', md: '1rem' },
-                color: '#6b7280',
-                maxWidth: '800px',
-                mx: 'auto',
-                mb: 4,
-                fontWeight: 400,
-                lineHeight: 1.5
-              }}
-            >
-              Healthy plants = premium beans & sustainable yields
-            </Typography>
+            <Typography variant="h1" sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem', lg: '3rem' }, fontWeight: 800, mb: 2, color: '#111827', lineHeight: 1.2 }}>Quality <Box component="span" sx={{ background: 'linear-gradient(135deg, #10b981 0%, #d97706 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Coffee Starts Here</Box></Typography>
+            <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', md: '1rem' }, color: '#6b7280', maxWidth: '800px', mx: 'auto', mb: 4, fontWeight: 400, lineHeight: 1.5 }}>Healthy plants = premium beans & sustainable yields</Typography>
           </Box>
         </motion.div>
 
@@ -332,141 +153,31 @@ const Belowimg = () => {
               </Grid>
             </Box>
 
-            {/* Content Section */}
             <Box sx={{ p: { xs: 3, sm: 4, md: 6, lg: 8 } }}>
-              {/* Benefits Section */}
               <Box sx={{ mb: { xs: 6, md: 8 } }}>
-                <Box sx={{ 
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                  mb: 3
-                }}>
-                  <CheckCircle sx={{ 
-                    color: '#10b981',
-                    width: { xs: 20, md: 24 },
-                    height: { xs: 20, md: 24 }
-                  }} />
-                  <Typography 
-                    variant="h3"
-                    sx={{
-                      fontSize: { xs: '1.1rem', md: '1.25rem' },
-                      fontWeight: 700,
-                      color: '#111827'
-                    }}
-                  >
-                    Key Benefits
-                  </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <CheckCircle sx={{ color: '#10b981', width: { xs: 20, md: 24 }, height: { xs: 20, md: 24 } }} />
+                  <Typography variant="h3" sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' }, fontWeight: 700, color: '#111827' }}>Key Benefits</Typography>
                 </Box>
 
                 <Grid container spacing={3}>
                   {benefits.map((benefit, index) => (
                     <Grid item xs={12} sm={6} md={3} key={index}>
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        viewport={{ once: true }}
-                        whileHover={{ y: -5 }}
-                      >
-                        <Box sx={{
-                          height: '100%',
-                          background: benefit.bgColor,
-                          border: `2px solid ${benefit.color}20`,
-                          borderRadius: '16px',
-                          p: 2.5,
-                          transition: 'all 0.3s ease',
-                          '&:hover': {
-                            boxShadow: '0 15px 30px -10px rgba(0, 0, 0, 0.1)',
-                            transform: 'translateY(-4px)'
-                          }
-                        }}>
-                          <Box sx={{ 
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'space-between',
-                            mb: 2
-                          }}>
-                            <Box sx={{
-                              p: 1.5,
-                              background: `linear-gradient(135deg, ${benefit.color} 0%, ${benefit.color}cc 100%)`,
-                              borderRadius: '12px'
-                            }}>
-                              <Box sx={{ color: 'white' }}>
-                                {React.cloneElement(benefit.icon, {
-                                  width: 18,
-                                  height: 18
-                                })}
-                              </Box>
+                      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: index * 0.1 }} viewport={{ once: true }} whileHover={{ y: -5 }}>
+                        <Box sx={{ height: '100%', background: benefit.bgColor, border: `2px solid ${benefit.color}20`, borderRadius: '16px', p: 2.5, transition: 'all 0.3s ease', '&:hover': { boxShadow: '0 15px 30px -10px rgba(0, 0, 0, 0.1)', transform: 'translateY(-4px)' } }}>
+                          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
+                            <Box sx={{ p: 1.5, background: `linear-gradient(135deg, ${benefit.color} 0%, ${benefit.color}cc 100%)`, borderRadius: '12px' }}>
+                              <Box sx={{ color: 'white' }}>{React.cloneElement(benefit.icon, { width: 18, height: 18 })}</Box>
                             </Box>
-                            <Chip 
-                              label={benefit.stats}
-                              sx={{
-                                background: `${benefit.color}15`,
-                                color: benefit.color,
-                                fontWeight: 600,
-                                fontSize: '0.65rem',
-                                height: '22px'
-                              }}
-                              size="small"
-                            />
+                            <Chip label={benefit.stats} sx={{ background: `${benefit.color}15`, color: benefit.color, fontWeight: 600, fontSize: '0.65rem', height: '22px' }} size="small" />
                           </Box>
-                          
-                          <Typography 
-                            variant="h6"
-                            sx={{
-                              fontSize: { xs: '0.95rem', sm: '1rem' },
-                              fontWeight: 700,
-                              color: benefit.color,
-                              mb: 1
-                            }}
-                          >
-                            {benefit.title}
-                          </Typography>
-                          
-                          <Typography 
-                            variant="body2"
-                            sx={{
-                              color: '#6b7280',
-                              mb: 2,
-                              fontSize: '0.8rem',
-                              lineHeight: 1.4
-                            }}
-                          >
-                            {benefit.description}
-                          </Typography>
-                          
-                          <Box sx={{ 
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1
-                          }}>
+                          <Typography variant="h6" sx={{ fontSize: { xs: '0.95rem', sm: '1rem' }, fontWeight: 700, color: benefit.color, mb: 1 }}>{benefit.title}</Typography>
+                          <Typography variant="body2" sx={{ color: '#6b7280', mb: 2, fontSize: '0.8rem', lineHeight: 1.4 }}>{benefit.description}</Typography>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                             {benefit.details.map((detail, i) => (
-                              <Box 
-                                key={i}
-                                sx={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: 1
-                                }}
-                              >
-                                <Box sx={{
-                                  width: '4px',
-                                  height: '4px',
-                                  borderRadius: '50%',
-                                  background: benefit.color,
-                                  flexShrink: 0
-                                }} />
-                                <Typography 
-                                  variant="caption"
-                                  sx={{
-                                    color: '#374151',
-                                    fontSize: '0.7rem',
-                                    lineHeight: 1.3
-                                  }}
-                                >
-                                  {detail}
-                                </Typography>
+                              <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Box sx={{ width: '4px', height: '4px', borderRadius: '50%', background: benefit.color, flexShrink: 0 }} />
+                                <Typography variant="caption" sx={{ color: '#374151', fontSize: '0.7rem', lineHeight: 1.3 }}>{detail}</Typography>
                               </Box>
                             ))}
                           </Box>
@@ -577,132 +288,30 @@ const Belowimg = () => {
                 </Grid>
               </Box>
 
-              {/* AI Impact Section */}
-              <Box sx={{
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, rgba(245, 158, 11, 0.03) 100%)',
-                borderRadius: '24px',
-                p: { xs: 3, md: 4 },
-                border: '1px solid rgba(16, 185, 129, 0.1)',
-                mb: { xs: 6, md: 8 }
-              }}>
-                <Box sx={{ 
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 3,
-                  mb: 4,
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  textAlign: { xs: 'center', sm: 'left' }
-                }}>
-                  <Box sx={{
-                    p: 2,
-                    background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-                    borderRadius: '16px',
-                    flexShrink: 0
-                  }}>
-                    <WandSparkles sx={{ 
-                      color: 'white',
-                      width: { xs: 28, md: 32 },
-                      height: { xs: 28, md: 32 }
-                    }} />
+              <Box sx={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, rgba(245, 158, 11, 0.03) 100%)', borderRadius: '24px', p: { xs: 3, md: 4 }, border: '1px solid rgba(16, 185, 129, 0.1)', mb: { xs: 6, md: 8 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 4, flexDirection: { xs: 'column', sm: 'row' }, textAlign: { xs: 'center', sm: 'left' } }}>
+                  <Box sx={{ p: 2, background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)', borderRadius: '16px', flexShrink: 0 }}>
+                    <WandSparkles sx={{ color: 'white', width: { xs: 28, md: 32 }, height: { xs: 28, md: 32 } }} />
                   </Box>
                   <Box>
-                    <Typography 
-                      variant="h3"
-                      sx={{
-                        fontSize: { xs: '1.25rem', md: '1.5rem' },
-                        fontWeight: 700,
-                        color: '#111827',
-                        mb: 1
-                      }}
-                    >
-                      AI-Driven Agricultural Revolution
-                    </Typography>
-                    <Typography 
-                      variant="body1"
-                      sx={{
-                        color: '#6b7280',
-                        fontSize: '0.95rem'
-                      }}
-                    >
-                      Transforming coffee farming with intelligent technology
-                    </Typography>
+                    <Typography variant="h3" sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' }, fontWeight: 700, color: '#111827', mb: 1 }}>AI-Driven Agricultural Revolution</Typography>
+                    <Typography variant="body1" sx={{ color: '#6b7280', fontSize: '0.95rem' }}>Transforming coffee farming with intelligent technology</Typography>
                   </Box>
                 </Box>
 
                 <Grid container spacing={3}>
                   {aiImpact.map((impact, index) => (
                     <Grid item xs={12} sm={6} md={3} key={index}>
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        viewport={{ once: true }}
-                        whileHover={{ x: 3 }}
-                      >
-                        <Box sx={{
-                          background: 'rgba(255, 255, 255, 0.9)',
-                          backdropFilter: 'blur(10px)',
-                          border: '1px solid rgba(16, 185, 129, 0.1)',
-                          borderRadius: '16px',
-                          p: 3,
-                          height: '100%',
-                          transition: 'all 0.3s ease',
-                          '&:hover': {
-                            boxShadow: '0 15px 40px -15px rgba(0, 0, 0, 0.1)'
-                          }
-                        }}>
-                          <Box sx={{ 
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 3,
-                            mb: 3
-                          }}>
-                            <Box sx={{
-                              p: 2,
-                              background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)',
-                              borderRadius: '12px'
-                            }}>
-                              <Box sx={{ color: '#8b5cf6' }}>
-                                {React.cloneElement(impact.icon, {
-                                  width: isMobile ? 20 : 24,
-                                  height: isMobile ? 20 : 24
-                                })}
-                              </Box>
+                      <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: index * 0.1 }} viewport={{ once: true }} whileHover={{ x: 3 }}>
+                        <Box sx={{ background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', border: '1px solid rgba(16, 185, 129, 0.1)', borderRadius: '16px', p: 3, height: '100%', transition: 'all 0.3s ease', '&:hover': { boxShadow: '0 15px 40px -15px rgba(0, 0, 0, 0.1)' } }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 3 }}>
+                            <Box sx={{ p: 2, background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', borderRadius: '12px' }}>
+                              <Box sx={{ color: '#8b5cf6' }}>{React.cloneElement(impact.icon, { width: isMobile ? 20 : 24, height: isMobile ? 20 : 24 })}</Box>
                             </Box>
-                            <Chip 
-                              label={impact.improvement}
-                              sx={{
-                                background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)',
-                                color: '#7c3aed',
-                                fontWeight: 600,
-                                fontSize: '0.75rem'
-                              }}
-                              size="small"
-                            />
+                            <Chip label={impact.improvement} sx={{ background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', color: '#7c3aed', fontWeight: 600, fontSize: '0.75rem' }} size="small" />
                           </Box>
-                          
-                          <Typography 
-                            variant="h6"
-                            sx={{
-                              fontWeight: 700,
-                              color: '#111827',
-                              mb: 1.5,
-                              fontSize: '1rem'
-                            }}
-                          >
-                            {impact.title}
-                          </Typography>
-                          
-                          <Typography 
-                            variant="body2"
-                            sx={{
-                              color: '#6b7280',
-                              fontSize: '0.875rem',
-                              lineHeight: 1.5
-                            }}
-                          >
-                            {impact.description}
-                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 700, color: '#111827', mb: 1.5, fontSize: '1rem' }}>{impact.title}</Typography>
+                          <Typography variant="body2" sx={{ color: '#6b7280', fontSize: '0.875rem', lineHeight: 1.5 }}>{impact.description}</Typography>
                         </Box>
                       </motion.div>
                     </Grid>
@@ -756,66 +365,11 @@ const Belowimg = () => {
                   textAlign: 'center',
                   mt: 6
                 }}>
-                  <Box sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: 2,
-                    justifyContent: 'center',
-                    mb: 2
-                  }}>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                        color: 'white',
-                        fontWeight: 600,
-                        borderRadius: '12px',
-                        px: { xs: 4, md: 6 },
-                        py: 2,
-                        fontSize: '0.95rem',
-                        textTransform: 'none',
-                        boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)',
-                        '&:hover': {
-                          boxShadow: '0 15px 35px -5px rgba(16, 185, 129, 0.5)',
-                          transform: 'translateY(-2px)'
-                        },
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      Learn Farming Best Practices
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        border: '2px solid #10b981',
-                        color: '#10b981',
-                        fontWeight: 600,
-                        borderRadius: '12px',
-                        px: { xs: 4, md: 6 },
-                        py: 2,
-                        fontSize: '0.95rem',
-                        textTransform: 'none',
-                        '&:hover': {
-                          background: 'rgba(16, 185, 129, 0.05)',
-                          border: '2px solid #059669'
-                        },
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
-                      Get AI Farming Tools
-                    </Button>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center', mb: 2 }}>
+                    <Button variant="contained" sx={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', fontWeight: 600, borderRadius: '12px', px: { xs: 4, md: 6 }, py: 2, fontSize: '0.95rem', textTransform: 'none', boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)', '&:hover': { boxShadow: '0 15px 35px -5px rgba(16, 185, 129, 0.5)', transform: 'translateY(-2px)' }, transition: 'all 0.3s ease' }}>Learn Farming Best Practices</Button>
+                    <Button variant="outlined" sx={{ border: '2px solid #10b981', color: '#10b981', fontWeight: 600, borderRadius: '12px', px: { xs: 4, md: 6 }, py: 2, fontSize: '0.95rem', textTransform: 'none', '&:hover': { background: 'rgba(16, 185, 129, 0.05)', border: '2px solid #059669' }, transition: 'all 0.3s ease' }}>Get AI Farming Tools</Button>
                   </Box>
-                  
-                  <Typography 
-                    variant="caption"
-                    sx={{
-                      color: '#9ca3af',
-                      fontSize: '0.75rem',
-                      display: 'block'
-                    }}
-                  >
-                    Join 10,000+ farmers already improving their coffee plant health
-                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#9ca3af', fontSize: '0.75rem', display: 'block' }}>Join 10,000+ farmers already improving their coffee plant health</Typography>
                 </Box>
               </motion.div>
             </Box>
