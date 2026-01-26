@@ -5,9 +5,7 @@ import { Card, CardContent } from '../../ui/card';
 import { Typography, Grid, Container, Box } from '@mui/material';
 
 const AnimatedCounter = ({ from, to, duration = 2, suffix = '' }) => {
-  const [count, setCount] = useState(from);
-  useEffect(() => { const controls = animate(from, to, { duration, onUpdate: (value) => setCount(Math.floor(value)), ease: "easeOut" }); return controls.stop; }, [from, to, duration]);
-  const formattedCount = to >= 1000 ? `${(count / 1000).toFixed(1)}K+` : count;
+  const formattedCount = to >= 1000 ? `${(to / 1000).toFixed(1)}K+` : to;
   return <span>{formattedCount}{suffix}</span>;
 };
 
