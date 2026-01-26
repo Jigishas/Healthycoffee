@@ -102,7 +102,7 @@ const Whatsapp = () => {
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                  {stats.map((stat, index) => (
+                  {STATS.map((stat, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, y: 20 }}
