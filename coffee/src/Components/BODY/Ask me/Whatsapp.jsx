@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Phone, Mail, Clock, CheckCircle, Send, User, Coffee, Shield, Leaf, TrendingUp, ChevronRight, Star, Users } from 'lucide-react';
 import { Box, Typography, Grid, Container, TextField, TextareaAutosize, Alert, Snackbar } from '@mui/material';
 
-const WHATSAPP_NUMBER = '254743121169';
+const WHATSAPP_NUMBER = '+254743121169';
 const BUSINESS_HOURS = { weekdays: '8:00 AM - 6:00 PM', weekends: '9:00 AM - 4:00 PM', timezone: 'EAT (GMT+3)' };
 const COMMON_QUESTIONS = ["Coffee plant diseases", "Best fertilizers", "Market prices", "Organic farming", "Harvesting tips", "Processing methods", "Export requirements", "Cooperatives"];
 const CATEGORIES = ['Diseases', 'Fertilizers', 'Harvesting', 'Processing', 'Marketing', 'Other'];
