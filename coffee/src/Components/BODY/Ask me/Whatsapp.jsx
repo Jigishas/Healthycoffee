@@ -45,7 +45,6 @@ const Whatsapp = () => {
 
   const showNotification = (message, severity = 'info') => setNotification({ message, severity });
 
-  const handleCloseNotification = () => setNotification(null);
 
   return (
     <div style={{
