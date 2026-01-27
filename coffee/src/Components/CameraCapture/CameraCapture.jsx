@@ -27,7 +27,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   const checkBackendStatus = async () => {
     setBackendStatus('checking');
     try {
-      const response = await fetch(`${uploadUrl}/health`, { timeout: 5000 });
+      const response = await fetch(`${uploadUrl}/health`, { timeout: 4000 });
       setBackendStatus(response.ok ? 'online' : 'offline');
     } catch { setBackendStatus('offline'); }
   };
