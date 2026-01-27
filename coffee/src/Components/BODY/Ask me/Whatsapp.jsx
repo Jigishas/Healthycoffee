@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Phone, Mail, Clock, CheckCircle, Send, User, Coffee, Shield, Leaf, TrendingUp, ChevronRight, Star, Users } from 'lucide-react';
 import { Box, Typography, Grid, Container, TextField, TextareaAutosize, Alert, Snackbar } from '@mui/material';
@@ -70,101 +70,8 @@ const Whatsapp = () => {
       <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2 } }}>
         <Grid container spacing={4} alignItems="stretch">
           {/* Left Column - Info & Stats */}
-          <Grid item xs={12} lg={5}>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Box className="sticky top-4 sm:top-8">
-                {/* Header */}
-                <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-                  <div className="p-3 sm:p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl sm:rounded-2xl shadow-lg">
-                    <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
-                  </div>
-                  <div>
-                    <Typography 
-                      variant="h3" 
-                      className="text-lg sm:text-xl md:text-2xl font-bold text-grey-900"
-                      sx={{ lineHeight: { xs: 1.2, sm: 1.3 } }}
-                    >
-                      Expert{' '}
-                      <span className="bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">
-                        Support
-                      </span>
-                    </Typography>
-                    <Typography variant="body2" className="text-grey-500"
-                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                      Get instant help
-                    </Typography>
-                  </div>
-                </div>
-
-                {/* Stats Cards */}
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                  {STATS.map((stat, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      whileHover={{ y: -4 }}
-                    >
-                      <Box className="bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-grey-200 shadow-md hover:shadow-lg transition-all duration-300">
-                        <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                          <div className="p-1.5 sm:p-2 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-lg">
-                            <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                          </div>
-                          <Typography variant="body2" className="font-semibold text-grey-700"
-                            sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                            {stat.label}
-                          </Typography>
-                        </div>
-                        <Typography variant="h5" className="font-bold text-emerald-700"
-                          sx={{ fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' } }}>
-                          {stat.value}
-                        </Typography>
-                      </Box>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Benefits */}
-                <Box className="mb-4 sm:mb-6">
-                  <div className="space-y-1.5 sm:space-y-2">
-                    {BENEFITS.map((benefit, index) => (
-                      <div key={index} className="flex items-center gap-2 sm:gap-2.5 p-1.5 sm:p-2">
-                        <div className="p-1 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-lg flex-shrink-0">
-                          <benefit.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
-                        </div>
-                        <Typography variant="body2" className="text-grey-700 text-xs sm:text-sm">{benefit.text}</Typography>
-                      </div>
-                    ))}
-                  </div>
-                </Box>
-
-                {/* Business Hours */}
-                <Box className="bg-gradient-to-r from-emerald-500/10 to-amber-500/10 p-3 sm:p-4 rounded-lg sm:rounded-xl border border-emerald-200/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                    <Typography className="font-medium text-emerald-800 text-sm sm:text-base">
-                      Hours
-                    </Typography>
-                  </div>
-                  <div className="space-y-1 text-xs sm:text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-grey-700">Mon - Fri:</span>
-                      <span className="font-medium text-emerald-700">{BUSINESS_HOURS.weekdays}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-grey-700">Sat - Sun:</span>
-                      <span className="font-medium text-emerald-700">{BUSINESS_HOURS.weekends}</span>
-                    </div>
-                  </div>
-                </Box>
-              </Box>
-            </motion.div>
-          </Grid>
+          
+               
 
           {/* Right Column - Contact Form */}
           <Grid item xs={12} lg={7}>
