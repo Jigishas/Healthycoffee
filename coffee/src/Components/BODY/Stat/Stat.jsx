@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Activity, Users, Sprout, Coffee, TrendingUp, Shield, BarChart, Target, Leaf, TreePine } from 'lucide-react';
+import React from 'react';
+import { Activity, Users, Sprout, Coffee, TrendingUp, Shield, BarChart, Target, Leaf, TreeDeciduous } from 'lucide-react';
 
 const AnimatedCounter = ({ to, suffix = '' }) => {
   const formattedCount = to >= 1000 ? `${(to / 1000).toFixed(1)}K+` : to;
@@ -25,10 +25,6 @@ const STATS = [
 ];
 
 const Stat = () => {
-  const [activeStat, setActiveStat] = useState(null);
-  const [touchActive, setTouchActive] = useState(null);
-  const handleTouchStart = (index) => { setTouchActive(index); setActiveStat(index); };
-  const handleTouchEnd = () => { setTimeout(() => { setTouchActive(null); setActiveStat(null); }, 300); };
 
   return (
     <div className="py-8 sm:py-10 md:py-16 px-1 sm:px-2 md:px-4 bg-gradient-to-br from-emerald-50 via-amber-50 to-blue-50 relative overflow-hidden flex justify-center items-center flex-col">
@@ -106,7 +102,7 @@ const Stat = () => {
         <div className="mt-8 sm:mt-12 relative z-10">
           <div className="bg-gradient-to-r from-emerald-500/10 via-amber-500/10 to-emerald-500/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-emerald-200/50 backdrop-blur-sm">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
-              {[{ icon: Target, color: 'emerald', title: 'Key Insight', text: 'Farmers in cooperatives earn 30% more' }, { icon: Leaf, color: 'amber', title: 'Sustainable Growth', text: 'Organic farming adoption up by 45%' }, { icon: TreePine, color: 'blue', title: 'Future Projection', text: 'Expected 25% growth in next 5 years' }].map((item, i) => (
+              {[{ icon: Target, color: 'emerald', title: 'Key Insight', text: 'Farmers in cooperatives earn 30% more' }, { icon: Leaf, color: 'amber', title: 'Sustainable Growth', text: 'Organic farming adoption up by 45%' }, { icon: TreeDeciduous, color: 'blue', title: 'Future Projection', text: 'Expected 25% growth in next 5 years' }].map((item, i) => (
                 <div key={i} className="w-full">
                   <div className={`flex items-center gap-3 sm:gap-4 ${i > 0 ? 'mb-4 sm:mb-0' : ''}`}>
                     <div className={`p-2 sm:p-3 bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 rounded-xl sm:rounded-2xl flex-shrink-0`}>
