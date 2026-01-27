@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Leaf, Heart, Shield, WandSparkles, Sprout, Coffee, TrendingUp, Target, BarChart, Users, Zap, CheckCircle, Droplets, Thermometer, Sun, Clock } from 'lucide-react';
-import { Box, Typography, Grid, Container, Chip, Button, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Typography, Grid, Container, Chip, Button } from '@mui/material';
+import { useTheme, useMediaQuery } from '@mui/material/styles';
 
 const BENEFITS = [
   { icon: Sprout, title: "Higher Yield Potential", description: "Healthy plants produce 30-50% more cherries", stats: "40% Increase", color: "#10b981", bgColor: "#ecfdf5", details: ["Better nutrient absorption", "Stronger root systems", "Optimal photosynthesis"] },
