@@ -28,7 +28,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     setBackendStatus('checking');
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500); // Reduced timeout to 2000ms for faster check
+      const timeoutId = setTimeout(() => controller.abort(), 2000); // Reduced timeout to 2000ms for faster check
       const response = await fetch(`${uploadUrl}/health`, { signal: controller.signal });
       clearTimeout(timeoutId);
       setBackendStatus(response.ok ? 'online' : 'offline');
