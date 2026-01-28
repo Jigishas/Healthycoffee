@@ -222,10 +222,18 @@ def upload_image():
         logger.error(f'Unexpected error: {str(e)}')
         return jsonify({'error': 'Internal server error'}), 500
 
-@app.route('/health', methods=['GET'])
+@app.route('/health', methods=['GET', 'POST'])
 def health():
     """Enhanced health check with model statistics"""
     try:
+        # Log dummy data if sent via POST
+        if request.method == 'POST':
+            dummy_data = request.get_json(silent=True)
+            if dummy_data:
+                logger.info(f'Ping received with dummy data: {dummy_data}')
+            else:
+                logger.info('Ping received without dummy data')
+
         # Get stats based on model type
         if hasattr(disease_classifier, 'get_stats'):
             disease_stats = disease_classifier.get_stats()
