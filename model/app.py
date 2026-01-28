@@ -234,16 +234,9 @@ def health():
             else:
                 logger.info('Ping received without dummy data')
 
-        # Get stats based on model type
-        if hasattr(disease_classifier, 'get_stats'):
-            disease_stats = disease_classifier.get_stats()
-        else:
-            disease_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': 'optimized'}
-
-        if hasattr(deficiency_classifier, 'get_stats'):
-            deficiency_stats = deficiency_classifier.get_stats()
-        else:
-            deficiency_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': 'optimized'}
+        # Default stats since models are loaded on-demand
+        disease_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': disease_model_type}
+        deficiency_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': deficiency_model_type}
 
         return jsonify({
             'status': 'healthy',
