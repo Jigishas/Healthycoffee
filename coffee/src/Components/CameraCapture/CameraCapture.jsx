@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Upload, X, RotateCw, Leaf, Shield, Zap, ThermometerSun, ScanLine, FileText } from 'lucide-react';
 import { Box, Typography, Grid, Container, Chip, Alert, LinearProgress, IconButton } from '@mui/material';
 
