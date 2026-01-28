@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Camera, Upload, X, RotateCw, Leaf, Shield, Zap, ThermometerSun, ScanLine, FileText } from 'lucide-react';
 import { Box, Typography, Grid, Container, Chip, Alert, LinearProgress, IconButton } from '@mui/material';
 
@@ -27,7 +27,10 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   const checkBackendStatus = async () => {
     setBackendStatus('checking');
     try {
-      const response = await fetch(`${uploadUrl}/health`, { timeout: 4000 });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1500); // Reduced timeout to 2000ms for faster check
+      const response = await fetch(`${uploadUrl}/health`, { signal: controller.signal });
+      clearTimeout(timeoutId);
       setBackendStatus(response.ok ? 'online' : 'offline');
     } catch { setBackendStatus('offline'); }
   };
