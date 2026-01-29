@@ -126,7 +126,10 @@ logger.info("Using on-demand model loading to minimize memory usage")
 
 @app.route('/api/upload-image', methods=['POST', 'OPTIONS'])
 def upload_image():
-    """Ultra-lightweight image upload endpoint - no ML models for Render free tier"""
+    """Analyze leaf image and return disease/deficiency predictions"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
     try:
         if 'image' not in request.files:
             logger.warning('No image file in request')
@@ -147,42 +150,67 @@ def upload_image():
             file.save(filepath)
             logger.info(f'File saved: {filepath}')
 
-            # Get file size for basic analysis
-            file_size = os.path.getsize(filepath)
-            processing_time = 0.1  # Minimal processing time
+            # Get predictions with timing using real models
+            start_time = time.time()
+            
+            try:
+                # Load and use the optimized models for actual predictions
+                from optimize_model import OptimizedTorchClassifier
+                
+                disease_classifier = OptimizedTorchClassifier(
+                    'models/leaf_diseases/efficientnet_disease_balanced.pth',
+                    'models/leaf_diseases/class_mapping_diseases.json',
+                    confidence_threshold=0.3
+                )
+                deficiency_classifier = OptimizedTorchClassifier(
+                    'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
+                    'models/leaf_deficiencies/class_mapping_deficiencies.json',
+                    confidence_threshold=0.3
+                )
+                
+                disease_result = disease_classifier.predict(filepath)
+                deficiency_result = deficiency_classifier.predict(filepath)
+                
+            except Exception as model_error:
+                logger.error(f'Model prediction failed: {str(model_error)}')
+                # Fallback to basic analysis if model loading fails
+                disease_result = {
+                    'class': 'Unknown',
+                    'confidence': 0.0,
+                    'class_index': -1,
+                    'inference_time': 0.0
+                }
+                deficiency_result = {
+                    'class': 'Unknown',
+                    'confidence': 0.0,
+                    'class_index': -1,
+                    'inference_time': 0.0
+                }
 
-            # Basic analysis without ML models (to fit Render free tier memory)
-            disease_result = {
-                'class': 'healthy',
-                'confidence': 0.5,
-                'class_index': 0,
-                'inference_time': 0.05
-            }
+            total_time = time.time() - start_time
 
-            deficiency_result = {
-                'class': 'healthy',
-                'confidence': 0.5,
-                'class_index': 0,
-                'inference_time': 0.05
-            }
+            # Get recommendations based on predictions
+            try:
+                recommendations = get_additional_recommendations(
+                    disease_class=disease_result.get('class_index', -1),
+                    deficiency_class=deficiency_result.get('class_index', -1)
+                )
+            except:
+                recommendations = [
+                    "Continue regular monitoring of your coffee plants",
+                    "Ensure proper watering and soil drainage",
+                    "Monitor for common pests and diseases"
+                ]
 
-            # Basic recommendations
-            recommendations = [
-                "Continue regular monitoring of your coffee plants",
-                "Ensure proper watering and soil drainage",
-                "Monitor for common pests and diseases",
-                "Maintain balanced fertilization schedule"
-            ]
-
-            # Basic explanations
-            disease_explanation = "Basic image analysis completed - no obvious disease symptoms detected"
-            disease_recommendation = "Continue standard coffee plant care practices"
-
-            deficiency_explanation = "Basic image analysis completed - no obvious nutrient deficiency symptoms detected"
-            deficiency_recommendation = "Maintain regular fertilization schedule"
+            # Get explanations
+            disease_explanation = get_explanation(disease_result.get('class', 'Unknown'), 'disease')
+            disease_recommendation = get_recommendation(disease_result.get('class', 'Unknown'), 'disease')
+            deficiency_explanation = get_explanation(deficiency_result.get('class', 'Unknown'), 'deficiency')
+            deficiency_recommendation = get_recommendation(deficiency_result.get('class', 'Unknown'), 'deficiency')
 
             # Clean up uploaded file
-            os.remove(filepath)
+            if os.path.exists(filepath):
+                os.remove(filepath)
 
             response_data = {
                 'disease_prediction': {
@@ -196,23 +224,16 @@ def upload_image():
                     'recommendation': deficiency_recommendation
                 },
                 'recommendations': recommendations,
-                'translated_recommendations': {
-                    'disease_explanation': disease_explanation,
-                    'disease_recommendation': disease_recommendation,
-                    'deficiency_explanation': deficiency_explanation,
-                    'deficiency_recommendation': deficiency_recommendation
-                },
-                'processing_time': processing_time,
-                'model_version': 'basic_analysis_v1.0',
-                'status': 'basic_analysis_only',
-                'note': 'Running in memory-optimized mode without ML models for Render free tier compatibility'
+                'processing_time': round(total_time, 4),
+                'model_version': 'optimized_v1.0',
+                'status': 'success'
             }
 
-            logger.info(f'Basic analysis completed in {processing_time}s')
+            logger.info(f'Analysis completed in {total_time:.4f}s - Disease: {disease_result.get("class")}, Deficiency: {deficiency_result.get("class")}')
             return jsonify(response_data)
 
         except Exception as e:
-            logger.error(f'Basic analysis error: {str(e)}')
+            logger.error(f'Analysis error: {str(e)}')
             # Clean up on error
             if os.path.exists(filepath):
                 os.remove(filepath)
