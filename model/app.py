@@ -154,15 +154,15 @@ def upload_image():
             start_time = time.time()
             
             try:
-                # Load and use the optimized models for actual predictions
-                from optimize_model import OptimizedTorchClassifier
+                # Load and use the lightweight models for actual predictions
+                from optimize_model import LightweightTorchClassifier
                 
-                disease_classifier = OptimizedTorchClassifier(
+                disease_classifier = LightweightTorchClassifier(
                     'models/leaf_diseases/efficientnet_disease_balanced.pth',
                     'models/leaf_diseases/class_mapping_diseases.json',
                     confidence_threshold=0.3
                 )
-                deficiency_classifier = OptimizedTorchClassifier(
+                deficiency_classifier = LightweightTorchClassifier(
                     'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
                     'models/leaf_deficiencies/class_mapping_deficiencies.json',
                     confidence_threshold=0.3

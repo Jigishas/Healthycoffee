@@ -143,7 +143,7 @@ function Navbar() {
                   Features
                 </a>
               </motion.li>
-              <motion.li whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+              {/* <motion.li whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                 <a 
                   href="#stats" 
                   className="nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap" 
@@ -151,7 +151,7 @@ function Navbar() {
                 >
                   Stats
                 </a>
-              </motion.li>
+              </motion.li> */}
               <motion.li whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                 <a 
                   href="#askme" 
