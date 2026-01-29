@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import App from './App.jsx'
 import './serviceWorker.js'
+import { startPinging } from './pingBackend.js'
 
 
 const muiTheme = createTheme({
@@ -16,6 +17,9 @@ const muiTheme = createTheme({
     },
   },
 })
+
+// Start backend pinger immediately on app load
+startPinging();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

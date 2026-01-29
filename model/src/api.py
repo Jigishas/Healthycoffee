@@ -10,7 +10,7 @@ app = Flask(__name__)
 # Allow CORS so the frontend can call this API from browsers
 # Use a permissive origin during troubleshooting; restrict in production.
 from flask_cors import CORS as _CORS
-_CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+_CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True, methods=['GET', 'POST', 'OPTIONS'])
 
 
 @app.after_request
@@ -21,18 +21,26 @@ def add_cors_headers(response):
     response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     return response
 
-@app.route('/health', methods=['GET'])
+@app.route('/health', methods=['GET', 'POST', 'OPTIONS'])
 def health_check():
     """Health check endpoint for frontend status verification"""
+    if request.method == 'OPTIONS':
+        return '', 204
     return jsonify({'status': 'healthy', 'service': 'leaf-analysis-api'})
 
-@app.route('/api/upload-image', methods=['POST'])
+@app.route('/api/upload-image', methods=['POST', 'OPTIONS'])
 def upload_image():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
     try:
         if 'image' not in request.files:
             return jsonify({'error': 'No image provided'}), 400
 
         file = request.files['image']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        
         os.makedirs('uploads', exist_ok=True)
         file_path = os.path.join('uploads', secure_filename(file.filename))
         file.save(file_path)

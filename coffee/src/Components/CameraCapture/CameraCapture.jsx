@@ -22,17 +22,32 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   const [backendStatus, setBackendStatus] = useState('checking');
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  useEffect(() => { checkBackendStatus(); return () => { if (stream) stream.getTracks().forEach(track => track.stop()); }; }, []);
+  useEffect(() => { 
+    checkBackendStatus(); 
+    // Recheck backend status every 30 seconds
+    const statusInterval = setInterval(checkBackendStatus, 30000);
+    return () => { 
+      clearInterval(statusInterval);
+      if (stream) stream.getTracks().forEach(track => track.stop()); 
+    }; 
+  }, []);
 
   const checkBackendStatus = async () => {
     setBackendStatus('checking');
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000); 
-      const response = await fetch(`${uploadUrl}/health`, { signal: controller.signal });
+      const timeoutId = setTimeout(() => controller.abort(), 3000); 
+      const response = await fetch(`${uploadUrl}/health`, { 
+        method: 'GET',
+        signal: controller.signal,
+        headers: { 'Accept': 'application/json' }
+      });
       clearTimeout(timeoutId);
       setBackendStatus(response.ok ? 'online' : 'offline');
-    } catch { setBackendStatus('offline'); }
+    } catch (err) { 
+      console.error('Backend status check failed:', err.message);
+      setBackendStatus('offline'); 
+    }
   };
 
   const startCamera = async () => {
@@ -72,20 +87,46 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
   const analyzeImage = async () => {
     if (!preview) return;
-    setMode('loading'); setError(null); setUploadProgress(0);
+    if (backendStatus !== 'online') {
+      setError('Backend service is not available. Please try again in a few moments.');
+      return;
+    }
+    setMode('loading'); 
+    setError(null); 
+    setUploadProgress(0);
     const progressInterval = setInterval(() => setUploadProgress(prev => prev >= 90 ? 90 : prev + 10), 200);
     try {
       const blob = await (await fetch(preview)).blob();
       const formData = new FormData();
       formData.append('image', blob, 'leaf-image.jpg');
-      const uploadResponse = await fetch(`${uploadUrl}/api/upload-image`, { method: 'POST', body: formData });
+      
+      const uploadResponse = await fetch(`${uploadUrl}/api/upload-image`, { 
+        method: 'POST', 
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
       clearInterval(progressInterval);
       setUploadProgress(100);
-      if (!uploadResponse.ok) throw new Error('Analysis failed');
+      
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || `HTTP ${uploadResponse.status}: Analysis failed`);
+      }
+      
       const data = await uploadResponse.json();
-      setResult(data); setMode('result');
+      setResult(data); 
+      setMode('result');
       if (onResult) onResult(data);
-    } catch (err) { setError('Failed to analyze image. Please try again.'); setMode('preview'); setUploadProgress(0); clearInterval(progressInterval); }
+    } catch (err) { 
+      console.error('Analysis error:', err);
+      setError(`Failed to analyze image: ${err.message}. Please try again.`); 
+      setMode('preview'); 
+      setUploadProgress(0); 
+      clearInterval(progressInterval); 
+    }
   };
 
   const resetCapture = () => { setPreview(''); setResult(null); setError(null); setUploadProgress(0); setMode('idle'); };
