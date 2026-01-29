@@ -158,26 +158,33 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       const formData = new FormData();
       formData.append('image', blob, 'leaf-image.jpg');
 
-      // Upload to backend
-      const uploadResponse = await fetch(uploadUrl, {
+      // Upload to backend - use the correct /api/upload-image endpoint
+      console.log('Uploading to:', `${uploadUrl}/api/upload-image`);
+      const uploadResponse = await fetch(`${uploadUrl}/api/upload-image`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
       });
 
       clearInterval(progressInterval);
       setUploadProgress(100);
 
       if (!uploadResponse.ok) {
-        throw new Error('Analysis failed');
+        const errorData = await uploadResponse.json().catch(() => ({ error: 'Analysis failed' }));
+        throw new Error(errorData.error || `HTTP ${uploadResponse.status}: Analysis failed`);
       }
 
       const data = await uploadResponse.json();
+      console.log('Analysis results:', data);
       setResult(data);
       setMode('result');
       if (onResult) onResult(data);
 
     } catch (err) {
-      setError('Failed to analyze image. Please try again.');
+      console.error('Analysis error:', err);
+      setError(`Failed to analyze image: ${err.message}`);
       setMode('preview');
       setUploadProgress(0);
     }
