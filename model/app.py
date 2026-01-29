@@ -162,14 +162,21 @@ def upload_image():
                     'models/leaf_diseases/class_mapping_diseases.json',
                     confidence_threshold=0.3
                 )
+                disease_classifier.load_model()
+                
                 deficiency_classifier = LightweightTorchClassifier(
                     'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
                     'models/leaf_deficiencies/class_mapping_deficiencies.json',
                     confidence_threshold=0.3
                 )
+                deficiency_classifier.load_model()
                 
                 disease_result = disease_classifier.predict(filepath)
                 deficiency_result = deficiency_classifier.predict(filepath)
+                
+                # Unload models to free memory
+                disease_classifier.unload_model()
+                deficiency_classifier.unload_model()
                 
             except Exception as model_error:
                 logger.error(f'Model prediction failed: {str(model_error)}')
