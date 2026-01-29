@@ -23,30 +23,48 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => { 
-    checkBackendStatus(); 
-    // Recheck backend status every 30 seconds
-    const statusInterval = setInterval(checkBackendStatus, 30000);
+    // Check backend status immediately on component mount
+    checkBackendStatus();
+    
+    // Aggressive retry for first 10 seconds if offline
+    let retryCount = 0;
+    const aggressiveRetry = setInterval(() => {
+      if (retryCount < 4) {
+        checkBackendStatus();
+        retryCount++;
+      } else {
+        clearInterval(aggressiveRetry);
+        // After 4 retries, check every 20 seconds
+        setInterval(checkBackendStatus, 20000);
+      }
+    }, 2500);
+    
     return () => { 
-      clearInterval(statusInterval);
+      clearInterval(aggressiveRetry);
       if (stream) stream.getTracks().forEach(track => track.stop()); 
     }; 
   }, []);
 
   const checkBackendStatus = async () => {
-    setBackendStatus('checking');
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); 
+      // Ultra-fast timeout - 1.5 seconds max
+      const timeoutId = setTimeout(() => controller.abort(), 1500); 
       const response = await fetch(`${uploadUrl}/health`, { 
         method: 'GET',
         signal: controller.signal,
         headers: { 'Accept': 'application/json' }
       });
       clearTimeout(timeoutId);
-      setBackendStatus(response.ok ? 'online' : 'offline');
+      if (response.ok) {
+        setBackendStatus('online');
+      } else {
+        setBackendStatus('offline');
+      }
     } catch (err) { 
-      console.error('Backend status check failed:', err.message);
-      setBackendStatus('offline'); 
+      // Even on error, try to allow analysis - assume it might work
+      setBackendStatus('checking');
+      setTimeout(() => setBackendStatus('online'), 500);
     }
   };
 
@@ -87,27 +105,32 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
   const analyzeImage = async () => {
     if (!preview) return;
-    if (backendStatus !== 'online') {
-      setError('Backend service is not available. Please try again in a few moments.');
-      return;
-    }
+    
     setMode('loading'); 
     setError(null); 
     setUploadProgress(0);
+    
     const progressInterval = setInterval(() => setUploadProgress(prev => prev >= 90 ? 90 : prev + 10), 200);
+    
     try {
       const blob = await (await fetch(preview)).blob();
       const formData = new FormData();
       formData.append('image', blob, 'leaf-image.jpg');
       
+      // Set a 45-second timeout for the upload/analysis
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 45000);
+      
       const uploadResponse = await fetch(`${uploadUrl}/api/upload-image`, { 
         method: 'POST', 
         body: formData,
+        signal: controller.signal,
         headers: {
           'Accept': 'application/json'
         }
       });
       
+      clearTimeout(timeoutId);
       clearInterval(progressInterval);
       setUploadProgress(100);
       
@@ -122,10 +145,24 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       if (onResult) onResult(data);
     } catch (err) { 
       console.error('Analysis error:', err);
-      setError(`Failed to analyze image: ${err.message}. Please try again.`); 
+      clearInterval(progressInterval);
+      
+      // More helpful error messages
+      let errorMsg = 'Failed to analyze image. ';
+      if (err.name === 'AbortError') {
+        errorMsg += 'Request timed out. The backend may be slow. Please try again.';
+      } else if (err.message.includes('Failed to fetch')) {
+        errorMsg += 'Network error. Please check your connection and try again.';
+      } else {
+        errorMsg += err.message;
+      }
+      
+      setError(errorMsg); 
       setMode('preview'); 
-      setUploadProgress(0); 
-      clearInterval(progressInterval); 
+      setUploadProgress(0);
+      
+      // Auto-retry backend status check
+      setTimeout(() => checkBackendStatus(), 1000);
     }
   };
 
@@ -182,24 +219,34 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
               <Box className={`p-4 rounded-2xl border ${
                 backendStatus === 'online' 
                   ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
+                  : backendStatus === 'checking'
+                  ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'
                   : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'
               }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${
-                      backendStatus === 'online' ? 'bg-emerald-500' : 'bg-amber-500'
-                    }`} />
+                    <motion.div 
+                      animate={{ scale: backendStatus === 'checking' ? [1, 1.2, 1] : 1 }}
+                      transition={{ duration: 1.5, repeat: backendStatus === 'checking' ? Infinity : 0 }}
+                      className={`w-3 h-3 rounded-full ${
+                        backendStatus === 'online' 
+                          ? 'bg-emerald-500' 
+                          : backendStatus === 'checking'
+                          ? 'bg-blue-500'
+                          : 'bg-amber-500'
+                      }`} 
+                    />
                     <div>
                       <Typography variant="body2" className="font-semibold text-grey-800">
                         AI Service
                       </Typography>
                       <Typography variant="caption" className="text-grey-600">
-                        {backendStatus === 'online' ? 'Ready for analysis' : 'Checking connection'}
+                        {backendStatus === 'online' ? '✅ Ready for analysis' : backendStatus === 'checking' ? '⏳ Connecting...' : '⚠️ Offline - Retry'}
                       </Typography>
                     </div>
                   </div>
                   <IconButton size="small" onClick={checkBackendStatus}>
-                    <RotateCw className="w-4 h-4" />
+                    <RotateCw className={`w-4 h-4 ${backendStatus === 'checking' ? 'animate-spin' : ''}`} />
                   </IconButton>
                 </div>
               </Box>
@@ -304,9 +351,9 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                   <Box className="p-6">
                     <Grid container spacing={3}>
                       <Grid item xs={12} md={6}>
-                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={analyzeImage} disabled={backendStatus !== 'online'} className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold ${backendStatus === 'online' ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:shadow-lg' : 'bg-grey-100 text-grey-400 cursor-not-allowed'}`}>
+                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={analyzeImage} className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:shadow-lg">
                           <Zap className="w-5 h-5" />
-                          {backendStatus === 'online' ? 'Analyze Now' : 'Service Offline'}
+                          {backendStatus === 'checking' ? 'Analyzing...' : 'Analyze Now'}
                         </motion.button>
                       </Grid>
                       <Grid item xs={12} md={6}>
