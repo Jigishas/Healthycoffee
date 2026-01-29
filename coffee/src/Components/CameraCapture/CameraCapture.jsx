@@ -113,14 +113,18 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     const progressInterval = setInterval(() => setUploadProgress(prev => prev >= 90 ? 90 : prev + 10), 200);
     
     try {
+      // Convert preview data URL to blob
       const blob = await (await fetch(preview)).blob();
       const formData = new FormData();
       formData.append('image', blob, 'leaf-image.jpg');
       
-      // Set a 45-second timeout for the upload/analysis
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 45000);
+      console.log('Uploading image to backend:', `${uploadUrl}/api/upload-image`);
       
+      // Set a 60-second timeout for the upload/analysis (AI analysis can be slow)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+      
+      // Send to backend for real analysis
       const uploadResponse = await fetch(`${uploadUrl}/api/upload-image`, { 
         method: 'POST', 
         body: formData,
@@ -136,13 +140,28 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       
       if (!uploadResponse.ok) {
         const errorData = await uploadResponse.json().catch(() => ({ error: 'Unknown error' }));
-        throw new Error(errorData.error || `HTTP ${uploadResponse.status}: Analysis failed`);
+        const errorMessage = errorData.error || `HTTP ${uploadResponse.status}: Analysis failed`;
+        console.error('Backend error:', errorMessage);
+        throw new Error(errorMessage);
       }
       
+      // Parse the real results from backend
       const data = await uploadResponse.json();
+      console.log('Analysis results received from backend:', data);
+      
+      // Validate we have the expected result structure
+      if (!data.disease_prediction || !data.deficiency_prediction) {
+        console.error('Invalid response structure from backend:', data);
+        throw new Error('Backend returned invalid response structure');
+      }
+      
+      // Set the real results from backend
       setResult(data); 
       setMode('result');
+      
+      // Call parent callback if provided
       if (onResult) onResult(data);
+      
     } catch (err) { 
       console.error('Analysis error:', err);
       clearInterval(progressInterval);
@@ -405,10 +424,22 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                               <Typography variant="h6" className="font-bold">Disease Status</Typography>
                             </div>
                             <Typography variant="h4" className={`font-black mb-2 ${result.disease_prediction.class === 'Healthy' ? 'text-emerald-700' : 'text-amber-700'}`}>{result.disease_prediction.class}</Typography>
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between mb-3">
                               <Typography variant="body2" className="text-grey-600">Confidence</Typography>
                               <Typography variant="body2" className="font-semibold text-grey-800">{Math.round(result.disease_prediction.confidence * 100)}%</Typography>
                             </div>
+                            {result.disease_prediction.explanation && (
+                              <Box className="mt-3 p-3 bg-white/60 rounded-lg">
+                                <Typography variant="caption" className="text-grey-700 block mb-2 font-semibold">Analysis:</Typography>
+                                <Typography variant="caption" className="text-grey-600">{result.disease_prediction.explanation}</Typography>
+                              </Box>
+                            )}
+                            {result.disease_prediction.recommendation && (
+                              <Box className="mt-2 p-3 bg-white/60 rounded-lg">
+                                <Typography variant="caption" className="text-grey-700 block mb-2 font-semibold">Recommendation:</Typography>
+                                <Typography variant="caption" className="text-grey-600">{result.disease_prediction.recommendation}</Typography>
+                              </Box>
+                            )}
                           </Box>
                         </Grid>
                       )}
@@ -422,14 +453,39 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                               <Typography variant="h6" className="font-bold">Nutrient Status</Typography>
                             </div>
                             <Typography variant="h4" className={`font-black mb-2 ${result.deficiency_prediction.class === 'Healthy' ? 'text-emerald-700' : 'text-blue-700'}`}>{result.deficiency_prediction.class}</Typography>
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between mb-3">
                               <Typography variant="body2" className="text-grey-600">Confidence</Typography>
                               <Typography variant="body2" className="font-semibold text-grey-800">{Math.round(result.deficiency_prediction.confidence * 100)}%</Typography>
                             </div>
+                            {result.deficiency_prediction.explanation && (
+                              <Box className="mt-3 p-3 bg-white/60 rounded-lg">
+                                <Typography variant="caption" className="text-grey-700 block mb-2 font-semibold">Analysis:</Typography>
+                                <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.explanation}</Typography>
+                              </Box>
+                            )}
+                            {result.deficiency_prediction.recommendation && (
+                              <Box className="mt-2 p-3 bg-white/60 rounded-lg">
+                                <Typography variant="caption" className="text-grey-700 block mb-2 font-semibold">Recommendation:</Typography>
+                                <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.recommendation}</Typography>
+                              </Box>
+                            )}
                           </Box>
                         </Grid>
                       )}
                     </Grid>
+                    {result.recommendations && result.recommendations.length > 0 && (
+                      <Box className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
+                        <Typography variant="h6" className="font-bold text-blue-900 mb-3">General Recommendations</Typography>
+                        <div className="space-y-2">
+                          {result.recommendations.map((rec, idx) => (
+                            <div key={idx} className="flex items-start gap-3">
+                              <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                              <Typography variant="body2" className="text-blue-800">{rec}</Typography>
+                            </div>
+                          ))}
+                        </div>
+                      </Box>
+                    )}
                   </Box>
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={4}>
