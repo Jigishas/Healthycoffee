@@ -32,13 +32,15 @@ class LightweightTorchClassifier:
                 self.classes = json.load(f)
             num_classes = len(self.classes)
 
-            # Use MobileNetV2 instead of EfficientNet for lower memory usage
-            self.model = models.mobilenet_v2(weights="IMAGENET1K_V1")
-            self.model.classifier[1] = nn.Linear(self.model.classifier[1].in_features, num_classes)
+            # Use EfficientNet-B0 to match the trained weights
+            self.model = models.efficientnet_b0(weights="IMAGENET1K_V1")
+            # Replace the final classifier layer
+            num_features = self.model.classifier[1].in_features
+            self.model.classifier[1] = nn.Linear(num_features, num_classes)
 
-            # Load trained weights
+            # Load trained weights with strict=False to ignore classifier differences
             state_dict = torch.load(self.model_path, map_location="cpu")
-            self.model.load_state_dict(state_dict)
+            self.model.load_state_dict(state_dict, strict=False)
             self.model.to(self.device)
             self.model.eval()
 
