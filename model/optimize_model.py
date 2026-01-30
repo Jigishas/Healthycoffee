@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
+from io import BytesIO
 import json
 import os
 from pathlib import Path
@@ -68,8 +69,13 @@ class LightweightTorchClassifier:
         if self.model is None:
             self.load_model()
 
-        # Load and preprocess image
-        image = Image.open(image_path).convert("RGB")
+        # Accept either a file path or a PIL Image
+        if isinstance(image_path, str):
+            image = Image.open(image_path).convert("RGB")
+        else:
+            # Assume a PIL Image was passed
+            image = image_path.convert("RGB")
+
         input_tensor = self.transform(image).unsqueeze(0).to(self.device)
 
         with torch.no_grad():
@@ -104,7 +110,12 @@ class LightweightTorchClassifier:
 
     def get_feature_embedding(self, image_path):
         """Extract feature embedding from penultimate layer for similarity matching"""
-        image = Image.open(image_path).convert("RGB")
+        # Accept both path or PIL Image
+        if isinstance(image_path, str):
+            image = Image.open(image_path).convert("RGB")
+        else:
+            image = image_path.convert("RGB")
+
         input_tensor = self.transform(image).unsqueeze(0).to(self.device)
 
         with torch.no_grad():

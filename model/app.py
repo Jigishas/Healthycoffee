@@ -1,26 +1,23 @@
 #!/usr/bin/env python3
 """
-Combined Production Flask Application with Optimized Models
+Combined Production Flask Application (in-memory image processing)
 
-This application deploys optimized models with enhanced performance monitoring
-and error handling for the coffee leaf disease and deficiency detection system.
+Changes:
+- No disk writes for uploaded images — images are processed in-memory.
+- Cached lightweight classifiers are loaded once and reused to reduce
+  repeated model load time (thread-safe lazy init).
 """
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_caching import Cache
 import os
-import sys
-import tempfile
-from werkzeug.utils import secure_filename
 import logging
-import json
 import time
-from pathlib import Path
-import torch
+from io import BytesIO
+import threading
 from PIL import Image
 
-from src.inference import TorchClassifier, InteractiveCoffeeDiagnosis
 from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation
 from optimize_model import LightweightTorchClassifier
@@ -29,457 +26,236 @@ from optimize_model import LightweightTorchClassifier
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('app.log'),
-        logging.StreamHandler()
-    ]
+    handlers=[logging.FileHandler('app.log'), logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Configure Redis caching
+# Simple cache (Redis URL configurable)
 cache = Cache(app, config={
     'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_URL': os.environ.get('REDIS_URL', 'redis://default:AdddRk3O6J4zWhPEG5AACpCvxsoQbwWF@redis-17844.c341.af-south-1-1.ec2.cloud.redislabs.com:17844'),
-    'CACHE_DEFAULT_TIMEOUT': 300  # 5 minutes default
+    'CACHE_REDIS_URL': os.environ.get('REDIS_URL'),
+    'CACHE_DEFAULT_TIMEOUT': 300
 })
 
-# Configure CORS properly for production - simplified and robust
-CORS(app, resources={
-    r"/*": {
-        "origins": "*",
-        "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-        "supports_credentials": False,
-        "expose_headers": ["Content-Type", "X-Custom-Header"],
-        "max_age": 86400
-    }
-})
+# CORS
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-@app.after_request
-def add_cors_headers(response):
-    """Ensure CORS headers are properly set for all responses"""
-    # Set CORS headers explicitly for all responses
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS,PUT,DELETE'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,X-Requested-With,Accept'
-    response.headers['Access-Control-Allow-Credentials'] = 'false'
-    response.headers['Access-Control-Max-Age'] = '86400'
-
-    return response
-
-# Configuration
-UPLOAD_FOLDER = 'uploads'
+# File validation
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB limit
-
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
+MAX_FILE_SIZE = 10 * 1024 * 1024
 
 def allowed_file(filename):
-    """Check if file extension is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def validate_image_file(file):
-    """Validate image file before processing"""
     if not file or file.filename == '':
         return False, 'No file provided'
-
     if not allowed_file(file.filename):
         return False, 'Invalid file type. Only PNG, JPG, JPEG, and GIF are allowed'
-
-    # Check file size
-    file.seek(0, os.SEEK_END)
-    file_size = file.tell()
-    file.seek(0)
-    if file_size > MAX_FILE_SIZE:
+    # Use stream to measure size without saving
+    try:
+        file.stream.seek(0, os.SEEK_END)
+        size = file.stream.tell()
+        file.stream.seek(0)
+    except Exception:
+        return False, 'Unable to read file size'
+    if size > MAX_FILE_SIZE:
         return False, f'File too large. Maximum size is {MAX_FILE_SIZE/1024/1024}MB'
-
     return True, None
 
-# Memory-optimized initialization - only load essential models
-# Skip interactive learning system to save memory on Render free tier
-interactive_system = None
-interactive_system_loaded = False
-logger.info("Skipping interactive learning system to optimize memory usage")
-
-# Ultra-lightweight approach - don't preload models at startup
-# Models will be loaded on-demand and unloaded after each prediction
+# Model configs
 disease_classifier_config = {
     'model_path': 'models/leaf_diseases/efficientnet_disease_balanced.pth',
     'classes_path': 'models/leaf_diseases/class_mapping_diseases.json',
-    'confidence_threshold': 0.5
+    'confidence_threshold': 0.3
 }
 deficiency_classifier_config = {
     'model_path': 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
     'classes_path': 'models/leaf_deficiencies/class_mapping_deficiencies.json',
-    'confidence_threshold': 0.5
+    'confidence_threshold': 0.3
 }
 
-disease_model_type = 'on_demand_lightweight'
-deficiency_model_type = 'on_demand_lightweight'
-logger.info("Using on-demand model loading to minimize memory usage")
+# Cached classifier instances
+_model_lock = threading.Lock()
+disease_classifier = None
+deficiency_classifier = None
+
+def get_classifiers():
+    """Thread-safe lazy initialization of lightweight classifiers."""
+    global disease_classifier, deficiency_classifier
+    if disease_classifier is not None and deficiency_classifier is not None:
+        return disease_classifier, deficiency_classifier
+    with _model_lock:
+        if disease_classifier is None:
+            disease_classifier = LightweightTorchClassifier(
+                disease_classifier_config['model_path'],
+                disease_classifier_config['classes_path'],
+                confidence_threshold=disease_classifier_config['confidence_threshold']
+            )
+            disease_classifier.load_model()
+        if deficiency_classifier is None:
+            deficiency_classifier = LightweightTorchClassifier(
+                deficiency_classifier_config['model_path'],
+                deficiency_classifier_config['classes_path'],
+                confidence_threshold=deficiency_classifier_config['confidence_threshold']
+            )
+            deficiency_classifier.load_model()
+    return disease_classifier, deficiency_classifier
+
 
 @app.route('/api/upload-image', methods=['POST', 'OPTIONS'])
 def upload_image():
-    """Analyze leaf image and return disease/deficiency predictions"""
     if request.method == 'OPTIONS':
         return '', 204
-    
     try:
         if 'image' not in request.files:
-            logger.warning('No image file in request')
             return jsonify({'error': 'No image file provided'}), 400
-
         file = request.files['image']
-
-        # Validate file
-        is_valid, error_msg = validate_image_file(file)
+        is_valid, err = validate_image_file(file)
         if not is_valid:
-            logger.warning(f'File validation failed: {error_msg}')
-            return jsonify({'error': error_msg}), 400
+            return jsonify({'error': err}), 400
 
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # Read image bytes and open in-memory
+        img_bytes = file.read()
+        try:
+            image = Image.open(BytesIO(img_bytes)).convert('RGB')
+        except Exception as e:
+            logger.error(f'Invalid image: {e}')
+            return jsonify({'error': 'Invalid image file'}), 400
+
+        start = time.time()
+        try:
+            disease_clf, deficiency_clf = get_classifiers()
+            disease_result = disease_clf.predict(image)
+            deficiency_result = deficiency_clf.predict(image)
+        except Exception as e:
+            logger.exception('Model prediction failed')
+            disease_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
+            deficiency_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
+        total_time = time.time() - start
 
         try:
-            file.save(filepath)
-            logger.info(f'File saved: {filepath}')
+            recommendations = get_additional_recommendations(
+                disease_class=disease_result.get('class_index', -1),
+                deficiency_class=deficiency_result.get('class_index', -1)
+            )
+        except Exception:
+            recommendations = [
+                "Continue regular monitoring of your coffee plants",
+                "Ensure proper watering and soil drainage",
+                "Monitor for common pests and diseases"
+            ]
 
-            # Get predictions with timing using real models
-            start_time = time.time()
-            
-            try:
-                # Load and use the lightweight models for actual predictions
-                from optimize_model import LightweightTorchClassifier
-                
-                disease_classifier = LightweightTorchClassifier(
-                    'models/leaf_diseases/efficientnet_disease_balanced.pth',
-                    'models/leaf_diseases/class_mapping_diseases.json',
-                    confidence_threshold=0.3
-                )
-                disease_classifier.load_model()
-                
-                deficiency_classifier = LightweightTorchClassifier(
-                    'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-                    'models/leaf_deficiencies/class_mapping_deficiencies.json',
-                    confidence_threshold=0.3
-                )
-                deficiency_classifier.load_model()
-                
-                disease_result = disease_classifier.predict(filepath)
-                deficiency_result = deficiency_classifier.predict(filepath)
-                
-                # Unload models to free memory
-                disease_classifier.unload_model()
-                deficiency_classifier.unload_model()
-                
-            except Exception as model_error:
-                logger.error(f'Model prediction failed: {str(model_error)}')
-                # Fallback to basic analysis if model loading fails
-                disease_result = {
-                    'class': 'Unknown',
-                    'confidence': 0.0,
-                    'class_index': -1,
-                    'inference_time': 0.0
-                }
-                deficiency_result = {
-                    'class': 'Unknown',
-                    'confidence': 0.0,
-                    'class_index': -1,
-                    'inference_time': 0.0
-                }
+        disease_explanation = get_explanation(disease_result.get('class', 'Unknown'), 'disease')
+        disease_recommendation = get_recommendation(disease_result.get('class', 'Unknown'), 'disease')
+        deficiency_explanation = get_explanation(deficiency_result.get('class', 'Unknown'), 'deficiency')
+        deficiency_recommendation = get_recommendation(deficiency_result.get('class', 'Unknown'), 'deficiency')
 
-            total_time = time.time() - start_time
-
-            # Get recommendations based on predictions
-            try:
-                recommendations = get_additional_recommendations(
-                    disease_class=disease_result.get('class_index', -1),
-                    deficiency_class=deficiency_result.get('class_index', -1)
-                )
-            except:
-                recommendations = [
-                    "Continue regular monitoring of your coffee plants",
-                    "Ensure proper watering and soil drainage",
-                    "Monitor for common pests and diseases"
-                ]
-
-            # Get explanations
-            disease_explanation = get_explanation(disease_result.get('class', 'Unknown'), 'disease')
-            disease_recommendation = get_recommendation(disease_result.get('class', 'Unknown'), 'disease')
-            deficiency_explanation = get_explanation(deficiency_result.get('class', 'Unknown'), 'deficiency')
-            deficiency_recommendation = get_recommendation(deficiency_result.get('class', 'Unknown'), 'deficiency')
-
-            # Clean up uploaded file
-            if os.path.exists(filepath):
-                os.remove(filepath)
-
-            response_data = {
-                'disease_prediction': {
-                    **disease_result,
-                    'explanation': disease_explanation,
-                    'recommendation': disease_recommendation
-                },
-                'deficiency_prediction': {
-                    **deficiency_result,
-                    'explanation': deficiency_explanation,
-                    'recommendation': deficiency_recommendation
-                },
-                'recommendations': recommendations,
-                'processing_time': round(total_time, 4),
-                'model_version': 'optimized_v1.0',
-                'status': 'success'
-            }
-
-            logger.info(f'Analysis completed in {total_time:.4f}s - Disease: {disease_result.get("class")}, Deficiency: {deficiency_result.get("class")}')
-            return jsonify(response_data)
-
-        except Exception as e:
-            logger.error(f'Analysis error: {str(e)}')
-            # Clean up on error
-            if os.path.exists(filepath):
-                os.remove(filepath)
-            return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
-
+        response = {
+            'disease_prediction': {**disease_result, 'explanation': disease_explanation, 'recommendation': disease_recommendation},
+            'deficiency_prediction': {**deficiency_result, 'explanation': deficiency_explanation, 'recommendation': deficiency_recommendation},
+            'recommendations': recommendations,
+            'processing_time': round(total_time, 4),
+            'model_version': 'optimized_v1.0',
+            'status': 'success'
+        }
+        logger.info(f"Analysis completed in {total_time:.4f}s - Disease: {disease_result.get('class')}, Deficiency: {deficiency_result.get('class')}")
+        return jsonify(response)
     except Exception as e:
-        logger.error(f'Unexpected error: {str(e)}')
+        logger.exception('Unexpected error in upload_image')
         return jsonify({'error': 'Internal server error'}), 500
 
-@app.route('/health', methods=['GET', 'POST'])
-def health():
-    """Enhanced health check with model statistics"""
-    try:
-        # Log dummy data if sent via POST
-        if request.method == 'POST':
-            dummy_data = request.get_json(silent=True)
-            if dummy_data:
-                logger.info(f'Ping received with dummy data: {dummy_data}')
-            else:
-                logger.info('Ping received without dummy data')
-
-        # Default stats since models are loaded on-demand
-        disease_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': disease_model_type}
-        deficiency_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': deficiency_model_type}
-
-        return jsonify({
-            'status': 'healthy',
-            'models_loaded': {
-                'disease_model': True,
-                'deficiency_model': True,
-                'disease_model_type': disease_model_type,
-                'deficiency_model_type': deficiency_model_type,
-                'model_version': f'{disease_model_type}_{deficiency_model_type}_v1.0'
-            },
-            'model_stats': {
-                'disease': disease_stats,
-                'deficiency': deficiency_stats
-            },
-            'timestamp': time.time()
-        })
-    except Exception as e:
-        logger.error(f'Health check error: {e}')
-        return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
-
-
-@app.route('/', methods=['GET'])
-def index():
-    return jsonify({'status': 'ok', 'message': 'HealthyCoffee backend running', 'routes': ['/health', '/api/upload-image']}), 200
-
-@app.route('/api/model-info', methods=['GET'])
-@cache.cached(timeout=300)  # Cache for 5 minutes
-def model_info():
-    """Get detailed information about loaded models"""
-    try:
-        # Get stats based on model type
-        if hasattr(disease_classifier, 'get_stats'):
-            disease_stats = disease_classifier.get_stats()
-        else:
-            disease_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': 'optimized'}
-
-        if hasattr(deficiency_classifier, 'get_stats'):
-            deficiency_stats = deficiency_classifier.get_stats()
-        else:
-            deficiency_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': 'optimized'}
-
-        return jsonify({
-            'model_version': f'{disease_model_type}_{deficiency_model_type}_v1.0',
-            'disease_classes': len(disease_classifier.classes),
-            'deficiency_classes': len(deficiency_classifier.classes),
-            'device': str(disease_classifier.device),
-            'optimized_models': disease_model_type == 'optimized' and deficiency_model_type == 'optimized',
-            'model_stats': {
-                'disease': disease_stats,
-                'deficiency': deficiency_stats
-            }
-        })
-    except Exception as e:
-        logger.error(f'Model info error: {e}')
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/performance', methods=['GET'])
-def performance():
-    """Get performance metrics and statistics"""
-    try:
-        # Get stats based on model type
-        if hasattr(disease_classifier, 'get_stats'):
-            disease_stats = disease_classifier.get_stats()
-        else:
-            disease_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': 'optimized'}
-
-        if hasattr(deficiency_classifier, 'get_stats'):
-            deficiency_stats = deficiency_classifier.get_stats()
-        else:
-            deficiency_stats = {'total_predictions': 0, 'average_confidence': 0, 'model_type': 'optimized'}
-
-        return jsonify({
-            'performance_metrics': {
-                'disease_model': disease_stats,
-                'deficiency_model': deficiency_stats,
-                'total_predictions': disease_stats['total_predictions'] + deficiency_stats['total_predictions']
-            },
-            'model_version': f'{disease_model_type}_{deficiency_model_type}_v1.0',
-            'timestamp': time.time()
-        })
-    except Exception as e:
-        logger.error(f'Performance metrics error: {e}')
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/interactive-diagnose', methods=['POST'])
 def interactive_diagnose():
-    """Interactive diagnosis endpoint with learning capabilities"""
     try:
         if 'image' not in request.files:
-            logger.warning('No image file in request')
             return jsonify({'error': 'No image file provided'}), 400
-
         file = request.files['image']
-
-        # Validate file
-        is_valid, error_msg = validate_image_file(file)
+        is_valid, err = validate_image_file(file)
         if not is_valid:
-            logger.warning(f'File validation failed: {error_msg}')
-            return jsonify({'error': error_msg}), 400
-
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
+            return jsonify({'error': err}), 400
+        img_bytes = file.read()
         try:
-            file.save(filepath)
-            logger.info(f'File saved: {filepath}')
+            image = Image.open(BytesIO(img_bytes)).convert('RGB')
+        except Exception:
+            return jsonify({'error': 'Invalid image file'}), 400
 
-            # Get interactive diagnosis
-            start_time = time.time()
-            try:
-                diagnosis_result = interactive_system.diagnose(filepath)
-            except Exception as e:
-                logger.error(f'Interactive diagnosis failed: {str(e)}')
-                # Fallback to legacy classifiers
-                disease_result = disease_classifier.predict(filepath)
-                deficiency_result = deficiency_classifier.predict(filepath)
-
-                diagnosis_result = {
-                    'disease_prediction': {
-                        **disease_result,
-                        'similar_previous_cases': 0,
-                        'certainty_level': 'Unknown'
-                    },
-                    'deficiency_prediction': {
-                        **deficiency_result,
-                        'similar_previous_cases': 0,
-                        'certainty_level': 'Unknown'
-                    },
-                    'learning_stats': {
-                        'disease_memory_size': 0,
-                        'deficiency_memory_size': 0,
-                        'disease_calibration_classes': 0,
-                        'deficiency_calibration_classes': 0
-                    },
-                    'status': 'fallback_used'
-                }
-            total_time = time.time() - start_time
-
-            # Add processing time to response
-            diagnosis_result['processing_time'] = round(total_time, 4)
-            diagnosis_result['model_version'] = 'interactive_learning_v1.0'
-
-            # Clean up uploaded file
-            os.remove(filepath)
-
-            logger.info(f'Interactive diagnosis completed in {total_time:.4f}s')
-            return jsonify(diagnosis_result)
-
-        except Exception as e:
-            logger.error(f'Interactive diagnosis error: {str(e)}')
-            # Clean up on error
-            if os.path.exists(filepath):
-                os.remove(filepath)
-            return jsonify({'error': f'Interactive diagnosis failed: {str(e)}'}), 500
-
-    except Exception as e:
-        logger.error(f'Unexpected error: {str(e)}')
+        start = time.time()
+        # interactive_system is optional; fallback to classifiers
+        try:
+            # Try interactive system if available
+            if 'interactive_system' in globals() and interactive_system is not None:
+                diagnosis_result = interactive_system.diagnose(image)
+            else:
+                raise RuntimeError('Interactive system not available')
+        except Exception:
+            disease_clf, deficiency_clf = get_classifiers()
+            disease_result = disease_clf.predict(image)
+            deficiency_result = deficiency_clf.predict(image)
+            diagnosis_result = {
+                'disease_prediction': {**disease_result, 'similar_previous_cases': 0, 'certainty_level': 'Unknown'},
+                'deficiency_prediction': {**deficiency_result, 'similar_previous_cases': 0, 'certainty_level': 'Unknown'},
+                'learning_stats': {'disease_memory_size': 0, 'deficiency_memory_size': 0, 'disease_calibration_classes': 0, 'deficiency_calibration_classes': 0},
+                'status': 'fallback_used'
+            }
+        total_time = time.time() - start
+        diagnosis_result['processing_time'] = round(total_time, 4)
+        diagnosis_result['model_version'] = 'interactive_learning_v1.0'
+        return jsonify(diagnosis_result)
+    except Exception:
+        logger.exception('Interactive diagnosis error')
         return jsonify({'error': 'Internal server error'}), 500
 
-@app.route('/api/feedback', methods=['POST'])
-def provide_feedback():
-    """Endpoint for users to provide feedback on predictions"""
+
+@app.route('/health', methods=['GET', 'POST'])
+def health():
     try:
-        data = request.get_json()
+        if request.method == 'POST':
+            data = request.get_json(silent=True)
+            logger.info(f'Health ping: {data}')
+        return jsonify({'status': 'healthy', 'timestamp': time.time()}), 200
+    except Exception:
+        logger.exception('Health check error')
+        return jsonify({'status': 'unhealthy'}), 500
 
-        if not data:
-            return jsonify({'error': 'No feedback data provided'}), 400
 
-        image_path = data.get('image_path')
-        disease_feedback = data.get('disease_feedback')
-        deficiency_feedback = data.get('deficiency_feedback')
-
-        if not image_path:
-            return jsonify({'error': 'Image path is required for feedback'}), 400
-
-        # Provide feedback to the interactive system
-        feedback_result = interactive_system.provide_feedback(
-            image_path,
-            disease_feedback=disease_feedback,
-            deficiency_feedback=deficiency_feedback
-        )
-
-        logger.info(f'Feedback incorporated: {feedback_result}')
-        return jsonify(feedback_result)
-
-    except Exception as e:
-        logger.error(f'Feedback error: {str(e)}')
-        return jsonify({'error': f'Feedback processing failed: {str(e)}'}), 500
-
-@app.route('/api/learning-stats', methods=['GET'])
-def learning_stats():
-    """Get statistics about the interactive learning system"""
+@app.route('/api/model-info', methods=['GET'])
+@cache.cached(timeout=300)
+def model_info():
     try:
-        # Get current learning statistics
-        stats = {
-            'disease_memory_size': len(interactive_system.disease_memory.memory),
-            'deficiency_memory_size': len(interactive_system.deficiency_memory.memory),
-            'disease_calibration_classes': len(interactive_system.disease_calibrator.calibration_map),
-            'deficiency_calibration_classes': len(interactive_system.deficiency_calibrator.calibration_map),
-            'disease_feature_classes': len(interactive_system.disease_classifier.feature_memory),
-            'deficiency_feature_classes': len(interactive_system.deficiency_classifier.feature_memory),
-            'timestamp': time.time()
-        }
-
+        if disease_classifier is None or deficiency_classifier is None:
+            return jsonify({'message': 'Models not loaded yet'}), 200
+        disease_stats = disease_classifier.get_stats() if hasattr(disease_classifier, 'get_stats') else {}
+        deficiency_stats = deficiency_classifier.get_stats() if hasattr(deficiency_classifier, 'get_stats') else {}
         return jsonify({
-            'learning_statistics': stats,
-            'status': 'success'
+            'model_version': 'optimized_v1.0',
+            'disease_classes': len(disease_classifier.classes) if hasattr(disease_classifier, 'classes') else None,
+            'deficiency_classes': len(deficiency_classifier.classes) if hasattr(deficiency_classifier, 'classes') else None,
+            'model_stats': {'disease': disease_stats, 'deficiency': deficiency_stats}
         })
+    except Exception:
+        logger.exception('Model info error')
+        return jsonify({'error': 'Internal server error'}), 500
 
-    except Exception as e:
-        logger.error(f'Learning stats error: {str(e)}')
-        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/performance', methods=['GET'])
+def performance():
+    try:
+        if disease_classifier is None or deficiency_classifier is None:
+            return jsonify({'message': 'Models not loaded yet'}), 200
+        disease_stats = disease_classifier.get_stats() if hasattr(disease_classifier, 'get_stats') else {'total_predictions': 0}
+        deficiency_stats = deficiency_classifier.get_stats() if hasattr(deficiency_classifier, 'get_stats') else {'total_predictions': 0}
+        total_preds = disease_stats.get('total_predictions', 0) + deficiency_stats.get('total_predictions', 0)
+        return jsonify({'performance_metrics': {'disease_model': disease_stats, 'deficiency_model': deficiency_stats, 'total_predictions': total_preds}, 'timestamp': time.time()})
+    except Exception:
+        logger.exception('Performance error')
+        return jsonify({'error': 'Internal server error'}), 500
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
-    logger.info(f'Starting combined Flask server on port {port}...')
-    print(f"Starting server on port {port}")
+    logger.info(f'Starting server on port {port}')
     app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
