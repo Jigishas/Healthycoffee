@@ -6,12 +6,15 @@ export const BACKEND_CONFIG = {
 
 // Determine which backend URL to use based on environment
 export const getBackendUrl = () => {
-  // In development (localhost), use localhost for faster development
-  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    return BACKEND_CONFIG.LOCAL_FALLBACK;
-  }
-  // Always use production URL for deployed frontend
-  return BACKEND_CONFIG.PRODUCTION_URL;
+  // TESTING: Force localhost to test with local backend
+  // Uncomment the line below to use Render production backend
+  return BACKEND_CONFIG.LOCAL_FALLBACK;
+  
+  // Production logic (use when local testing is complete):
+  // if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+  //   return BACKEND_CONFIG.LOCAL_FALLBACK;
+  // }
+  // return BACKEND_CONFIG.PRODUCTION_URL;
 };
 
 // Dynamic backend URL that updates if environment changes
