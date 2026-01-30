@@ -6,15 +6,17 @@ export const BACKEND_CONFIG = {
 
 // Determine which backend URL to use based on environment
 export const getBackendUrl = () => {
-  // TESTING: Force localhost to test with local backend
-  // Uncomment the line below to use Render production backend
-  return BACKEND_CONFIG.LOCAL_FALLBACK;
-  
-  // Production logic (use when local testing is complete):
-  // if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-  //   return BACKEND_CONFIG.LOCAL_FALLBACK;
-  // }
-  // return BACKEND_CONFIG.PRODUCTION_URL;
+  // Use production backend by default. If running the frontend on localhost
+  // (developer testing), fall back to the local backend at port 8000.
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return BACKEND_CONFIG.LOCAL_FALLBACK;
+    }
+    return BACKEND_CONFIG.PRODUCTION_URL;
+  }
+  // When running in non-browser environments, prefer production URL
+  return BACKEND_CONFIG.PRODUCTION_URL;
 };
 
 // Dynamic backend URL that updates if environment changes
