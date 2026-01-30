@@ -55,6 +55,10 @@ class LightweightTorchClassifier:
     def predict(self, image_path):
         start_time = time.time()
 
+        # Ensure model is loaded
+        if self.model is None:
+            self.load_model()
+
         # Load and preprocess image
         image = Image.open(image_path).convert("RGB")
         input_tensor = self.transform(image).unsqueeze(0).to(self.device)

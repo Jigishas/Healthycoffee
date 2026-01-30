@@ -13,18 +13,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://healthycoffee.vercel.app", "http://localhost:3000"])
 
-# Load optimized models with confidence threshold
+# Load optimized models with confidence threshold and preload for faster inference
 disease_classifier = OptimizedTorchClassifier(
     'models/leaf_diseases/efficientnet_disease_balanced.pth',
     'models/leaf_diseases/class_mapping_diseases.json',
-    confidence_threshold=0.3
+    confidence_threshold=0.3,
+    preload=True
 )
 deficiency_classifier = OptimizedTorchClassifier(
     'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
     'models/leaf_deficiencies/class_mapping_deficiencies.json',
-    confidence_threshold=0.3
+    confidence_threshold=0.3,
+    preload=True
 )
 
 UPLOAD_FOLDER = 'uploads'
