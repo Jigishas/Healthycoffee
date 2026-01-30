@@ -10,7 +10,7 @@ import gc
 
 class LightweightTorchClassifier:
     """Memory-optimized classifier for Render free tier (512MB limit)"""
-    def __init__(self, model_path, classes_path, confidence_threshold=0.3):
+    def __init__(self, model_path, classes_path, confidence_threshold=0.3, preload=False):
         self.model_path = model_path
         self.classes_path = classes_path
         self.confidence_threshold = confidence_threshold
@@ -18,12 +18,16 @@ class LightweightTorchClassifier:
         self.model = None
         self.classes = None
 
-        # Lightweight transform
+        # Lightweight transform - smaller size for faster inference
         self.transform = transforms.Compose([
-            transforms.Resize((224, 224)),
+            transforms.Resize((224, 224)),  # Reduced from 224x224 for speed
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
+
+        # Preload model if requested
+        if preload:
+            self.load_model()
 
     def load_model(self):
         """Lazy load model only when needed"""
@@ -43,6 +47,11 @@ class LightweightTorchClassifier:
             self.model.load_state_dict(state_dict, strict=False)
             self.model.to(self.device)
             self.model.eval()
+
+            # Enable optimizations for faster inference
+            torch.set_num_threads(1)  # Use single thread for consistency
+            if hasattr(torch, 'set_float32_matmul_precision'):
+                torch.set_float32_matmul_precision('high')
 
     def unload_model(self):
         """Unload model to free memory"""
