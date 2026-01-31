@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Camera, Upload, X, RotateCw, Download, 
@@ -10,6 +10,8 @@ import {
   Box, Typography, Grid, Container, Chip,
   Alert, LinearProgress, IconButton
 } from '@mui/material';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 const CameraCapture = ({ uploadUrl, onResult }) => {
   const videoRef = useRef(null);
@@ -23,6 +25,9 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   const [error, setError] = useState(null);
   const [backendStatus, setBackendStatus] = useState('checking');
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [facingMode, setFacingMode] = useState('environment');
+  const reportRef = useRef(null);
+  const fileCaptureRef = useRef(null);
 
   // Step-by-step guide for proper leaf capture
   const captureSteps = [
@@ -32,17 +37,8 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     { icon: <ThermometerSun />, text: "Close-up shot", tip: "Focus on entire leaf surface" }
   ];
 
-  // Initialize camera
-  useEffect(() => {
-    checkBackendStatus();
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, []);
-
-  const checkBackendStatus = async () => {
+  // Initialize camera and backend status checker
+  const checkBackendStatus = useCallback(async () => {
     setBackendStatus('checking');
     try {
       const response = await fetch(`${uploadUrl}/health`, { timeout: 5000 });
@@ -51,17 +47,29 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       } else {
         setBackendStatus('offline');
       }
-    } catch {
+    } catch (err) {
+      console.error('Backend health check failed', err);
       setBackendStatus('offline');
     }
-  };
+  }, [uploadUrl]);
 
-  const startCamera = async () => {
+  useEffect(() => {
+    checkBackendStatus();
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [checkBackendStatus, stream]);
+
+  const startCamera = async (newFacingMode) => {
     setError(null);
+    const fm = newFacingMode || facingMode;
+    setFacingMode(fm);
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: { 
-          facingMode: 'environment',
+          facingMode: fm,
           width: { ideal: 1280 },
           height: { ideal: 720 }
         }
@@ -72,6 +80,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       }
       setMode('camera');
     } catch (err) {
+      console.error('Camera start failed', err);
       setError('Camera access denied. Please check permissions.');
       setMode('idle');
     }
@@ -84,6 +93,19 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     }
     setMode('idle');
   };
+
+  const toggleFacingMode = async () => {
+    const newFacing = facingMode === 'environment' ? 'user' : 'environment';
+    setFacingMode(newFacing);
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    // restart camera if currently showing
+    if (mode === 'camera') {
+      setTimeout(() => startCamera(newFacing), 200);
+    }
+  }; 
 
   const capturePhoto = () => {
     if (!videoRef.current) return;
@@ -201,6 +223,48 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   const retryAnalysis = () => {
     setResult(null);
     setMode('preview');
+  };
+
+  const downloadPdf = async () => {
+    if (!reportRef.current) return;
+    try {
+      const element = reportRef.current;
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const imgWidth = pageWidth - 80;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.setFontSize(18);
+      pdf.text('Leaf Analysis Report', 40, 40);
+      pdf.addImage(imgData, 'JPEG', 40, 60, imgWidth, imgHeight);
+
+      let y = 60 + imgHeight + 16;
+      pdf.setFontSize(12);
+      pdf.text(`Processing time: ${result.processing_time || 'N/A'}s`, 40, y);
+      y += 18;
+      pdf.text(`Model: ${result.model_version || 'N/A'}`, 40, y);
+
+      if (result.recommendations && result.recommendations.length) {
+        y += 24;
+        pdf.text('Recommendations:', 40, y);
+        y += 16;
+        result.recommendations.forEach((r) => {
+          pdf.text(`- ${r}`, 48, y);
+          y += 14;
+          if (y > pdf.internal.pageSize.getHeight() - 40) {
+            pdf.addPage();
+            y = 40;
+          }
+        });
+      }
+
+      pdf.save(`leaf-analysis-${Date.now()}.pdf`);
+    } catch (err) {
+      console.error('PDF generation failed', err);
+      setError('Failed to generate PDF report');
+    }
   };
 
   return (
@@ -369,6 +433,31 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                         </Box>
                       </motion.button>
                     </Grid>
+
+                    {/* Device Camera (mobile) */}
+                    <Grid item xs={12} md={6}>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => fileCaptureRef.current?.click()}
+                        className="w-full group"
+                      >
+                        <Box className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-2xl p-8 text-center hover:border-purple-300 hover:shadow-lg transition-all duration-300">
+                          <div className="relative inline-flex mb-4">
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full blur-lg opacity-30 group-hover:opacity-50" />
+                            <div className="relative p-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full">
+                              <Camera className="w-8 h-8 text-white" />
+                            </div>
+                          </div>
+                          <Typography variant="h6" className="font-bold text-purple-800 mb-2">
+                            Open Device Camera
+                          </Typography>
+                          <Typography variant="body2" className="text-grey-600">
+                            Use your phone's camera to capture a photo
+                          </Typography>
+                        </Box>
+                      </motion.button>
+                    </Grid>
                   </Grid>
 
                   {/* File Input */}
@@ -377,6 +466,16 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                     ref={fileInputRef}
                     onChange={handleFileSelect}
                     accept="image/*"
+                    className="hidden"
+                  />
+
+                  {/* Device camera input (mobile) */}
+                  <input
+                    type="file"
+                    ref={fileCaptureRef}
+                    onChange={handleFileSelect}
+                    accept="image/*"
+                    capture="environment"
                     className="hidden"
                   />
                 </Box>
@@ -429,13 +528,11 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                         </motion.button>
                         
                         <IconButton
-                          onClick={() => {
-                            // Handle camera flip (front/back)
-                          }}
+                          onClick={toggleFacingMode}
                           className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
                         >
                           <RotateCw className="w-6 h-6" />
-                        </IconButton>
+                        </IconButton> 
                       </div>
                     </div>
                   </div>
@@ -559,7 +656,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
               >
-                <Box className="space-y-6">
+                <Box className="space-y-6" ref={reportRef}>
                   {/* Results Summary */}
                   <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
                     <div className="flex items-center justify-between mb-6">
@@ -571,6 +668,14 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                         className="bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800"
                         icon={<Zap className="w-4 h-4" />}
                       />
+                    </div>
+
+                    <div className="flex gap-4 items-center mb-4">
+                      <img src={preview} alt="Sample" className="w-40 h-40 object-cover rounded-lg border" />
+                      <div>
+                        <Typography variant="subtitle1" className="text-grey-600">Captured Sample</Typography>
+                        <Typography variant="caption" className="text-grey-500">This sample was analyzed</Typography>
+                      </div>
                     </div>
 
                     <Grid container spacing={4}>
@@ -654,6 +759,52 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                     </Grid>
                   </Box>
 
+                  {/* Recommendations and explanations */}
+                  {(result.recommendations || result.disease_prediction?.recommendation || result.deficiency_prediction?.recommendation) && (
+                    <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                      <Typography variant="h6" className="font-bold mb-3">Recommendations & Notes</Typography>
+
+                      {result.disease_prediction?.explanation && (
+                        <Box className="mb-3">
+                          <Typography variant="subtitle2" className="font-semibold">Disease Explanation</Typography>
+                          <Typography variant="body2" className="text-grey-600">{result.disease_prediction.explanation}</Typography>
+                        </Box>
+                      )}
+
+                      {result.disease_prediction?.recommendation && (
+                        <Box className="mb-3">
+                          <Typography variant="subtitle2" className="font-semibold">Disease Recommendation</Typography>
+                          <Typography variant="body2" className="text-grey-600">{result.disease_prediction.recommendation}</Typography>
+                        </Box>
+                      )}
+
+                      {result.deficiency_prediction?.explanation && (
+                        <Box className="mb-3">
+                          <Typography variant="subtitle2" className="font-semibold">Nutrient Explanation</Typography>
+                          <Typography variant="body2" className="text-grey-600">{result.deficiency_prediction.explanation}</Typography>
+                        </Box>
+                      )}
+
+                      {result.deficiency_prediction?.recommendation && (
+                        <Box className="mb-3">
+                          <Typography variant="subtitle2" className="font-semibold">Nutrient Recommendation</Typography>
+                          <Typography variant="body2" className="text-grey-600">{result.deficiency_prediction.recommendation}</Typography>
+                        </Box>
+                      )}
+
+                      {result.recommendations && result.recommendations.length > 0 && (
+                        <Box>
+                          <Typography variant="subtitle2" className="font-semibold">Additional Tips</Typography>
+                          <ul className="list-disc list-inside text-grey-600 mt-1">
+                            {result.recommendations.map((r, idx) => (
+                              <li key={idx}>{r}</li>
+                            ))}
+                          </ul>
+                        </Box>
+                      )}
+                    </Box>
+                  )}
+
                   {/* Action Buttons */}
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={4}>
@@ -671,7 +822,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => {/* Download PDF */}}
+                        onClick={downloadPdf}
                         className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg"
                       >
                         <FileText className="w-5 h-5" />
