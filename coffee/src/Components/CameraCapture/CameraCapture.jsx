@@ -10,7 +10,6 @@ import {
   Box, Typography, Grid, Container, Chip,
   Alert, LinearProgress, IconButton
 } from '@mui/material';
-import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
 const CameraCapture = ({ uploadUrl, onResult }) => {
@@ -231,102 +230,362 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   const downloadPdf = async () => {
     if (!reportRef.current) return;
     try {
-      const element = reportRef.current;
-      // Use html2canvas options to avoid CSS parsing issues
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: false,
-        backgroundColor: '#ffffff',
-        removeContainer: true,
-        foreignObjectRendering: false,
-        logging: false
-      });
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const imgWidth = pageWidth - 80;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      let y = 40;
 
-      pdf.setFontSize(18);
-      pdf.text('Leaf Analysis Report', 40, 40);
-      pdf.addImage(imgData, 'JPEG', 40, 60, imgWidth, imgHeight);
+      // Title
+      pdf.setFontSize(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Coffee Leaf Analysis Report', 40, y);
+      y += 30;
 
-      let y = 60 + imgHeight + 16;
-      pdf.setFontSize(12);
+      // Date and basic info
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      const currentDate = new Date().toLocaleDateString();
+      pdf.text(`Generated on: ${currentDate}`, 40, y);
+      y += 15;
       pdf.text(`Processing time: ${result.processing_time || 'N/A'}s`, 40, y);
-      y += 18;
-      pdf.text(`Model: ${result.model_version || 'N/A'}`, 40, y);
+      y += 15;
+      pdf.text(`Model version: ${result.model_version || 'N/A'}`, 40, y);
+      y += 30;
 
-      if (result.recommendations && result.recommendations.length) {
-        y += 24;
-        pdf.text('Recommendations:', 40, y);
-        y += 16;
-        result.recommendations.forEach((r) => {
-          pdf.text(`- ${r}`, 48, y);
-          y += 14;
-          if (y > pdf.internal.pageSize.getHeight() - 40) {
+      // Add image
+      if (preview) {
+        try {
+          const imgWidth = 200;
+          const imgHeight = 150;
+          pdf.addImage(preview, 'JPEG', 40, y, imgWidth, imgHeight);
+          y += imgHeight + 20;
+        } catch (imgErr) {
+          console.warn('Could not add image to PDF:', imgErr);
+          y += 20;
+        }
+      }
+
+      // Analysis Results
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Analysis Results', 40, y);
+      y += 20;
+
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+
+      if (result.disease_prediction) {
+        pdf.text(`Disease Status: ${result.disease_prediction.class}`, 40, y);
+        y += 15;
+        pdf.text(`Confidence: ${Math.round(result.disease_prediction.confidence * 100)}%`, 40, y);
+        y += 20;
+      }
+
+      if (result.deficiency_prediction) {
+        pdf.text(`Nutrient Status: ${result.deficiency_prediction.class}`, 40, y);
+        y += 15;
+        pdf.text(`Confidence: ${Math.round(result.deficiency_prediction.confidence * 100)}%`, 40, y);
+        y += 30;
+      }
+
+      // Disease Management Recommendations
+      if (result.disease_recommendations) {
+        if (y > pageHeight - 100) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Disease Management Recommendations', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        if (result.disease_recommendations.overview) {
+          pdf.text('Overview:', 40, y);
+          y += 15;
+          const overviewLines = pdf.splitTextToSize(result.disease_recommendations.overview, pageWidth - 80);
+          pdf.text(overviewLines, 50, y);
+          y += overviewLines.length * 12 + 10;
+        }
+
+        if (result.disease_recommendations.symptoms && result.disease_recommendations.symptoms.length > 0) {
+          if (y > pageHeight - 100) {
             pdf.addPage();
             y = 40;
           }
-        });
-      }
-
-      pdf.save(`leaf-analysis-${Date.now()}.pdf`);
-    } catch (err) {
-      console.error('PDF generation failed', err);
-      // Fallback: create a simple PDF with text content
-      try {
-        const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
-        pdf.setFontSize(18);
-        pdf.text('Leaf Analysis Report', 40, 40);
-
-        let y = 80;
-        pdf.setFontSize(12);
-
-        // Add image if available
-        if (preview) {
-          const img = new Image();
-          img.src = preview;
-          const imgWidth = 200;
-          const imgHeight = (img.height * imgWidth) / img.width;
-          pdf.addImage(preview, 'JPEG', 40, y, imgWidth, imgHeight);
-          y += imgHeight + 20;
-        }
-
-        pdf.text(`Processing time: ${result.processing_time || 'N/A'}s`, 40, y);
-        y += 20;
-        pdf.text(`Model: ${result.model_version || 'N/A'}`, 40, y);
-        y += 30;
-
-        if (result.disease_prediction) {
-          pdf.text(`Disease Status: ${result.disease_prediction.class} (${Math.round(result.disease_prediction.confidence * 100)}%)`, 40, y);
-          y += 20;
-        }
-
-        if (result.deficiency_prediction) {
-          pdf.text(`Nutrient Status: ${result.deficiency_prediction.class} (${Math.round(result.deficiency_prediction.confidence * 100)}%)`, 40, y);
-          y += 30;
-        }
-
-        if (result.recommendations && result.recommendations.length) {
-          pdf.text('Recommendations:', 40, y);
-          y += 20;
-          result.recommendations.forEach((r) => {
-            pdf.text(`- ${r}`, 60, y);
-            y += 15;
-            if (y > pdf.internal.pageSize.getHeight() - 40) {
+          pdf.text('Symptoms:', 40, y);
+          y += 15;
+          result.disease_recommendations.symptoms.forEach((symptom) => {
+            if (y > pageHeight - 40) {
               pdf.addPage();
               y = 40;
             }
+            pdf.text(`• ${symptom}`, 50, y);
+            y += 12;
           });
+          y += 10;
         }
 
-        pdf.save(`leaf-analysis-${Date.now()}.pdf`);
-      } catch (fallbackErr) {
-        console.error('Fallback PDF generation also failed', fallbackErr);
-        setError('Failed to generate PDF report');
+        if (result.disease_recommendations.integrated_management) {
+          if (y > pageHeight - 100) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.text('Integrated Management:', 40, y);
+          y += 15;
+
+          const mgmt = result.disease_recommendations.integrated_management;
+          if (mgmt.cultural_practices) {
+            pdf.text('Cultural Practices:', 50, y);
+            y += 12;
+            mgmt.cultural_practices.slice(0, 3).forEach((practice) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${practice}`, 60, y);
+              y += 10;
+            });
+          }
+
+          if (mgmt.chemical_control) {
+            if (y > pageHeight - 60) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text('Chemical Control:', 50, y);
+            y += 12;
+            mgmt.chemical_control.slice(0, 3).forEach((control) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${control}`, 60, y);
+              y += 10;
+            });
+          }
+        }
+
+        if (result.disease_recommendations.severity_specific_recommendations) {
+          if (y > pageHeight - 60) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.text('Severity-Specific Recommendations:', 40, y);
+          y += 15;
+          const severity = result.disease_recommendations.severity_specific_recommendations;
+          pdf.text(`Spray Frequency: ${severity.spray_frequency}`, 50, y);
+          y += 12;
+          pdf.text(`Intervention Level: ${severity.intervention_level}`, 50, y);
+          y += 20;
+        }
+
+        if (result.disease_recommendations.coffee_specific_recommendations) {
+          if (y > pageHeight - 100) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.text('Coffee-Specific Recommendations:', 40, y);
+          y += 15;
+
+          const coffeeRecs = result.disease_recommendations.coffee_specific_recommendations;
+          if (coffeeRecs.harvest_timing) {
+            pdf.text(`Harvest Timing: ${coffeeRecs.harvest_timing}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.shade_management) {
+            pdf.text(`Shade Management: ${coffeeRecs.shade_management}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.processing_impact) {
+            pdf.text(`Processing Impact: ${coffeeRecs.processing_impact}`, 50, y);
+            y += 20;
+          }
+        }
       }
+
+      // Deficiency Recommendations
+      if (result.deficiency_recommendations) {
+        if (y > pageHeight - 100) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Nutrient Deficiency Management', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        if (result.deficiency_recommendations.basic && result.deficiency_recommendations.basic.length > 0) {
+          pdf.text('Basic Management:', 40, y);
+          y += 15;
+          result.deficiency_recommendations.basic.forEach((rec) => {
+            if (y > pageHeight - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text(`• ${rec}`, 50, y);
+            y += 12;
+          });
+          y += 10;
+        }
+
+        if (result.deficiency_recommendations.management && result.deficiency_recommendations.management.length > 0) {
+          if (y > pageHeight - 80) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.text('Management Strategies:', 40, y);
+          y += 15;
+          result.deficiency_recommendations.management.forEach((strategy) => {
+            if (y > pageHeight - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text(`• ${strategy}`, 50, y);
+            y += 12;
+          });
+          y += 10;
+        }
+      }
+
+      // Products and Varieties
+      if ((result.products && result.products.length > 0) || (result.varieties && result.varieties.length > 0)) {
+        if (y > pageHeight - 100) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Recommended Products & Varieties', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        if (result.products && result.products.length > 0) {
+          pdf.text('Recommended Products:', 40, y);
+          y += 15;
+          result.products.forEach((product) => {
+            if (y > pageHeight - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text(`• ${product}`, 50, y);
+            y += 12;
+          });
+          y += 10;
+        }
+
+        if (result.varieties && result.varieties.length > 0) {
+          if (y > pageHeight - 80) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.text('Resistant Varieties:', 40, y);
+          y += 15;
+          result.varieties.forEach((variety) => {
+            if (y > pageHeight - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            const varietyLines = pdf.splitTextToSize(`• ${variety}`, pageWidth - 90);
+            pdf.text(varietyLines, 50, y);
+            y += varietyLines.length * 10 + 5;
+          });
+        }
+      }
+
+      // Coffee-Specific Practices
+      if (result.disease_recommendations?.coffee_specific_recommendations?.coffee_specific_practices) {
+        if (y > pageHeight - 100) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Coffee Cultivation Best Practices', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices.forEach((practice) => {
+          if (y > pageHeight - 40) {
+            pdf.addPage();
+            y = 40;
+          }
+          const practiceLines = pdf.splitTextToSize(`• ${practice}`, pageWidth - 90);
+          pdf.text(practiceLines, 50, y);
+          y += practiceLines.length * 10 + 5;
+        });
+      }
+
+      // Quality Impact
+      if (result.disease_recommendations?.coffee_specific_recommendations?.quality_impact) {
+        if (y > pageHeight - 80) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Quality & Market Impact', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        const qualityImpact = result.disease_recommendations.coffee_specific_recommendations.quality_impact;
+        if (qualityImpact.cup_quality) {
+          pdf.text(`Cup Quality Impact: ${qualityImpact.cup_quality}`, 40, y);
+          y += 15;
+        }
+        if (qualityImpact.market_price) {
+          pdf.text(`Market Price Impact: ${qualityImpact.market_price}`, 40, y);
+          y += 15;
+        }
+        if (qualityImpact.certification) {
+          pdf.text(`Certification Impact: ${qualityImpact.certification}`, 40, y);
+          y += 15;
+        }
+      }
+
+      // Economic Considerations
+      if (result.disease_recommendations?.economic_considerations) {
+        if (y > pageHeight - 60) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Economic Analysis', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        const economic = result.disease_recommendations.economic_considerations;
+        pdf.text(`Management Cost: $${economic.management_cost_usd_per_ha}/ha`, 40, y);
+        y += 15;
+        pdf.text(`Potential Yield Loss: ${economic.potential_yield_loss_percent}%`, 40, y);
+        y += 15;
+        pdf.text(`Return on Investment: ${economic.return_on_investment}`, 40, y);
+      }
+
+      pdf.save(`coffee-leaf-analysis-${Date.now()}.pdf`);
+    } catch (err) {
+      console.error('PDF generation failed', err);
+      setError('Failed to generate PDF report');
     }
   };
 
@@ -804,51 +1063,256 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                     </Grid>
                   </Box>
 
-                  {/* Recommendations and explanations */}
-                  {(result.recommendations || result.disease_prediction?.recommendation || result.deficiency_prediction?.recommendation) && (
-                    <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
-                      <Typography variant="h6" className="font-bold mb-3">Recommendations & Notes</Typography>
+                  {/* Comprehensive Results Display */}
+                  <Box className="space-y-6">
+                    {/* Disease Recommendations */}
+                    {result.disease_recommendations && (
+                      <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                        <Typography variant="h6" className="font-bold mb-4 text-emerald-800">Disease Management Recommendations</Typography>
 
-                      {result.disease_prediction?.explanation && (
-                        <Box className="mb-3">
-                          <Typography variant="subtitle2" className="font-semibold">Disease Explanation</Typography>
-                          <Typography variant="body2" className="text-grey-600">{result.disease_prediction.explanation}</Typography>
-                        </Box>
-                      )}
+                        <div className="space-y-4">
+                          <Box>
+                            <Typography variant="subtitle1" className="font-semibold mb-2">Overview</Typography>
+                            <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.overview}</Typography>
+                          </Box>
 
-                      {result.disease_prediction?.recommendation && (
-                        <Box className="mb-3">
-                          <Typography variant="subtitle2" className="font-semibold">Disease Recommendation</Typography>
-                          <Typography variant="body2" className="text-grey-600">{result.disease_prediction.recommendation}</Typography>
-                        </Box>
-                      )}
+                          {result.disease_recommendations.symptoms && result.disease_recommendations.symptoms.length > 0 && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Symptoms</Typography>
+                              <ul className="list-disc list-inside text-grey-600 text-sm">
+                                {result.disease_recommendations.symptoms.map((symptom, idx) => (
+                                  <li key={idx}>{symptom}</li>
+                                ))}
+                              </ul>
+                            </Box>
+                          )}
 
-                      {result.deficiency_prediction?.explanation && (
-                        <Box className="mb-3">
-                          <Typography variant="subtitle2" className="font-semibold">Nutrient Explanation</Typography>
-                          <Typography variant="body2" className="text-grey-600">{result.deficiency_prediction.explanation}</Typography>
-                        </Box>
-                      )}
+                          {result.disease_recommendations.integrated_management && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Integrated Management</Typography>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {result.disease_recommendations.integrated_management.cultural_practices && (
+                                  <Box className="bg-emerald-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-emerald-800 mb-1">Cultural Practices</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.integrated_management.cultural_practices.slice(0, 3).map((practice, idx) => (
+                                        <li key={idx}>{practice}</li>
+                                      ))}
+                                    </ul>
+                                  </Box>
+                                )}
 
-                      {result.deficiency_prediction?.recommendation && (
-                        <Box className="mb-3">
-                          <Typography variant="subtitle2" className="font-semibold">Nutrient Recommendation</Typography>
-                          <Typography variant="body2" className="text-grey-600">{result.deficiency_prediction.recommendation}</Typography>
-                        </Box>
-                      )}
+                                {result.disease_recommendations.integrated_management.chemical_control && (
+                                  <Box className="bg-blue-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-blue-800 mb-1">Chemical Control</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.integrated_management.chemical_control.slice(0, 3).map((control, idx) => (
+                                        <li key={idx}>{control}</li>
+                                      ))}
+                                    </ul>
+                                  </Box>
+                                )}
 
-                      {result.recommendations && result.recommendations.length > 0 && (
-                        <Box>
-                          <Typography variant="subtitle2" className="font-semibold">Additional Tips</Typography>
-                          <ul className="list-disc list-inside text-grey-600 mt-1">
-                            {result.recommendations.map((r, idx) => (
-                              <li key={idx}>{r}</li>
-                            ))}
-                          </ul>
-                        </Box>
-                      )}
-                    </Box>
-                  )}
+                                {result.disease_recommendations.integrated_management.biological_control && (
+                                  <Box className="bg-purple-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-purple-800 mb-1">Biological Control</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.integrated_management.biological_control.slice(0, 3).map((control, idx) => (
+                                        <li key={idx}>{control}</li>
+                                      ))}
+                                    </ul>
+                                  </Box>
+                                )}
+                              </div>
+                            </Box>
+                          )}
+
+                          {result.disease_recommendations.severity_specific_recommendations && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Severity-Specific Recommendations</Typography>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Box className="bg-amber-50 p-3 rounded-lg">
+                                  <Typography variant="subtitle2" className="font-semibold text-amber-800 mb-1">Spray Frequency</Typography>
+                                  <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.severity_specific_recommendations.spray_frequency}</Typography>
+                                </Box>
+                                <Box className="bg-red-50 p-3 rounded-lg">
+                                  <Typography variant="subtitle2" className="font-semibold text-red-800 mb-1">Intervention Level</Typography>
+                                  <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.severity_specific_recommendations.intervention_level}</Typography>
+                                </Box>
+                              </div>
+                            </Box>
+                          )}
+
+                          {result.disease_recommendations.coffee_specific_recommendations && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Coffee-Specific Recommendations</Typography>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {result.disease_recommendations.coffee_specific_recommendations.harvest_timing && (
+                                  <Box className="bg-green-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-green-800 mb-1">Harvest Timing</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.harvest_timing}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.shade_management && (
+                                  <Box className="bg-teal-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-teal-800 mb-1">Shade Management</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.shade_management}</Typography>
+                                  </Box>
+                                )}
+                              </div>
+                            </Box>
+                          )}
+                        </div>
+                      </Box>
+                    )}
+
+                    {/* Deficiency Recommendations */}
+                    {result.deficiency_recommendations && (
+                      <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                        <Typography variant="h6" className="font-bold mb-4 text-blue-800">Nutrient Deficiency Management</Typography>
+
+                        <div className="space-y-4">
+                          {result.deficiency_recommendations.basic && result.deficiency_recommendations.basic.length > 0 && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Basic Management</Typography>
+                              <ul className="list-disc list-inside text-grey-600">
+                                {result.deficiency_recommendations.basic.map((rec, idx) => (
+                                  <li key={idx}>{rec}</li>
+                                ))}
+                              </ul>
+                            </Box>
+                          )}
+
+                          {result.deficiency_recommendations.symptoms && result.deficiency_recommendations.symptoms.length > 0 && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Symptoms</Typography>
+                              <ul className="list-disc list-inside text-grey-600 text-sm">
+                                {result.deficiency_recommendations.symptoms.map((symptom, idx) => (
+                                  <li key={idx}>{symptom}</li>
+                                ))}
+                              </ul>
+                            </Box>
+                          )}
+
+                          {result.deficiency_recommendations.management && result.deficiency_recommendations.management.length > 0 && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Management Strategies</Typography>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {result.deficiency_recommendations.management.map((strategy, idx) => (
+                                  <Box key={idx} className="bg-blue-50 p-3 rounded-lg">
+                                    <Typography variant="body2" className="text-grey-600">{strategy}</Typography>
+                                  </Box>
+                                ))}
+                              </div>
+                            </Box>
+                          )}
+                        </div>
+                      </Box>
+                    )}
+
+                    {/* Products and Varieties */}
+                    {(result.products && result.products.length > 0) || (result.varieties && result.varieties.length > 0) && (
+                      <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                        <Typography variant="h6" className="font-bold mb-4 text-purple-800">Recommended Products & Varieties</Typography>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {result.products && result.products.length > 0 && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Recommended Products</Typography>
+                              <ul className="list-disc list-inside text-grey-600">
+                                {result.products.map((product, idx) => (
+                                  <li key={idx}>{product}</li>
+                                ))}
+                              </ul>
+                            </Box>
+                          )}
+
+                          {result.varieties && result.varieties.length > 0 && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Resistant Varieties</Typography>
+                              <ul className="list-disc list-inside text-grey-600 text-sm">
+                                {result.varieties.map((variety, idx) => (
+                                  <li key={idx}>{variety}</li>
+                                ))}
+                              </ul>
+                            </Box>
+                          )}
+                        </div>
+                      </Box>
+                    )}
+
+                    {/* Coffee-Specific Practices */}
+                    {result.disease_recommendations?.coffee_specific_recommendations?.coffee_specific_practices && (
+                      <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                        <Typography variant="h6" className="font-bold mb-4 text-green-800">Coffee Cultivation Best Practices</Typography>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices.map((practice, idx) => (
+                            <Box key={idx} className="bg-green-50 p-3 rounded-lg">
+                              <Typography variant="body2" className="text-grey-600">{practice}</Typography>
+                            </Box>
+                          ))}
+                        </div>
+                      </Box>
+                    )}
+
+                    {/* Quality Impact */}
+                    {result.disease_recommendations?.coffee_specific_recommendations?.quality_impact && (
+                      <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                        <Typography variant="h6" className="font-bold mb-4 text-amber-800">Quality & Market Impact</Typography>
+                        <div className="space-y-3">
+                          {result.disease_recommendations.coffee_specific_recommendations.quality_impact.cup_quality && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold">Cup Quality Impact</Typography>
+                              <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.quality_impact.cup_quality}</Typography>
+                            </Box>
+                          )}
+                          {result.disease_recommendations.coffee_specific_recommendations.quality_impact.market_price && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold">Market Price Impact</Typography>
+                              <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.quality_impact.market_price}</Typography>
+                            </Box>
+                          )}
+                          {result.disease_recommendations.coffee_specific_recommendations.quality_impact.certification && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold">Certification Impact</Typography>
+                              <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.quality_impact.certification}</Typography>
+                            </Box>
+                          )}
+                        </div>
+                      </Box>
+                    )}
+
+                    {/* Sustainability Considerations */}
+                    {result.disease_recommendations?.coffee_specific_recommendations?.sustainability_considerations && (
+                      <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                        <Typography variant="h6" className="font-bold mb-4 text-teal-800">Sustainability Considerations</Typography>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations.map((consideration, idx) => (
+                            <Box key={idx} className="bg-teal-50 p-3 rounded-lg">
+                              <Typography variant="body2" className="text-grey-600">{consideration}</Typography>
+                            </Box>
+                          ))}
+                        </div>
+                      </Box>
+                    )}
+
+                    {/* Economic Considerations */}
+                    {result.disease_recommendations?.economic_considerations && (
+                      <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                        <Typography variant="h6" className="font-bold mb-4 text-orange-800">Economic Analysis</Typography>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Box className="bg-orange-50 p-3 rounded-lg">
+                            <Typography variant="subtitle2" className="font-semibold text-orange-800 mb-1">Management Cost</Typography>
+                            <Typography variant="body2" className="text-grey-600">${result.disease_recommendations.economic_considerations.management_cost_usd_per_ha}/ha</Typography>
+                          </Box>
+                          <Box className="bg-red-50 p-3 rounded-lg">
+                            <Typography variant="subtitle2" className="font-semibold text-red-800 mb-1">Potential Yield Loss</Typography>
+                            <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.economic_considerations.potential_yield_loss_percent}%</Typography>
+                          </Box>
+                        </div>
+                      </Box>
+                    )}
+                  </Box>
 
                   {/* Action Buttons */}
                   <Grid container spacing={3}>
