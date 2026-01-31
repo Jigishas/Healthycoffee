@@ -567,6 +567,9 @@ class CoffeeDiseaseRecommender:
         # Generate farm-specific adaptations
         farm_adaptations = self._get_farm_specific_adaptations(disease_name, farm_conditions)
 
+        # Get coffee-specific additional recommendations
+        coffee_specific_recs = self._get_coffee_specific_recommendations(disease_name, severity)
+
         result = {
             "disease_name": disease_data["name"],
             "overview": disease_data["overview"],
@@ -581,7 +584,8 @@ class CoffeeDiseaseRecommender:
             },
             "farm_specific_adaptations": farm_adaptations,
             "monitoring_schedule": self._get_monitoring_schedule(disease_name, severity),
-            "economic_considerations": self._get_economic_analysis(disease_name, severity)
+            "economic_considerations": self._get_economic_analysis(disease_name, severity),
+            "coffee_specific_recommendations": coffee_specific_recs
         }
 
         # Add emergency_measures if available
@@ -684,6 +688,102 @@ class CoffeeDiseaseRecommender:
             "action_thresholds": "Implement spray decisions based on established thresholds",
             "weather_monitoring": "Track temperature, humidity, and rainfall patterns"
         }
+
+    def _get_coffee_specific_recommendations(self, disease_name, severity):
+        """Generate coffee-specific additional recommendations"""
+        coffee_recs = {
+            "0": {  # Cercospora Leaf Spot
+                "harvest_timing": "Harvest immediately if disease pressure is high to prevent quality loss",
+                "post_harvest": "Clean and disinfect harvesting equipment between fields",
+                "variety_rotation": "Rotate between susceptible and resistant varieties every 3-5 years",
+                "soil_health": "Maintain soil organic matter above 3% to improve plant resistance",
+                "companion_cropping": "Intercrop with maize or beans to reduce disease spread",
+                "processing_impact": "Disease can reduce cup quality by 10-20% if not controlled"
+            },
+            "1": {  # Healthy
+                "preventive_maintenance": "Continue integrated pest management practices",
+                "soil_monitoring": "Regular soil testing every 6 months",
+                "variety_evaluation": "Monitor variety performance and plan replacements",
+                "certification": "Maintain organic or sustainable certification standards",
+                "yield_optimization": "Focus on maximizing yield through balanced nutrition"
+            },
+            "2": {  # Coffee Leaf Rust
+                "shade_management": "Maintain 30-40% shade to reduce disease pressure",
+                "windbreaks": "Establish windbreaks to reduce spore dispersal",
+                "spore_monitoring": "Use spore traps during high-risk periods",
+                "fungicide_resistance": "Rotate fungicide classes to prevent resistance development",
+                "biological_control": "Introduce predatory mites and beneficial insects",
+                "post_harvest_sanitation": "Remove all infected leaves and berries from the field"
+            },
+            "3": {  # Phoma Leaf Blight
+                "pruning_strategy": "Prune during dry season to minimize infection",
+                "wound_protection": "Apply wound sealants after pruning",
+                "irrigation_management": "Use drip irrigation to avoid leaf wetness",
+                "nutrient_balance": "Maintain balanced NPK ratios to improve plant health",
+                "compost_application": "Apply well-decomposed compost to improve soil health",
+                "storage_practices": "Store harvested coffee in dry, well-ventilated conditions"
+            }
+        }
+
+        base_rec = coffee_recs.get(disease_name, {
+            "general_advice": "Consult local agricultural extension services for specific recommendations",
+            "monitoring": "Implement regular field monitoring and record-keeping",
+            "sustainability": "Focus on sustainable farming practices for long-term productivity"
+        })
+
+        # Add severity-specific recommendations
+        severity_additions = {
+            "low": {
+                "intervention_level": "Preventive focus",
+                "monitoring_frequency": "Weekly field inspections",
+                "economic_approach": "Cost-effective preventive measures"
+            },
+            "medium": {
+                "intervention_level": "Curative and preventive",
+                "monitoring_frequency": "Twice weekly inspections",
+                "economic_approach": "Balanced investment in control measures"
+            },
+            "high": {
+                "intervention_level": "Emergency intervention required",
+                "monitoring_frequency": "Daily monitoring in affected areas",
+                "economic_approach": "Priority investment to prevent major losses"
+            }
+        }
+
+        severity_rec = severity_additions.get(severity, severity_additions["medium"])
+
+        # Combine base and severity recommendations
+        combined_rec = {**base_rec, **severity_rec}
+
+        # Add coffee-specific general recommendations
+        combined_rec.update({
+            "coffee_specific_practices": [
+                "Maintain proper plant spacing (2-3m between plants, 1.5-2m between rows)",
+                "Implement regular pruning cycles (stumping every 4-6 years for Arabica)",
+                "Use shade trees that provide 30-50% light interception",
+                "Apply mulch to maintain soil moisture and suppress weeds",
+                "Monitor soil pH regularly (optimal range: 5.5-6.5)",
+                "Implement integrated nutrient management with organic and inorganic fertilizers",
+                "Practice selective harvesting to maintain quality standards",
+                "Store coffee in parchment form in dry, cool conditions",
+                "Participate in farmer field schools for continuous learning",
+                "Join cooperative marketing to improve bargaining power"
+            ],
+            "quality_impact": {
+                "cup_quality": "Disease can reduce cup quality by affecting bean development",
+                "market_price": "Infected coffee may receive lower market prices",
+                "certification": "Severe infections may affect organic certification status"
+            },
+            "sustainability_considerations": [
+                "Minimize chemical pesticide use through integrated pest management",
+                "Promote biodiversity through companion planting and natural habitats",
+                "Implement soil conservation practices to prevent erosion",
+                "Use water-efficient irrigation systems in water-scarce areas",
+                "Adopt climate-smart agricultural practices for changing weather patterns"
+            ]
+        })
+
+        return combined_rec
 
     def _get_economic_analysis(self, disease_name, severity):
         """Provide economic considerations for disease management"""
