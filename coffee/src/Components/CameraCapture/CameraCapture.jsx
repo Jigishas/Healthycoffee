@@ -232,7 +232,16 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     if (!reportRef.current) return;
     try {
       const element = reportRef.current;
-      const canvas = await html2canvas(element, { scale: 2 });
+      // Use html2canvas options to avoid CSS parsing issues
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: '#ffffff',
+        removeContainer: true,
+        foreignObjectRendering: false,
+        logging: false
+      });
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
@@ -266,7 +275,58 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       pdf.save(`leaf-analysis-${Date.now()}.pdf`);
     } catch (err) {
       console.error('PDF generation failed', err);
-      setError('Failed to generate PDF report');
+      // Fallback: create a simple PDF with text content
+      try {
+        const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+        pdf.setFontSize(18);
+        pdf.text('Leaf Analysis Report', 40, 40);
+
+        let y = 80;
+        pdf.setFontSize(12);
+
+        // Add image if available
+        if (preview) {
+          const img = new Image();
+          img.src = preview;
+          const imgWidth = 200;
+          const imgHeight = (img.height * imgWidth) / img.width;
+          pdf.addImage(preview, 'JPEG', 40, y, imgWidth, imgHeight);
+          y += imgHeight + 20;
+        }
+
+        pdf.text(`Processing time: ${result.processing_time || 'N/A'}s`, 40, y);
+        y += 20;
+        pdf.text(`Model: ${result.model_version || 'N/A'}`, 40, y);
+        y += 30;
+
+        if (result.disease_prediction) {
+          pdf.text(`Disease Status: ${result.disease_prediction.class} (${Math.round(result.disease_prediction.confidence * 100)}%)`, 40, y);
+          y += 20;
+        }
+
+        if (result.deficiency_prediction) {
+          pdf.text(`Nutrient Status: ${result.deficiency_prediction.class} (${Math.round(result.deficiency_prediction.confidence * 100)}%)`, 40, y);
+          y += 30;
+        }
+
+        if (result.recommendations && result.recommendations.length) {
+          pdf.text('Recommendations:', 40, y);
+          y += 20;
+          result.recommendations.forEach((r) => {
+            pdf.text(`- ${r}`, 60, y);
+            y += 15;
+            if (y > pdf.internal.pageSize.getHeight() - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+          });
+        }
+
+        pdf.save(`leaf-analysis-${Date.now()}.pdf`);
+      } catch (fallbackErr) {
+        console.error('Fallback PDF generation also failed', fallbackErr);
+        setError('Failed to generate PDF report');
+      }
     }
   };
 
@@ -392,7 +452,14 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={startCamera}
+                        onClick={() => {
+                          // Try to start camera first, fallback to file input
+                          if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                            startCamera();
+                          } else {
+                            fileInputRef.current?.click();
+                          }
+                        }}
                         className="w-full group"
                       >
                         <Box className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 rounded-2xl p-8 text-center hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
@@ -406,7 +473,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                             Use Camera
                           </Typography>
                           <Typography variant="body2" className="text-grey-600">
-                            Real-time capture
+                            Real-time capture or select from gallery
                           </Typography>
                         </Box>
                       </motion.button>
@@ -432,31 +499,6 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                           </Typography>
                           <Typography variant="body2" className="text-grey-600">
                             From gallery or files
-                          </Typography>
-                        </Box>
-                      </motion.button>
-                    </Grid>
-
-                    {/* Device Camera (mobile) */}
-                    <Grid item xs={12} md={6}>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => fileCaptureRef.current?.click()}
-                        className="w-full group"
-                      >
-                        <Box className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-2xl p-8 text-center hover:border-purple-300 hover:shadow-lg transition-all duration-300">
-                          <div className="relative inline-flex mb-4">
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full blur-lg opacity-30 group-hover:opacity-50" />
-                            <div className="relative p-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full">
-                              <Camera className="w-8 h-8 text-white" />
-                            </div>
-                          </div>
-                          <Typography variant="h6" className="font-bold text-purple-800 mb-2">
-                            Open Device Camera
-                          </Typography>
-                          <Typography variant="body2" className="text-grey-600">
-                            Use your phone's camera to capture a photo
                           </Typography>
                         </Box>
                       </motion.button>
