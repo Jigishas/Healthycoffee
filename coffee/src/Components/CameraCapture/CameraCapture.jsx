@@ -112,19 +112,20 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
-    
+
     // Set canvas size
     canvas.width = videoRef.current.videoWidth;
     canvas.height = videoRef.current.videoHeight;
-    
+
     // Draw video frame
     context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    
+
     // Get image data URL
     const imageData = canvas.toDataURL('image/jpeg');
     setPreview(imageData);
-    setMode('preview');
     stopCamera();
+    // Auto-analyze captured photo
+    analyzeImage(imageData);
   };
 
   const handleFileSelect = (event) => {
@@ -145,16 +146,18 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       setPreview(e.target.result);
-      setMode('preview');
       // Store file for upload
       fileInputRef.current.file = file;
+      // Auto-analyze selected image
+      analyzeImage(e.target.result);
     };
     reader.readAsDataURL(file);
     event.target.value = ''; // Reset input
   };
 
-  const analyzeImage = async () => {
-    if (!preview) return;
+  const analyzeImage = async (imageDataParam) => {
+    const imageToUse = imageDataParam || preview;
+    if (!imageToUse) return;
 
     setMode('loading');
     setError(null);
@@ -173,7 +176,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       }, 200);
 
       // Convert base64 to blob
-      const response = await fetch(preview);
+      const response = await fetch(imageToUse);
       const blob = await response.blob();
 
       // Create form data
@@ -568,7 +571,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={analyzeImage}
+                          onClick={() => analyzeImage()}
                           disabled={backendStatus !== 'online'}
                           className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold ${
                             backendStatus === 'online'
