@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Camera, Upload, X, RotateCw, Download, 
@@ -1048,13 +1048,13 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                       {result.disease_prediction && (
                         <Grid item xs={12} md={6}>
                           <Box className={`p-4 rounded-2xl border ${
-                            result.disease_prediction.class === 'Healthy' 
+                            result.disease_prediction.class === 'Healthy'
                               ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
                               : 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200'
                           }`}>
                             <div className="flex items-center gap-3 mb-3">
                               <div className={`p-2 rounded-lg ${
-                                result.disease_prediction.class === 'Healthy' 
+                                result.disease_prediction.class === 'Healthy'
                                   ? 'bg-emerald-100 text-emerald-600'
                                   : 'bg-amber-100 text-amber-600'
                               }`}>
@@ -1065,13 +1065,13 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                               </Typography>
                             </div>
                             <Typography variant="h4" className={`font-black mb-2 ${
-                              result.disease_prediction.class === 'Healthy' 
+                              result.disease_prediction.class === 'Healthy'
                                 ? 'text-emerald-700'
                                 : 'text-amber-700'
                             }`}>
                               {result.disease_prediction.class}
                             </Typography>
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between mb-2">
                               <Typography variant="body2" className="text-grey-600">
                                 Confidence
                               </Typography>
@@ -1079,6 +1079,37 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                                 {Math.round(result.disease_prediction.confidence * 100)}%
                               </Typography>
                             </div>
+
+                            {/* Show detailed disease prediction info */}
+                            <Box className="mt-3 space-y-2">
+                              {result.disease_prediction.description && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Description:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.disease_prediction.description}</Typography>
+                                </Box>
+                              )}
+
+                              {result.disease_prediction.explanation && result.disease_prediction.explanation !== "No explanation available for this condition." && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Explanation:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.disease_prediction.explanation}</Typography>
+                                </Box>
+                              )}
+
+                              {result.disease_prediction.recommendation && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Recommendation:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.disease_prediction.recommendation}</Typography>
+                                </Box>
+                              )}
+
+                              {result.disease_prediction.inference_time && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Inference Time:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.disease_prediction.inference_time}s</Typography>
+                                </Box>
+                              )}
+                            </Box>
                           </Box>
                         </Grid>
                       )}
@@ -1087,13 +1118,13 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                       {result.deficiency_prediction && (
                         <Grid item xs={12} md={6}>
                           <Box className={`p-4 rounded-2xl border ${
-                            result.deficiency_prediction.class === 'Healthy' 
+                            result.deficiency_prediction.class === 'Healthy'
                               ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
                               : 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'
                           }`}>
                             <div className="flex items-center gap-3 mb-3">
                               <div className={`p-2 rounded-lg ${
-                                result.deficiency_prediction.class === 'Healthy' 
+                                result.deficiency_prediction.class === 'Healthy'
                                   ? 'bg-emerald-100 text-emerald-600'
                                   : 'bg-blue-100 text-blue-600'
                               }`}>
@@ -1104,13 +1135,13 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                               </Typography>
                             </div>
                             <Typography variant="h4" className={`font-black mb-2 ${
-                              result.deficiency_prediction.class === 'Healthy' 
+                              result.deficiency_prediction.class === 'Healthy'
                                 ? 'text-emerald-700'
                                 : 'text-blue-700'
                             }`}>
                               {result.deficiency_prediction.class}
                             </Typography>
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between mb-2">
                               <Typography variant="body2" className="text-grey-600">
                                 Confidence
                               </Typography>
@@ -1118,6 +1149,37 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                                 {Math.round(result.deficiency_prediction.confidence * 100)}%
                               </Typography>
                             </div>
+
+                            {/* Show detailed deficiency prediction info */}
+                            <Box className="mt-3 space-y-2">
+                              {result.deficiency_prediction.description && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Description:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.description}</Typography>
+                                </Box>
+                              )}
+
+                              {result.deficiency_prediction.explanation && result.deficiency_prediction.explanation !== "No explanation available for this condition." && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Explanation:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.explanation}</Typography>
+                                </Box>
+                              )}
+
+                              {result.deficiency_prediction.recommendation && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Recommendation:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.recommendation}</Typography>
+                                </Box>
+                              )}
+
+                              {result.deficiency_prediction.inference_time && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Inference Time:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.inference_time}s</Typography>
+                                </Box>
+                              )}
+                            </Box>
                           </Box>
                         </Grid>
                       )}
