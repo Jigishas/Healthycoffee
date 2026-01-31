@@ -1,4 +1,4 @@
- import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Camera, Upload, X, RotateCw, Download, 
@@ -248,7 +248,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       // Subtitle
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
-      pdf.text('Comprehensive AI-Powered Agricultural Assessment', 40, 55);
+      pdf.text('Detailed AI-Powered Agricultural Assessment', 40, 55);
 
       // Report metadata
       pdf.setFontSize(10);
@@ -258,33 +258,6 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       pdf.text(`Generated: ${currentDate} at ${currentTime}`, 40, 70);
 
       y = 100;
-
-      // Executive Summary Section
-      pdf.setTextColor(0, 0, 0);
-      pdf.setFontSize(16);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('EXECUTIVE SUMMARY', 40, y);
-      y += 25;
-
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'normal');
-
-      // Analysis Results Summary
-      if (result.disease_prediction) {
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Disease Analysis:', 40, y);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(`${result.disease_prediction.class} (${Math.round(result.disease_prediction.confidence * 100)}% confidence)`, 140, y);
-        y += 15;
-      }
-
-      if (result.deficiency_prediction) {
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Nutrient Analysis:', 40, y);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(`${result.deficiency_prediction.class} (${Math.round(result.deficiency_prediction.confidence * 100)}% confidence)`, 140, y);
-        y += 20;
-      }
 
       // Add image
       if (preview) {
@@ -310,6 +283,96 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
       pdf.text('DETAILED ANALYSIS & RECOMMENDATIONS', 40, y);
+      y += 25;
+
+      // Analysis Overview
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Analysis Overview', 40, y);
+      y += 20;
+
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+
+      // Disease Analysis Details
+      if (result.disease_prediction) {
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Disease Analysis:', 40, y);
+        pdf.setFont('helvetica', 'normal');
+        y += 15;
+
+        if (result.disease_prediction.description) {
+          const diseaseDescLines = pdf.splitTextToSize(`Description: ${result.disease_prediction.description}`, pageWidth - 80);
+          pdf.text(diseaseDescLines, 50, y);
+          y += diseaseDescLines.length * 12 + 10;
+        }
+
+        if (result.disease_prediction.explanation && result.disease_prediction.explanation !== "No explanation available for this condition.") {
+          const diseaseExpLines = pdf.splitTextToSize(`Explanation: ${result.disease_prediction.explanation}`, pageWidth - 80);
+          pdf.text(diseaseExpLines, 50, y);
+          y += diseaseExpLines.length * 12 + 10;
+        }
+
+        if (result.disease_prediction.recommendation) {
+          pdf.text(`Initial Recommendation: ${result.disease_prediction.recommendation}`, 50, y);
+          y += 15;
+        }
+
+        pdf.text(`Inference Time: ${result.disease_prediction.inference_time}s`, 50, y);
+        y += 20;
+      }
+
+      // Nutrient Analysis Details
+      if (result.deficiency_prediction) {
+        if (y > pageHeight - 100) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Nutrient Analysis:', 40, y);
+        pdf.setFont('helvetica', 'normal');
+        y += 15;
+
+        if (result.deficiency_prediction.description) {
+          const nutrientDescLines = pdf.splitTextToSize(`Description: ${result.deficiency_prediction.description}`, pageWidth - 80);
+          pdf.text(nutrientDescLines, 50, y);
+          y += nutrientDescLines.length * 12 + 10;
+        }
+
+        if (result.deficiency_prediction.explanation && result.deficiency_prediction.explanation !== "No explanation available for this condition.") {
+          const nutrientExpLines = pdf.splitTextToSize(`Explanation: ${result.deficiency_prediction.explanation}`, pageWidth - 80);
+          pdf.text(nutrientExpLines, 50, y);
+          y += nutrientExpLines.length * 12 + 10;
+        }
+
+        if (result.deficiency_prediction.recommendation) {
+          pdf.text(`Initial Recommendation: ${result.deficiency_prediction.recommendation}`, 50, y);
+          y += 15;
+        }
+
+        pdf.text(`Inference Time: ${result.deficiency_prediction.inference_time}s`, 50, y);
+        y += 25;
+      }
+
+      // Technical Analysis
+      if (y > pageHeight - 60) {
+        pdf.addPage();
+        y = 40;
+      }
+
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Technical Analysis', 40, y);
+      y += 20;
+
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Model Version: ${result.model_version}`, 40, y);
+      y += 15;
+      pdf.text(`Total Processing Time: ${result.processing_time}s`, 40, y);
+      y += 15;
+      pdf.text(`Analysis Status: ${result.status}`, 40, y);
       y += 25;
 
       // Disease Management Recommendations
