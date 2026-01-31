@@ -235,58 +235,82 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       const pageHeight = pdf.internal.pageSize.getHeight();
       let y = 40;
 
-      // Title
-      pdf.setFontSize(20);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Coffee Leaf Analysis Report', 40, y);
-      y += 30;
+      // Header with formal styling
+      pdf.setFillColor(34, 197, 94); // Emerald green
+      pdf.rect(0, 0, pageWidth, 80, 'F');
 
-      // Date and basic info
-      pdf.setFontSize(10);
+      // Title
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(255, 255, 255);
+      pdf.text('Coffee Leaf Analysis Report', 40, 35);
+
+      // Subtitle
+      pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
+      pdf.text('Comprehensive AI-Powered Agricultural Assessment', 40, 55);
+
+      // Report metadata
+      pdf.setFontSize(10);
+      pdf.setTextColor(255, 255, 255);
       const currentDate = new Date().toLocaleDateString();
-      pdf.text(`Generated on: ${currentDate}`, 40, y);
-      y += 15;
-      pdf.text(`Processing time: ${result.processing_time || 'N/A'}s`, 40, y);
-      y += 15;
-      pdf.text(`Model version: ${result.model_version || 'N/A'}`, 40, y);
-      y += 30;
+      const currentTime = new Date().toLocaleTimeString();
+      pdf.text(`Generated: ${currentDate} at ${currentTime}`, 40, 70);
+
+      y = 100;
+
+      // Executive Summary Section
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('EXECUTIVE SUMMARY', 40, y);
+      y += 25;
+
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+
+      // Analysis Results Summary
+      if (result.disease_prediction) {
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Disease Analysis:', 40, y);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`${result.disease_prediction.class} (${Math.round(result.disease_prediction.confidence * 100)}% confidence)`, 140, y);
+        y += 15;
+      }
+
+      if (result.deficiency_prediction) {
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Nutrient Analysis:', 40, y);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`${result.deficiency_prediction.class} (${Math.round(result.deficiency_prediction.confidence * 100)}% confidence)`, 140, y);
+        y += 20;
+      }
 
       // Add image
       if (preview) {
         try {
-          const imgWidth = 200;
-          const imgHeight = 150;
+          if (y > pageHeight - 200) {
+            pdf.addPage();
+            y = 40;
+          }
+          const imgWidth = 180;
+          const imgHeight = 135;
           pdf.addImage(preview, 'JPEG', 40, y, imgWidth, imgHeight);
-          y += imgHeight + 20;
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'italic');
+          pdf.text('Analyzed Leaf Sample', 40, y + imgHeight + 10);
+          y += imgHeight + 30;
         } catch (imgErr) {
           console.warn('Could not add image to PDF:', imgErr);
           y += 20;
         }
       }
 
-      // Analysis Results
-      pdf.setFontSize(14);
+      // DETAILED ANALYSIS SECTIONS
+      pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Analysis Results', 40, y);
-      y += 20;
-
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'normal');
-
-      if (result.disease_prediction) {
-        pdf.text(`Disease Status: ${result.disease_prediction.class}`, 40, y);
-        y += 15;
-        pdf.text(`Confidence: ${Math.round(result.disease_prediction.confidence * 100)}%`, 40, y);
-        y += 20;
-      }
-
-      if (result.deficiency_prediction) {
-        pdf.text(`Nutrient Status: ${result.deficiency_prediction.class}`, 40, y);
-        y += 15;
-        pdf.text(`Confidence: ${Math.round(result.deficiency_prediction.confidence * 100)}%`, 40, y);
-        y += 30;
-      }
+      pdf.text('DETAILED ANALYSIS & RECOMMENDATIONS', 40, y);
+      y += 25;
 
       // Disease Management Recommendations
       if (result.disease_recommendations) {
@@ -297,14 +321,16 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('Disease Management Recommendations', 40, y);
+        pdf.text('1. DISEASE MANAGEMENT RECOMMENDATIONS', 40, y);
         y += 20;
 
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'normal');
 
         if (result.disease_recommendations.overview) {
+          pdf.setFont('helvetica', 'bold');
           pdf.text('Overview:', 40, y);
+          pdf.setFont('helvetica', 'normal');
           y += 15;
           const overviewLines = pdf.splitTextToSize(result.disease_recommendations.overview, pageWidth - 80);
           pdf.text(overviewLines, 50, y);
@@ -316,7 +342,9 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
             pdf.addPage();
             y = 40;
           }
+          pdf.setFont('helvetica', 'bold');
           pdf.text('Symptoms:', 40, y);
+          pdf.setFont('helvetica', 'normal');
           y += 15;
           result.disease_recommendations.symptoms.forEach((symptom) => {
             if (y > pageHeight - 40) {
@@ -334,12 +362,16 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
             pdf.addPage();
             y = 40;
           }
+          pdf.setFont('helvetica', 'bold');
           pdf.text('Integrated Management:', 40, y);
+          pdf.setFont('helvetica', 'normal');
           y += 15;
 
           const mgmt = result.disease_recommendations.integrated_management;
           if (mgmt.cultural_practices) {
+            pdf.setFont('helvetica', 'bold');
             pdf.text('Cultural Practices:', 50, y);
+            pdf.setFont('helvetica', 'normal');
             y += 12;
             mgmt.cultural_practices.slice(0, 3).forEach((practice) => {
               if (y > pageHeight - 40) {
@@ -356,9 +388,30 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
               pdf.addPage();
               y = 40;
             }
+            pdf.setFont('helvetica', 'bold');
             pdf.text('Chemical Control:', 50, y);
+            pdf.setFont('helvetica', 'normal');
             y += 12;
             mgmt.chemical_control.slice(0, 3).forEach((control) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${control}`, 60, y);
+              y += 10;
+            });
+          }
+
+          if (mgmt.biological_control) {
+            if (y > pageHeight - 60) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Biological Control:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            mgmt.biological_control.slice(0, 3).forEach((control) => {
               if (y > pageHeight - 40) {
                 pdf.addPage();
                 y = 40;
@@ -374,7 +427,9 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
             pdf.addPage();
             y = 40;
           }
+          pdf.setFont('helvetica', 'bold');
           pdf.text('Severity-Specific Recommendations:', 40, y);
+          pdf.setFont('helvetica', 'normal');
           y += 15;
           const severity = result.disease_recommendations.severity_specific_recommendations;
           pdf.text(`Spray Frequency: ${severity.spray_frequency}`, 50, y);
@@ -388,7 +443,9 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
             pdf.addPage();
             y = 40;
           }
+          pdf.setFont('helvetica', 'bold');
           pdf.text('Coffee-Specific Recommendations:', 40, y);
+          pdf.setFont('helvetica', 'normal');
           y += 15;
 
           const coffeeRecs = result.disease_recommendations.coffee_specific_recommendations;
@@ -407,7 +464,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         }
       }
 
-      // Deficiency Recommendations
+      // 2. Nutrient Deficiency Management
       if (result.deficiency_recommendations) {
         if (y > pageHeight - 100) {
           pdf.addPage();
@@ -416,14 +473,16 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
-        pdf.text('Nutrient Deficiency Management', 40, y);
+        pdf.text('2. NUTRIENT DEFICIENCY MANAGEMENT', 40, y);
         y += 20;
 
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'normal');
 
         if (result.deficiency_recommendations.basic && result.deficiency_recommendations.basic.length > 0) {
+          pdf.setFont('helvetica', 'bold');
           pdf.text('Basic Management:', 40, y);
+          pdf.setFont('helvetica', 'normal');
           y += 15;
           result.deficiency_recommendations.basic.forEach((rec) => {
             if (y > pageHeight - 40) {
@@ -441,7 +500,9 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
             pdf.addPage();
             y = 40;
           }
+          pdf.setFont('helvetica', 'bold');
           pdf.text('Management Strategies:', 40, y);
+          pdf.setFont('helvetica', 'normal');
           y += 15;
           result.deficiency_recommendations.management.forEach((strategy) => {
             if (y > pageHeight - 40) {
@@ -1292,6 +1353,27 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                               <Typography variant="body2" className="text-grey-600">{consideration}</Typography>
                             </Box>
                           ))}
+                        </div>
+                      </Box>
+                    )}
+
+                    {/* Processing Time and Model Info */}
+                    {(result.processing_time || result.model_version) && (
+                      <Box className="bg-white rounded-3xl shadow-xl border border-grey-200 p-6">
+                        <Typography variant="h6" className="font-bold mb-4 text-grey-800">Analysis Details</Typography>
+                        <div className="space-y-2">
+                          {result.processing_time && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold">Processing Time</Typography>
+                              <Typography variant="body2" className="text-grey-600">{result.processing_time}s</Typography>
+                            </Box>
+                          )}
+                          {result.model_version && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold">Model Version</Typography>
+                              <Typography variant="body2" className="text-grey-600">{result.model_version}</Typography>
+                            </Box>
+                          )}
                         </div>
                       </Box>
                     )}
