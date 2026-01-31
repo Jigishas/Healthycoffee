@@ -301,6 +301,21 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         pdf.setFont('helvetica', 'normal');
         y += 15;
 
+        if (result.disease_prediction.class) {
+          pdf.text(`Class: ${result.disease_prediction.class}`, 50, y);
+          y += 15;
+        }
+
+        if (result.disease_prediction.class_index) {
+          pdf.text(`Class Index: ${result.disease_prediction.class_index}`, 50, y);
+          y += 15;
+        }
+
+        if (result.disease_prediction.confidence) {
+          pdf.text(`Confidence: ${result.disease_prediction.confidence}`, 50, y);
+          y += 15;
+        }
+
         if (result.disease_prediction.description) {
           const diseaseDescLines = pdf.splitTextToSize(`Description: ${result.disease_prediction.description}`, pageWidth - 80);
           pdf.text(diseaseDescLines, 50, y);
@@ -333,6 +348,21 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         pdf.text('Nutrient Analysis:', 40, y);
         pdf.setFont('helvetica', 'normal');
         y += 15;
+
+        if (result.deficiency_prediction.class) {
+          pdf.text(`Class: ${result.deficiency_prediction.class}`, 50, y);
+          y += 15;
+        }
+
+        if (result.deficiency_prediction.class_index) {
+          pdf.text(`Class Index: ${result.deficiency_prediction.class_index}`, 50, y);
+          y += 15;
+        }
+
+        if (result.deficiency_prediction.confidence) {
+          pdf.text(`Confidence: ${result.deficiency_prediction.confidence}`, 50, y);
+          y += 15;
+        }
 
         if (result.deficiency_prediction.description) {
           const nutrientDescLines = pdf.splitTextToSize(`Description: ${result.deficiency_prediction.description}`, pageWidth - 80);
@@ -1145,6 +1175,27 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
                             {/* Show detailed disease prediction info */}
                             <Box className="mt-3 space-y-2">
+                              {result.disease_prediction.class && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Class:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.disease_prediction.class}</Typography>
+                                </Box>
+                              )}
+
+                              {result.disease_prediction.class_index && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Class Index:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.disease_prediction.class_index}</Typography>
+                                </Box>
+                              )}
+
+                              {result.disease_prediction.confidence && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Confidence:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.disease_prediction.confidence}</Typography>
+                                </Box>
+                              )}
+
                               {result.disease_prediction.description && (
                                 <Box>
                                   <Typography variant="body2" className="font-semibold text-grey-700">Description:</Typography>
@@ -1215,6 +1266,27 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
                             {/* Show detailed deficiency prediction info */}
                             <Box className="mt-3 space-y-2">
+                              {result.deficiency_prediction.class && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Class:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.class}</Typography>
+                                </Box>
+                              )}
+
+                              {result.deficiency_prediction.class_index && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Class Index:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.class_index}</Typography>
+                                </Box>
+                              )}
+
+                              {result.deficiency_prediction.confidence && (
+                                <Box>
+                                  <Typography variant="body2" className="font-semibold text-grey-700">Confidence:</Typography>
+                                  <Typography variant="caption" className="text-grey-600">{result.deficiency_prediction.confidence}</Typography>
+                                </Box>
+                              )}
+
                               {result.deficiency_prediction.description && (
                                 <Box>
                                   <Typography variant="body2" className="font-semibold text-grey-700">Description:</Typography>
