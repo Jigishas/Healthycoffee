@@ -420,6 +420,24 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'normal');
 
+        if (result.disease_recommendations.disease_name) {
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Disease Name:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 15;
+          pdf.text(result.disease_recommendations.disease_name, 50, y);
+          y += 15;
+        }
+
+        if (result.disease_recommendations.current_severity) {
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Current Severity:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 15;
+          pdf.text(result.disease_recommendations.current_severity, 50, y);
+          y += 15;
+        }
+
         if (result.disease_recommendations.overview) {
           pdf.setFont('helvetica', 'bold');
           pdf.text('Overview:', 40, y);
@@ -516,7 +534,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         }
 
         if (result.disease_recommendations.severity_specific_recommendations) {
-          if (y > pageHeight - 60) {
+          if (y > pageHeight - 100) {
             pdf.addPage();
             y = 40;
           }
@@ -525,10 +543,143 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.setFont('helvetica', 'normal');
           y += 15;
           const severity = result.disease_recommendations.severity_specific_recommendations;
-          pdf.text(`Spray Frequency: ${severity.spray_frequency}`, 50, y);
-          y += 12;
-          pdf.text(`Intervention Level: ${severity.intervention_level}`, 50, y);
-          y += 20;
+
+          if (severity.immediate_actions && severity.immediate_actions.length > 0) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Immediate Actions:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            severity.immediate_actions.forEach((action) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${action}`, 60, y);
+              y += 10;
+            });
+            y += 5;
+          }
+
+          if (severity.long_term_strategies && severity.long_term_strategies.length > 0) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Long Term Strategies:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            severity.long_term_strategies.forEach((strategy) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${strategy}`, 60, y);
+              y += 10;
+            });
+            y += 5;
+          }
+
+          if (severity.spray_frequency) {
+            pdf.text(`Spray Frequency: ${severity.spray_frequency}`, 50, y);
+            y += 12;
+          }
+          if (severity.intervention_level) {
+            pdf.text(`Intervention Level: ${severity.intervention_level}`, 50, y);
+            y += 20;
+          }
+        }
+
+        if (result.disease_recommendations.emergency_measures) {
+          if (y > pageHeight - 100) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Emergency Measures:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 15;
+
+          const emergency = result.disease_recommendations.emergency_measures;
+          if (emergency.high_infection && emergency.high_infection.length > 0) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('High Infection:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            emergency.high_infection.forEach((measure) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${measure}`, 60, y);
+              y += 10;
+            });
+            y += 5;
+          }
+
+          if (emergency.preventive_protocol && emergency.preventive_protocol.length > 0) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Preventive Protocol:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            emergency.preventive_protocol.forEach((protocol) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${protocol}`, 60, y);
+              y += 10;
+            });
+            y += 10;
+          }
+        }
+
+        if (result.disease_recommendations.monitoring_schedule) {
+          if (y > pageHeight - 80) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Monitoring Schedule:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 15;
+
+          const monitoring = result.disease_recommendations.monitoring_schedule;
+          if (monitoring.inspection_frequency) {
+            pdf.text(`Inspection Frequency: ${monitoring.inspection_frequency}`, 50, y);
+            y += 12;
+          }
+          if (monitoring.weather_monitoring) {
+            pdf.text(`Weather Monitoring: ${monitoring.weather_monitoring}`, 50, y);
+            y += 20;
+          }
+        }
+
+        if (result.disease_recommendations.resistant_varieties && result.disease_recommendations.resistant_varieties.length > 0) {
+          if (y > pageHeight - 100) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Resistant Varieties:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 15;
+
+          result.disease_recommendations.resistant_varieties.forEach((variety) => {
+            if (y > pageHeight - 60) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`${variety.name}:`, 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            pdf.text(`Resistance Level: ${variety.resistance_level}`, 60, y);
+            y += 10;
+            pdf.text(`Adaptation: ${variety.adaptation}`, 60, y);
+            y += 10;
+            if (variety.characteristics) {
+              pdf.text(`Characteristics: ${variety.characteristics}`, 60, y);
+              y += 10;
+            }
+            y += 5;
+          });
         }
 
         if (result.disease_recommendations.coffee_specific_recommendations) {
@@ -548,6 +699,26 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           }
           if (coffeeRecs.shade_management) {
             pdf.text(`Shade Management: ${coffeeRecs.shade_management}`, 50, y);
+            y += 12;
+          }
+                          if (coffeeRecs.compost_application) {
+            pdf.text(`Compost Application: ${coffeeRecs.compost_application}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.economic_approach) {
+            pdf.text(`Economic Approach: ${coffeeRecs.economic_approach}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.intervention_level) {
+            pdf.text(`Intervention Level: ${coffeeRecs.intervention_level}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.wound_protection) {
+            pdf.text(`Wound Protection: ${coffeeRecs.wound_protection}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.storage_practices) {
+            pdf.text(`Storage Practices: ${coffeeRecs.storage_practices}`, 50, y);
             y += 12;
           }
           if (coffeeRecs.processing_impact) {
@@ -715,7 +886,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
       // Economic Considerations
       if (result.disease_recommendations?.economic_considerations) {
-        if (y > pageHeight - 60) {
+        if (y > pageHeight - 100) {
           pdf.addPage();
           y = 40;
         }
@@ -729,11 +900,152 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         pdf.setFont('helvetica', 'normal');
 
         const economic = result.disease_recommendations.economic_considerations;
-        pdf.text(`Management Cost: $${economic.management_cost_usd_per_ha}/ha`, 40, y);
-        y += 15;
-        pdf.text(`Potential Yield Loss: ${economic.potential_yield_loss_percent}%`, 40, y);
-        y += 15;
-        pdf.text(`Return on Investment: ${economic.return_on_investment}`, 40, y);
+        if (economic.management_cost_usd_per_ha) {
+          pdf.text(`Management Cost: $${economic.management_cost_usd_per_ha}/ha`, 40, y);
+          y += 15;
+        }
+        if (economic.potential_yield_loss_percent) {
+          pdf.text(`Potential Yield Loss: ${economic.potential_yield_loss_percent}%`, 40, y);
+          y += 15;
+        }
+        if (economic.return_on_investment) {
+          pdf.text(`Return on Investment: ${economic.return_on_investment}`, 40, y);
+          y += 15;
+        }
+        if (economic.economic_threshold) {
+          pdf.text(`Economic Threshold: ${economic.economic_threshold}`, 40, y);
+          y += 15;
+        }
+        if (economic.cost_effective_strategies && economic.cost_effective_strategies.length > 0) {
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Cost-Effective Strategies:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 12;
+          economic.cost_effective_strategies.forEach((strategy) => {
+            if (y > pageHeight - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text(`• ${strategy}`, 50, y);
+            y += 10;
+          });
+          y += 5;
+        }
+      }
+
+      // Farm-Specific Adaptations
+      if (result.disease_recommendations?.farm_specific_adaptations) {
+        if (y > pageHeight - 80) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Farm-Specific Adaptations', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        const farmAdapt = result.disease_recommendations.farm_specific_adaptations;
+        if (farmAdapt.general_recommendations && farmAdapt.general_recommendations.length > 0) {
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('General Recommendations:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 12;
+          farmAdapt.general_recommendations.forEach((rec) => {
+            if (y > pageHeight - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text(`• ${rec}`, 50, y);
+            y += 10;
+          });
+          y += 10;
+        }
+      }
+
+      // Quality Impact
+      if (result.disease_recommendations?.coffee_specific_recommendations?.quality_impact) {
+        if (y > pageHeight - 80) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Quality & Market Impact', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        const qualityImpact = result.disease_recommendations.coffee_specific_recommendations.quality_impact;
+        if (qualityImpact.cup_quality) {
+          pdf.text(`Cup Quality Impact: ${qualityImpact.cup_quality}`, 40, y);
+          y += 15;
+        }
+        if (qualityImpact.market_price) {
+          pdf.text(`Market Price Impact: ${qualityImpact.market_price}`, 40, y);
+          y += 15;
+        }
+        if (qualityImpact.certification) {
+          pdf.text(`Certification Impact: ${qualityImpact.certification}`, 40, y);
+          y += 15;
+        }
+      }
+
+      // Sustainability Considerations
+      if (result.disease_recommendations?.coffee_specific_recommendations?.sustainability_considerations) {
+        if (y > pageHeight - 100) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Sustainability Considerations', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations.forEach((consideration) => {
+          if (y > pageHeight - 40) {
+            pdf.addPage();
+            y = 40;
+          }
+          const considerationLines = pdf.splitTextToSize(`• ${consideration}`, pageWidth - 90);
+          pdf.text(considerationLines, 50, y);
+          y += considerationLines.length * 10 + 5;
+        });
+      }
+
+      // Coffee-Specific Practices
+      if (result.disease_recommendations?.coffee_specific_recommendations?.coffee_specific_practices) {
+        if (y > pageHeight - 100) {
+          pdf.addPage();
+          y = 40;
+        }
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Coffee Cultivation Best Practices', 40, y);
+        y += 20;
+
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+
+        result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices.forEach((practice) => {
+          if (y > pageHeight - 40) {
+            pdf.addPage();
+            y = 40;
+          }
+          const practiceLines = pdf.splitTextToSize(`• ${practice}`, pageWidth - 90);
+          pdf.text(practiceLines, 50, y);
+          y += practiceLines.length * 10 + 5;
+        });
       }
 
       pdf.save(`coffee-leaf-analysis-${Date.now()}.pdf`);
@@ -1329,6 +1641,20 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                         <Typography variant="h6" className="font-bold mb-4 text-emerald-800">Disease Management Recommendations</Typography>
 
                         <div className="space-y-4">
+                          {result.disease_recommendations.disease_name && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Disease Name</Typography>
+                              <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.disease_name}</Typography>
+                            </Box>
+                          )}
+
+                          {result.disease_recommendations.current_severity && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Current Severity</Typography>
+                              <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.current_severity}</Typography>
+                            </Box>
+                          )}
+
                           <Box>
                             <Typography variant="subtitle1" className="font-semibold mb-2">Overview</Typography>
                             <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.overview}</Typography>
@@ -1389,14 +1715,98 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                             <Box>
                               <Typography variant="subtitle1" className="font-semibold mb-2">Severity-Specific Recommendations</Typography>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Box className="bg-amber-50 p-3 rounded-lg">
-                                  <Typography variant="subtitle2" className="font-semibold text-amber-800 mb-1">Spray Frequency</Typography>
-                                  <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.severity_specific_recommendations.spray_frequency}</Typography>
+                                {result.disease_recommendations.severity_specific_recommendations.immediate_actions && result.disease_recommendations.severity_specific_recommendations.immediate_actions.length > 0 && (
+                                  <Box className="bg-red-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-red-800 mb-1">Immediate Actions</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.severity_specific_recommendations.immediate_actions.map((action, idx) => (
+                                        <li key={idx}>{action}</li>
+                                      ))}
+                                    </ul>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.severity_specific_recommendations.long_term_strategies && result.disease_recommendations.severity_specific_recommendations.long_term_strategies.length > 0 && (
+                                  <Box className="bg-green-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-green-800 mb-1">Long Term Strategies</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.severity_specific_recommendations.long_term_strategies.map((strategy, idx) => (
+                                        <li key={idx}>{strategy}</li>
+                                      ))}
+                                    </ul>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.severity_specific_recommendations.spray_frequency && (
+                                  <Box className="bg-amber-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-amber-800 mb-1">Spray Frequency</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.severity_specific_recommendations.spray_frequency}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.severity_specific_recommendations.intervention_level && (
+                                  <Box className="bg-red-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-red-800 mb-1">Intervention Level</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.severity_specific_recommendations.intervention_level}</Typography>
+                                  </Box>
+                                )}
+                              </div>
+                            </Box>
+                          )}
+
+                          {result.disease_recommendations.emergency_measures && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Emergency Measures</Typography>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {result.disease_recommendations.emergency_measures.high_infection && (
+                                  <Box className="bg-red-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-red-800 mb-1">High Infection</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.emergency_measures.high_infection.map((measure, idx) => (
+                                        <li key={idx}>{measure}</li>
+                                      ))}
+                                    </ul>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.emergency_measures.preventive_protocol && (
+                                  <Box className="bg-blue-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-blue-800 mb-1">Preventive Protocol</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.emergency_measures.preventive_protocol.map((protocol, idx) => (
+                                        <li key={idx}>{protocol}</li>
+                                      ))}
+                                    </ul>
+                                  </Box>
+                                )}
+                              </div>
+                            </Box>
+                          )}
+
+                          {result.disease_recommendations.monitoring_schedule && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Monitoring Schedule</Typography>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Box className="bg-purple-50 p-3 rounded-lg">
+                                  <Typography variant="subtitle2" className="font-semibold text-purple-800 mb-1">Inspection Frequency</Typography>
+                                  <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.monitoring_schedule.inspection_frequency}</Typography>
                                 </Box>
-                                <Box className="bg-red-50 p-3 rounded-lg">
-                                  <Typography variant="subtitle2" className="font-semibold text-red-800 mb-1">Intervention Level</Typography>
-                                  <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.severity_specific_recommendations.intervention_level}</Typography>
+                                <Box className="bg-indigo-50 p-3 rounded-lg">
+                                  <Typography variant="subtitle2" className="font-semibold text-indigo-800 mb-1">Weather Monitoring</Typography>
+                                  <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.monitoring_schedule.weather_monitoring}</Typography>
                                 </Box>
+                              </div>
+                            </Box>
+                          )}
+
+                          {result.disease_recommendations.resistant_varieties && result.disease_recommendations.resistant_varieties.length > 0 && (
+                            <Box>
+                              <Typography variant="subtitle1" className="font-semibold mb-2">Resistant Varieties</Typography>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {result.disease_recommendations.resistant_varieties.map((variety, idx) => (
+                                  <Box key={idx} className="bg-green-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-green-800 mb-1">{variety.name}</Typography>
+                                    <Typography variant="body2" className="text-grey-600 text-xs">Resistance: {variety.resistance_level}</Typography>
+                                    <Typography variant="body2" className="text-grey-600 text-xs">Adaptation: {variety.adaptation}</Typography>
+                                    {variety.characteristics && <Typography variant="body2" className="text-grey-600 text-xs">Characteristics: {variety.characteristics}</Typography>}
+                                  </Box>
+                                ))}
                               </div>
                             </Box>
                           )}
@@ -1404,7 +1814,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                           {result.disease_recommendations.coffee_specific_recommendations && (
                             <Box>
                               <Typography variant="subtitle1" className="font-semibold mb-2">Coffee-Specific Recommendations</Typography>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {result.disease_recommendations.coffee_specific_recommendations.harvest_timing && (
                                   <Box className="bg-green-50 p-3 rounded-lg">
                                     <Typography variant="subtitle2" className="font-semibold text-green-800 mb-1">Harvest Timing</Typography>
@@ -1415,6 +1825,84 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                                   <Box className="bg-teal-50 p-3 rounded-lg">
                                     <Typography variant="subtitle2" className="font-semibold text-teal-800 mb-1">Shade Management</Typography>
                                     <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.shade_management}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.pruning_strategy && (
+                                  <Box className="bg-orange-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-orange-800 mb-1">Pruning Strategy</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.pruning_strategy}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.irrigation_management && (
+                                  <Box className="bg-blue-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-blue-800 mb-1">Irrigation Management</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.irrigation_management}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.nutrient_balance && (
+                                  <Box className="bg-purple-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-purple-800 mb-1">Nutrient Balance</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.nutrient_balance}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.monitoring_frequency && (
+                                  <Box className="bg-indigo-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-indigo-800 mb-1">Monitoring Frequency</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.monitoring_frequency}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.compost_application && (
+                                  <Box className="bg-lime-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-lime-800 mb-1">Compost Application</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.compost_application}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.economic_approach && (
+                                  <Box className="bg-yellow-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-yellow-800 mb-1">Economic Approach</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.economic_approach}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.intervention_level && (
+                                  <Box className="bg-red-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-red-800 mb-1">Intervention Level</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.intervention_level}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.wound_protection && (
+                                  <Box className="bg-pink-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-pink-800 mb-1">Wound Protection</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.wound_protection}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.storage_practices && (
+                                  <Box className="bg-cyan-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-cyan-800 mb-1">Storage Practices</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.storage_practices}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.processing_impact && (
+                                  <Box className="bg-amber-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-amber-800 mb-1">Processing Impact</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.processing_impact}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.quality_impact && (
+                                  <Box className="bg-rose-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-rose-800 mb-1">Quality Impact</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.quality_impact}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations && (
+                                  <Box className="bg-emerald-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-emerald-800 mb-1">Sustainability Considerations</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations}</Typography>
+                                  </Box>
+                                )}
+                                {result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices && (
+                                  <Box className="bg-violet-50 p-3 rounded-lg">
+                                    <Typography variant="subtitle2" className="font-semibold text-violet-800 mb-1">Coffee-Specific Practices</Typography>
+                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices}</Typography>
                                   </Box>
                                 )}
                               </div>
