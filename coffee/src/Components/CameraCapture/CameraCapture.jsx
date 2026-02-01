@@ -930,7 +930,8 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       }
 
       // Products and Varieties
-      if ((result.products && result.products.length > 0) || (result.varieties && result.varieties.length > 0)) {
+      if ((result.recommendations?.products && result.recommendations.products.length > 0) ||
+          (result.recommendations?.varieties && result.recommendations.varieties.length > 0)) {
         if (y > pageHeight - 100) {
           pdf.addPage();
           y = 40;
@@ -944,10 +945,10 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'normal');
 
-        if (result.products && result.products.length > 0) {
+        if (result.recommendations.products && result.recommendations.products.length > 0) {
           pdf.text('Recommended Products:', 40, y);
           y += 15;
-          result.products.forEach((product) => {
+          result.recommendations.products.forEach((product) => {
             if (y > pageHeight - 40) {
               pdf.addPage();
               y = 40;
@@ -958,14 +959,14 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           y += 10;
         }
 
-        if (result.varieties && result.varieties.length > 0) {
+        if (result.recommendations.varieties && result.recommendations.varieties.length > 0) {
           if (y > pageHeight - 80) {
             pdf.addPage();
             y = 40;
           }
           pdf.text('Resistant Varieties:', 40, y);
           y += 15;
-          result.varieties.forEach((variety) => {
+          result.recommendations.varieties.forEach((variety) => {
             if (y > pageHeight - 40) {
               pdf.addPage();
               y = 40;
