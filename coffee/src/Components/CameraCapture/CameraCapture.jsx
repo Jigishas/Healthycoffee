@@ -759,6 +759,26 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           y += 10;
         }
 
+        if (result.deficiency_recommendations.symptoms && result.deficiency_recommendations.symptoms.length > 0) {
+          if (y > pageHeight - 80) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Symptoms:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 15;
+          result.deficiency_recommendations.symptoms.forEach((symptom) => {
+            if (y > pageHeight - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text(`• ${symptom}`, 50, y);
+            y += 12;
+          });
+          y += 10;
+        }
+
         if (result.deficiency_recommendations.management && result.deficiency_recommendations.management.length > 0) {
           if (y > pageHeight - 80) {
             pdf.addPage();
@@ -1890,19 +1910,35 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
                                 {result.disease_recommendations.coffee_specific_recommendations.quality_impact && (
                                   <Box className="bg-rose-50 p-3 rounded-lg">
                                     <Typography variant="subtitle2" className="font-semibold text-rose-800 mb-1">Quality Impact</Typography>
-                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.quality_impact}</Typography>
+                                    {result.disease_recommendations.coffee_specific_recommendations.quality_impact.cup_quality && (
+                                      <Typography variant="body2" className="text-grey-600 text-xs">Cup Quality: {result.disease_recommendations.coffee_specific_recommendations.quality_impact.cup_quality}</Typography>
+                                    )}
+                                    {result.disease_recommendations.coffee_specific_recommendations.quality_impact.market_price && (
+                                      <Typography variant="body2" className="text-grey-600 text-xs">Market Price: {result.disease_recommendations.coffee_specific_recommendations.quality_impact.market_price}</Typography>
+                                    )}
+                                    {result.disease_recommendations.coffee_specific_recommendations.quality_impact.certification && (
+                                      <Typography variant="body2" className="text-grey-600 text-xs">Certification: {result.disease_recommendations.coffee_specific_recommendations.quality_impact.certification}</Typography>
+                                    )}
                                   </Box>
                                 )}
-                                {result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations && (
+                                {result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations && result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations.length > 0 && (
                                   <Box className="bg-emerald-50 p-3 rounded-lg">
                                     <Typography variant="subtitle2" className="font-semibold text-emerald-800 mb-1">Sustainability Considerations</Typography>
-                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations}</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.coffee_specific_recommendations.sustainability_considerations.map((consideration, idx) => (
+                                        <li key={idx}>{consideration}</li>
+                                      ))}
+                                    </ul>
                                   </Box>
                                 )}
-                                {result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices && (
+                                {result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices && result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices.length > 0 && (
                                   <Box className="bg-violet-50 p-3 rounded-lg">
                                     <Typography variant="subtitle2" className="font-semibold text-violet-800 mb-1">Coffee-Specific Practices</Typography>
-                                    <Typography variant="body2" className="text-grey-600">{result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices}</Typography>
+                                    <ul className="list-disc list-inside text-grey-600 text-xs">
+                                      {result.disease_recommendations.coffee_specific_recommendations.coffee_specific_practices.map((practice, idx) => (
+                                        <li key={idx}>{practice}</li>
+                                      ))}
+                                    </ul>
                                   </Box>
                                 )}
                               </div>
