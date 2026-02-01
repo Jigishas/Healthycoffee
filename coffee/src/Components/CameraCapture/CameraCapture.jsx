@@ -644,7 +644,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           }
         }
 
-        if (result.disease_recommendations.severity_specific_recommendations) {
+        if (diseaseRecs.severity_specific_recommendations) {
           if (y > pageHeight - 100) {
             pdf.addPage();
             y = 40;
@@ -653,7 +653,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.text('Severity-Specific Recommendations:', 40, y);
           pdf.setFont('helvetica', 'normal');
           y += 15;
-          const severity = result.disease_recommendations.severity_specific_recommendations;
+          const severity = diseaseRecs.severity_specific_recommendations;
 
           if (severity.immediate_actions && severity.immediate_actions.length > 0) {
             pdf.setFont('helvetica', 'bold');
@@ -697,7 +697,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           }
         }
 
-        if (result.disease_recommendations.emergency_measures) {
+        if (diseaseRecs.emergency_measures) {
           if (y > pageHeight - 100) {
             pdf.addPage();
             y = 40;
@@ -707,7 +707,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.setFont('helvetica', 'normal');
           y += 15;
 
-          const emergency = result.disease_recommendations.emergency_measures;
+          const emergency = diseaseRecs.emergency_measures;
           if (emergency.high_infection && emergency.high_infection.length > 0) {
             pdf.setFont('helvetica', 'bold');
             pdf.text('High Infection:', 50, y);
@@ -741,7 +741,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           }
         }
 
-        if (result.disease_recommendations.monitoring_schedule) {
+        if (diseaseRecs.monitoring_schedule) {
           if (y > pageHeight - 80) {
             pdf.addPage();
             y = 40;
@@ -751,7 +751,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.setFont('helvetica', 'normal');
           y += 15;
 
-          const monitoring = result.disease_recommendations.monitoring_schedule;
+          const monitoring = diseaseRecs.monitoring_schedule;
           if (monitoring.inspection_frequency) {
             pdf.text(`Inspection Frequency: ${monitoring.inspection_frequency}`, 50, y);
             y += 12;
@@ -762,7 +762,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           }
         }
 
-        if (result.disease_recommendations.resistant_varieties && result.disease_recommendations.resistant_varieties.length > 0) {
+        if (diseaseRecs.resistant_varieties && diseaseRecs.resistant_varieties.length > 0) {
           if (y > pageHeight - 100) {
             pdf.addPage();
             y = 40;
@@ -772,7 +772,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.setFont('helvetica', 'normal');
           y += 15;
 
-          result.disease_recommendations.resistant_varieties.forEach((variety) => {
+          diseaseRecs.resistant_varieties.forEach((variety) => {
             if (y > pageHeight - 60) {
               pdf.addPage();
               y = 40;
@@ -793,7 +793,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           });
         }
 
-        if (result.disease_recommendations.coffee_specific_recommendations) {
+        if (diseaseRecs.coffee_specific_recommendations) {
           if (y > pageHeight - 100) {
             pdf.addPage();
             y = 40;
@@ -803,7 +803,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.setFont('helvetica', 'normal');
           y += 15;
 
-          const coffeeRecs = result.disease_recommendations.coffee_specific_recommendations;
+          const coffeeRecs = diseaseRecs.coffee_specific_recommendations;
           if (coffeeRecs.harvest_timing) {
             pdf.text(`Harvest Timing: ${coffeeRecs.harvest_timing}`, 50, y);
             y += 12;
@@ -812,7 +812,23 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
             pdf.text(`Shade Management: ${coffeeRecs.shade_management}`, 50, y);
             y += 12;
           }
-                          if (coffeeRecs.compost_application) {
+          if (coffeeRecs.pruning_strategy) {
+            pdf.text(`Pruning Strategy: ${coffeeRecs.pruning_strategy}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.irrigation_management) {
+            pdf.text(`Irrigation Management: ${coffeeRecs.irrigation_management}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.nutrient_balance) {
+            pdf.text(`Nutrient Balance: ${coffeeRecs.nutrient_balance}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.monitoring_frequency) {
+            pdf.text(`Monitoring Frequency: ${coffeeRecs.monitoring_frequency}`, 50, y);
+            y += 12;
+          }
+          if (coffeeRecs.compost_application) {
             pdf.text(`Compost Application: ${coffeeRecs.compost_application}`, 50, y);
             y += 12;
           }
