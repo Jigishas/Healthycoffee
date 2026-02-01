@@ -856,7 +856,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       }
 
       // 2. Nutrient Deficiency Management
-      if (result.deficiency_recommendations) {
+      if (result.recommendations?.deficiency_recommendations) {
         if (y > pageHeight - 100) {
           pdf.addPage();
           y = 40;
@@ -870,12 +870,14 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'normal');
 
-        if (result.deficiency_recommendations.basic && result.deficiency_recommendations.basic.length > 0) {
+        const defRecs = result.recommendations.deficiency_recommendations;
+
+        if (defRecs.basic && defRecs.basic.length > 0) {
           pdf.setFont('helvetica', 'bold');
           pdf.text('Basic Management:', 40, y);
           pdf.setFont('helvetica', 'normal');
           y += 15;
-          result.deficiency_recommendations.basic.forEach((rec) => {
+          defRecs.basic.forEach((rec) => {
             if (y > pageHeight - 40) {
               pdf.addPage();
               y = 40;
@@ -886,7 +888,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           y += 10;
         }
 
-        if (result.deficiency_recommendations.symptoms && result.deficiency_recommendations.symptoms.length > 0) {
+        if (defRecs.symptoms && defRecs.symptoms.length > 0) {
           if (y > pageHeight - 80) {
             pdf.addPage();
             y = 40;
@@ -895,7 +897,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.text('Symptoms:', 40, y);
           pdf.setFont('helvetica', 'normal');
           y += 15;
-          result.deficiency_recommendations.symptoms.forEach((symptom) => {
+          defRecs.symptoms.forEach((symptom) => {
             if (y > pageHeight - 40) {
               pdf.addPage();
               y = 40;
@@ -906,7 +908,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           y += 10;
         }
 
-        if (result.deficiency_recommendations.management && result.deficiency_recommendations.management.length > 0) {
+        if (defRecs.management && defRecs.management.length > 0) {
           if (y > pageHeight - 80) {
             pdf.addPage();
             y = 40;
@@ -915,7 +917,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.text('Management Strategies:', 40, y);
           pdf.setFont('helvetica', 'normal');
           y += 15;
-          result.deficiency_recommendations.management.forEach((strategy) => {
+          defRecs.management.forEach((strategy) => {
             if (y > pageHeight - 40) {
               pdf.addPage();
               y = 40;
