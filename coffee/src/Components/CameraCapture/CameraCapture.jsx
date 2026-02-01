@@ -406,7 +406,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       y += 25;
 
       // Disease Management Recommendations
-      if (result.disease_recommendations) {
+      if (result.recommendations?.disease_recommendations) {
         if (y > pageHeight - 100) {
           pdf.addPage();
           y = 40;
@@ -420,35 +420,37 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'normal');
 
-        if (result.disease_recommendations.disease_name) {
+        const diseaseRecs = result.recommendations.disease_recommendations;
+
+        if (diseaseRecs.disease_name) {
           pdf.setFont('helvetica', 'bold');
           pdf.text('Disease Name:', 40, y);
           pdf.setFont('helvetica', 'normal');
           y += 15;
-          pdf.text(result.disease_recommendations.disease_name, 50, y);
+          pdf.text(diseaseRecs.disease_name, 50, y);
           y += 15;
         }
 
-        if (result.disease_recommendations.current_severity) {
+        if (diseaseRecs.current_severity) {
           pdf.setFont('helvetica', 'bold');
           pdf.text('Current Severity:', 40, y);
           pdf.setFont('helvetica', 'normal');
           y += 15;
-          pdf.text(result.disease_recommendations.current_severity, 50, y);
+          pdf.text(diseaseRecs.current_severity, 50, y);
           y += 15;
         }
 
-        if (result.disease_recommendations.overview) {
+        if (diseaseRecs.overview) {
           pdf.setFont('helvetica', 'bold');
           pdf.text('Overview:', 40, y);
           pdf.setFont('helvetica', 'normal');
           y += 15;
-          const overviewLines = pdf.splitTextToSize(result.disease_recommendations.overview, pageWidth - 80);
+          const overviewLines = pdf.splitTextToSize(diseaseRecs.overview, pageWidth - 80);
           pdf.text(overviewLines, 50, y);
           y += overviewLines.length * 12 + 10;
         }
 
-        if (result.disease_recommendations.symptoms && result.disease_recommendations.symptoms.length > 0) {
+        if (diseaseRecs.symptoms && diseaseRecs.symptoms.length > 0) {
           if (y > pageHeight - 100) {
             pdf.addPage();
             y = 40;
@@ -457,7 +459,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.text('Symptoms:', 40, y);
           pdf.setFont('helvetica', 'normal');
           y += 15;
-          result.disease_recommendations.symptoms.forEach((symptom) => {
+          diseaseRecs.symptoms.forEach((symptom) => {
             if (y > pageHeight - 40) {
               pdf.addPage();
               y = 40;
@@ -468,7 +470,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           y += 10;
         }
 
-        if (result.disease_recommendations.integrated_management) {
+        if (diseaseRecs.integrated_management) {
           if (y > pageHeight - 100) {
             pdf.addPage();
             y = 40;
@@ -478,7 +480,7 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
           pdf.setFont('helvetica', 'normal');
           y += 15;
 
-          const mgmt = result.disease_recommendations.integrated_management;
+          const mgmt = diseaseRecs.integrated_management;
           if (mgmt.cultural_practices) {
             pdf.setFont('helvetica', 'bold');
             pdf.text('Cultural Practices:', 50, y);
@@ -549,6 +551,96 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
               pdf.text(`• ${monitor}`, 60, y);
               y += 10;
             });
+          }
+        }
+
+        // Add Farm-Specific Adaptations
+        if (diseaseRecs.farm_specific_adaptations) {
+          if (y > pageHeight - 80) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Farm-Specific Adaptations:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 15;
+
+          const farmAdapt = diseaseRecs.farm_specific_adaptations;
+          if (farmAdapt.general_recommendations && farmAdapt.general_recommendations.length > 0) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('General Recommendations:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            farmAdapt.general_recommendations.forEach((rec) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${rec}`, 60, y);
+              y += 10;
+            });
+            y += 10;
+          }
+
+          if (farmAdapt.based_on_conditions && farmAdapt.based_on_conditions.length > 0) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Based on Farm Conditions:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            farmAdapt.based_on_conditions.forEach((condition) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${condition}`, 60, y);
+              y += 10;
+            });
+            y += 10;
+          }
+        }
+
+        // Add Economic Considerations
+        if (diseaseRecs.economic_considerations) {
+          if (y > pageHeight - 100) {
+            pdf.addPage();
+            y = 40;
+          }
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Economic Considerations:', 40, y);
+          pdf.setFont('helvetica', 'normal');
+          y += 15;
+
+          const economic = diseaseRecs.economic_considerations;
+          if (economic.management_cost_usd_per_ha) {
+            pdf.text(`Management Cost: $${economic.management_cost_usd_per_ha}/ha`, 50, y);
+            y += 12;
+          }
+          if (economic.potential_yield_loss_percent) {
+            pdf.text(`Potential Yield Loss: ${economic.potential_yield_loss_percent}%`, 50, y);
+            y += 12;
+          }
+          if (economic.return_on_investment) {
+            pdf.text(`Return on Investment: ${economic.return_on_investment}`, 50, y);
+            y += 12;
+          }
+          if (economic.economic_threshold) {
+            pdf.text(`Economic Threshold: ${economic.economic_threshold}`, 50, y);
+            y += 12;
+          }
+          if (economic.cost_effective_strategies && economic.cost_effective_strategies.length > 0) {
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Cost-Effective Strategies:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            economic.cost_effective_strategies.forEach((strategy) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${strategy}`, 60, y);
+              y += 10;
+            });
+            y += 10;
           }
         }
 
