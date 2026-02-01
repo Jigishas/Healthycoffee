@@ -24,7 +24,7 @@ const PWAInstallPrompt = () => {
         <div className="flex items-start gap-3 sm:gap-4">
           {/* Icon */}
           <div className="flex-shrink-0 mt-1">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-xl ring-2 ring-green-200">
               <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
           </div>
