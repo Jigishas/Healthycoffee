@@ -531,6 +531,25 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
               y += 10;
             });
           }
+
+          if (mgmt.monitoring) {
+            if (y > pageHeight - 60) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Monitoring:', 50, y);
+            pdf.setFont('helvetica', 'normal');
+            y += 12;
+            mgmt.monitoring.slice(0, 3).forEach((monitor) => {
+              if (y > pageHeight - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+              pdf.text(`• ${monitor}`, 60, y);
+              y += 10;
+            });
+          }
         }
 
         if (result.disease_recommendations.severity_specific_recommendations) {
