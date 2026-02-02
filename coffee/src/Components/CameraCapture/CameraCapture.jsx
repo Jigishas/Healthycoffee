@@ -233,6 +233,10 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
+    try {
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
       let y = 40;
 
       // Header with formal styling
@@ -2313,4 +2317,5 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   );
 };
 
+export default CameraCapture;
 export default CameraCapture;
