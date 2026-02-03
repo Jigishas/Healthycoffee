@@ -1,4 +1,4 @@
-// Centralized configuration for backend URLs
+   //Centralized configuration for backend URLs
 export const BACKEND_CONFIG = {
   PRODUCTION_URL: 'https://healthycoffee.onrender.com',
   LOCAL_FALLBACK: 'http://localhost:8000'
