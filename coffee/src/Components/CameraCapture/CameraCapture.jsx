@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import { 
   Camera, Upload, X, RotateCw, Download, 
   Leaf, AlertCircle, CheckCircle, Loader2,
@@ -231,8 +231,6 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     if (!result) return;
     try {
       const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
       let y = 30;
 
       // Header
