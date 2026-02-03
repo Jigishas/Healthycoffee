@@ -1,47 +1,47 @@
 {
   "0": {
-    "name": "Healthy",
-    "description": "Leaf shows normal green coloration with no visible signs of nutrient stress.",
-    "recommendation": "Maintain current agronomic practices, ensure balanced fertilization and good field hygiene."
+    "name": "healthy",
+    "description": "Plant appears healthy",
+    "recommendation": "Continue normal care"
   },
   "1": {
-    "name": "boron-B",
-    "description": "Boron deficiency causes thick, brittle, or deformed leaves, often with cracked stems and poor flowering.",
-    "recommendation": "Apply boron-containing fertilizers (e.g., borax or Solubor) in small, carefully measured amounts to avoid toxicity."
+    "name": "nitrogen_deficiency",
+    "description": "Yellowing of older leaves",
+    "recommendation": "Apply nitrogen fertilizer"
   },
   "2": {
-    "name": "calcium-Ca",
-    "description": "Calcium deficiency leads to distorted young leaves, tip burn, and weak cell walls.",
-    "recommendation": "Apply agricultural lime or gypsum to improve calcium availability and maintain proper soil pH."
+    "name": "phosphorus_deficiency",
+    "description": "Purple or reddish leaves",
+    "recommendation": "Apply phosphorus fertilizer"
   },
   "3": {
-    "name": "iron-Fe",
-    "description": "Iron deficiency causes interveinal chlorosis (yellowing between veins) on young leaves while veins remain green.",
-    "recommendation": "Apply foliar iron chelates (Fe-EDDHA or Fe-DTPA) and ensure soil pH is not too alkaline."
+    "name": "potassium_deficiency",
+    "description": "Brown leaf edges",
+    "recommendation": "Apply potassium fertilizer"
   },
   "4": {
-    "name": "magnesium-Mg",
-    "description": "Magnesium deficiency shows as interveinal chlorosis on older leaves, with green veins and yellow tissue.",
-    "recommendation": "Apply magnesium sulfate (Epsom salts) or dolomitic lime to replenish magnesium levels."
+    "name": "calcium_deficiency",
+    "description": "New leaves distorted",
+    "recommendation": "Apply calcium supplement"
   },
   "5": {
-    "name": "manganese-Mn",
-    "description": "Manganese deficiency causes interveinal chlorosis with small necrotic spots, usually on younger leaves.",
-    "recommendation": "Apply manganese sulfate or foliar Mn sprays, and avoid excessive liming that raises soil pH."
+    "name": "magnesium_deficiency",
+    "description": "Yellowing between veins",
+    "recommendation": "Apply magnesium fertilizer"
   },
   "6": {
-    "name": "nitrogen-N",
-    "description": "Nitrogen deficiency results in uniform yellowing of older leaves, stunted growth, and reduced vigor.",
-    "recommendation": "Apply nitrogen fertilizers such as urea, ammonium nitrate, or organic manures in split doses."
+    "name": "iron_deficiency",
+    "description": "Yellowing of young leaves",
+    "recommendation": "Apply iron chelate"
   },
   "7": {
-    "name": "phosphorus-P",
-    "description": "Phosphorus deficiency causes dark green or purplish leaves, poor root growth, and delayed maturity.",
-    "recommendation": "Apply phosphorus fertilizers like triple superphosphate (TSP) or diammonium phosphate (DAP)."
+    "name": "manganese_deficiency",
+    "description": "Yellowing with green veins",
+    "recommendation": "Apply manganese fertilizer"
   },
   "8": {
-    "name": "potasium-K",
-    "description": "Potassium deficiency shows as leaf edge scorching, yellowing, and weak stems.",
-    "recommendation": "Apply muriate of potash (KCl) or sulfate of potash (K2SO4) to restore potassium levels."
+    "name": "boron_deficiency",
+    "description": "Brittle leaves and shoots",
+    "recommendation": "Apply boron supplement"
   }
 }

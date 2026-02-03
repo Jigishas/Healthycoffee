@@ -67,7 +67,7 @@ def validate_image_file(file):
 
 # Model configs
 disease_classifier_config = {
-    'model_path': 'models/leaf_diseases/efficientnet_disease_balanced.pth',
+    'model_path': 'models/leaf_diseases/efficientnet_disease_balanced',
     'classes_path': 'models/leaf_diseases/class_mapping_diseases.json',
     'confidence_threshold': 0.3
 }
