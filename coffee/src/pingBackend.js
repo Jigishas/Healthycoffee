@@ -1,6 +1,6 @@
 // Ping backend service to keep Render free tier awake and responsive
 const BACKEND_URL = 'https://healthycoffee.onrender.com/health';
-const PING_INTERVAL = 5 * 60 * 1000; // 5 minutes - more aggressive pinging
+const PING_INTERVAL = 10 * 60 * 1000; // 10 minutes - keep connection alive
 
 function pingBackend() {
   fetch(BACKEND_URL, {
@@ -25,7 +25,7 @@ function pingBackend() {
 function startPinging() {
   console.log('🚀 Backend health monitor started');
   pingBackend(); // Ping immediately on app load
-  setInterval(pingBackend, PING_INTERVAL); // Then ping every 5 minutes
+  setInterval(pingBackend, PING_INTERVAL); // Then ping every 10 minutes
 }
 
 export { pingBackend, startPinging };
