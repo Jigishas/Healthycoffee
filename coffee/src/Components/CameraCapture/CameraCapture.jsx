@@ -249,7 +249,29 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
 
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'normal');
-      pdf.setFont('helvetica', 'bold');
+
+      // Add analysis results
+      if (result.disease_prediction) {
+        pdf.text(`Disease Status: ${result.disease_prediction.class}`, 30, y);
+        y += 15;
+        pdf.text(`Confidence: ${Math.round(result.disease_prediction.confidence * 100)}%`, 30, y);
+        y += 15;
+      }
+
+      if (result.deficiency_prediction) {
+        pdf.text(`Nutrient Status: ${result.deficiency_prediction.class}`, 30, y);
+        y += 15;
+        pdf.text(`Confidence: ${Math.round(result.deficiency_prediction.confidence * 100)}%`, 30, y);
+        y += 15;
+      }
+
+      // Save the PDF
+      pdf.save('crop-health-report.pdf');
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      setError('Failed to generate PDF report');
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
