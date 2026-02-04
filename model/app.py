@@ -37,6 +37,19 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+# Security: Generate secret key
+app.secret_key = secrets.token_hex(32)
+
+# Proxy fix for production deployments
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
+
+# Rate limiting
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["100 per minute", "1000 per hour"]
+)
+
 # Simple cache (Redis URL configurable)
 cache = Cache(app, config={
     'CACHE_TYPE': 'redis',
@@ -44,8 +57,17 @@ cache = Cache(app, config={
     'CACHE_DEFAULT_TIMEOUT': 300
 })
 
-# CORS
-CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS - Restrict origins for production
+allowed_origins = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
+CORS(app, resources={
+    r"/api/*": {
+        "origins": allowed_origins,
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "expose_headers": ["X-API-Version"],
+        "max_age": 86400
+    }
+})
 
 # File validation
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
