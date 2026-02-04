@@ -8,6 +8,9 @@ import os
 from pathlib import Path
 import time
 import gc
+import logging
+
+logger = logging.getLogger(__name__)
 
 class LightweightTorchClassifier:
     """Memory-optimized classifier for Render free tier (512MB limit)"""
@@ -43,9 +46,19 @@ class LightweightTorchClassifier:
             num_features = self.model.classifier[1].in_features
             self.model.classifier[1] = nn.Linear(num_features, num_classes)
 
-            # Load trained weights with strict=False to ignore classifier differences
-            state_dict = torch.load(self.model_path, map_location="cpu")
-            self.model.load_state_dict(state_dict, strict=False)
+            # Load trained weights - handle both .pth files and directory formats
+            try:
+                # Try loading as a single .pth file first
+                if os.path.isfile(self.model_path):
+                    state_dict = torch.load(self.model_path, map_location="cpu")
+                else:
+                    # If it's a directory, PyTorch will automatically handle the multi-file format
+                    state_dict = torch.load(self.model_path, map_location="cpu")
+                self.model.load_state_dict(state_dict, strict=False)
+            except Exception as e:
+                logger.error(f"Failed to load model from {self.model_path}: {e}")
+                raise
+
             self.model.to(self.device)
             self.model.eval()
 
