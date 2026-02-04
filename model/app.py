@@ -11,8 +11,6 @@ Changes:
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_caching import Cache
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 import os
 import logging
@@ -43,12 +41,12 @@ app.secret_key = secrets.token_hex(32)
 # Proxy fix for production deployments
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
-# Rate limiting
-limiter = Limiter(
-    app=app,
-    key_func=get_remote_address,
-    default_limits=["100 per minute", "1000 per hour"]
-)
+# Rate limiting - commented out for testing
+# limiter = Limiter(
+#     app=app,
+#     key_func=get_remote_address,
+#     default_limits=["100 per minute", "1000 per hour"]
+# )
 
 # Simple cache (Redis URL configurable)
 cache = Cache(app, config={
@@ -133,7 +131,6 @@ def get_classifiers():
 
 
 @app.route('/api/v1/upload-image', methods=['POST', 'OPTIONS'])
-@limiter.limit("10 per minute")
 def upload_image():
     if request.method == 'OPTIONS':
         response = app.make_response('')
