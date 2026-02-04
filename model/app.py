@@ -132,25 +132,37 @@ def get_classifiers():
     return disease_classifier, deficiency_classifier
 
 
-@app.route('/api/upload-image', methods=['POST', 'OPTIONS'])
+@app.route('/api/v1/upload-image', methods=['POST', 'OPTIONS'])
+@limiter.limit("10 per minute")
 def upload_image():
     if request.method == 'OPTIONS':
-        return '', 204
+        response = app.make_response('')
+        response.headers['X-API-Version'] = 'v1.0'
+        return response, 204
+
     try:
+        # Data privacy: Log request without storing image data
+        client_ip = request.remote_addr
+        user_agent = request.headers.get('User-Agent', 'Unknown')
+        logger.info(f"Image upload request from {client_ip} - User-Agent: {user_agent[:100]}...")
+
         if 'image' not in request.files:
-            return jsonify({'error': 'No image file provided'}), 400
+            return jsonify({'error': 'No image file provided', 'api_version': 'v1.0'}), 400
+
         file = request.files['image']
         is_valid, err = validate_image_file(file)
         if not is_valid:
-            return jsonify({'error': err}), 400
+            return jsonify({'error': err, 'api_version': 'v1.0'}), 400
 
-        # Read image bytes and open in-memory
+        # Read image bytes and open in-memory (data is not persisted)
         img_bytes = file.read()
+        image_hash = hashlib.sha256(img_bytes).hexdigest()[:16]  # For logging only
+
         try:
             image = Image.open(BytesIO(img_bytes)).convert('RGB')
         except Exception as e:
-            logger.error(f'Invalid image: {e}')
-            return jsonify({'error': 'Invalid image file'}), 400
+            logger.error(f'Invalid image {image_hash}: {e}')
+            return jsonify({'error': 'Invalid image file', 'api_version': 'v1.0'}), 400
 
         start = time.time()
         try:
@@ -158,10 +170,14 @@ def upload_image():
             disease_result = disease_clf.predict(image)
             deficiency_result = deficiency_clf.predict(image)
         except Exception as e:
-            logger.exception('Model prediction failed')
+            logger.exception(f'Model prediction failed for {image_hash}')
             disease_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
             deficiency_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
         total_time = time.time() - start
+
+        # Clear image data from memory immediately
+        del img_bytes
+        del image
 
         try:
             recommendations = get_additional_recommendations(
@@ -186,13 +202,16 @@ def upload_image():
             'recommendations': recommendations,
             'processing_time': round(total_time, 4),
             'model_version': 'optimized_v1.0',
+            'api_version': 'v1.0',
             'status': 'success'
         }
-        logger.info(f"Analysis completed in {total_time:.4f}s - Disease: {disease_result.get('class')}, Deficiency: {deficiency_result.get('class')}")
+
+        logger.info(f"Analysis completed in {total_time:.4f}s for {image_hash} - Disease: {disease_result.get('class')}, Deficiency: {deficiency_result.get('class')}")
         return jsonify(response)
+
     except Exception as e:
         logger.exception('Unexpected error in upload_image')
-        return jsonify({'error': 'Internal server error'}), 500
+        return jsonify({'error': 'Internal server error', 'api_version': 'v1.0'}), 500
 
 
 @app.route('/api/interactive-diagnose', methods=['POST'])
