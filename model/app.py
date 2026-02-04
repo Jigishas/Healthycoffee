@@ -11,12 +11,17 @@ Changes:
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_caching import Cache
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from werkzeug.middleware.proxy_fix import ProxyFix
 import os
 import logging
 import time
 from io import BytesIO
 import threading
 from PIL import Image
+import hashlib
+import secrets
 
 from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation
