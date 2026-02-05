@@ -56,13 +56,19 @@ cache = Cache(app, config={
 })
 
 # CORS - Restrict origins for production
-allowed_origins = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
+allowed_origins = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000,https://healthycoffee.vercel.app').split(',')
 CORS(app, resources={
     r"/api/*": {
         "origins": allowed_origins,
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
         "expose_headers": ["X-API-Version"],
+        "max_age": 86400
+    },
+    r"/health": {
+        "origins": allowed_origins,
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"],
         "max_age": 86400
     }
 })
