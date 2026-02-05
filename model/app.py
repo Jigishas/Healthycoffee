@@ -23,7 +23,7 @@ import secrets
 
 from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation
-from optimize_model import LightweightTorchClassifier
+from src.inference import TorchClassifier
 
 # Configure logging
 logging.basicConfig(
@@ -92,14 +92,12 @@ def validate_image_file(file):
 
 # Model configs
 disease_classifier_config = {
-    'model_path': 'models/leaf_diseases/efficientnet_disease_balanced',
-    'classes_path': 'models/leaf_diseases/class_mapping_diseases.json',
-    'confidence_threshold': 0.3
+    'model_path': 'models/leaf_diseases/improved_disease_model.pth',
+    'classes_path': 'models/leaf_diseases/class_mapping_diseases.json'
 }
 deficiency_classifier_config = {
     'model_path': 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-    'classes_path': 'models/leaf_deficiencies/class_mapping_deficiencies.json',
-    'confidence_threshold': 0.3
+    'classes_path': 'models/leaf_deficiencies/class_mapping_deficiencies.json'
 }
 
 # Cached classifier instances
@@ -108,25 +106,21 @@ disease_classifier = None
 deficiency_classifier = None
 
 def get_classifiers():
-    """Thread-safe lazy initialization of lightweight classifiers."""
+    """Thread-safe lazy initialization of classifiers."""
     global disease_classifier, deficiency_classifier
     if disease_classifier is not None and deficiency_classifier is not None:
         return disease_classifier, deficiency_classifier
     with _model_lock:
         if disease_classifier is None:
-            disease_classifier = LightweightTorchClassifier(
+            disease_classifier = TorchClassifier(
                 disease_classifier_config['model_path'],
-                disease_classifier_config['classes_path'],
-                confidence_threshold=disease_classifier_config['confidence_threshold']
+                disease_classifier_config['classes_path']
             )
-            disease_classifier.load_model()
         if deficiency_classifier is None:
-            deficiency_classifier = LightweightTorchClassifier(
+            deficiency_classifier = TorchClassifier(
                 deficiency_classifier_config['model_path'],
-                deficiency_classifier_config['classes_path'],
-                confidence_threshold=deficiency_classifier_config['confidence_threshold']
+                deficiency_classifier_config['classes_path']
             )
-            deficiency_classifier.load_model()
     return disease_classifier, deficiency_classifier
 
 
