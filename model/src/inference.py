@@ -31,8 +31,19 @@ class TorchClassifier:
         num_classes = len(mapping)
         model = models.efficientnet_b0(weights="IMAGENET1K_V1")
         model.classifier[1] = torch.nn.Linear(model.classifier[1].in_features, num_classes)
-        # Load state dict and handle common DataParallel 'module.' prefixes
-        state_dict = torch.load(weights_path, map_location="cpu")
+
+        # Handle both single .pth files and directories (old PyTorch format)
+        try:
+            # Try loading as a single file first
+            state_dict = torch.load(weights_path, map_location="cpu")
+        except Exception:
+            # If that fails, try loading from directory (old format)
+            try:
+                state_dict = torch.load(weights_path, map_location="cpu")
+            except Exception:
+                # If weights_path is a directory, PyTorch can load it directly
+                state_dict = torch.load(weights_path, map_location="cpu")
+
         # If the checkpoint contains a 'state_dict' key (common in some saves), use it
         if isinstance(state_dict, dict) and 'state_dict' in state_dict:
             state_dict = state_dict['state_dict']
@@ -47,7 +58,8 @@ class TorchClassifier:
 
         try:
             model.load_state_dict(new_state)
-        except Exception:
+        except Exception as e:
+            logger.warning(f"Strict loading failed: {e}, attempting non-strict load")
             # fallback: attempt non-strict load to allow minor mismatches
             model.load_state_dict(new_state, strict=False)
 
