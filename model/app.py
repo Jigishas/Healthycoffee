@@ -9,7 +9,7 @@ Changes:
 """
 
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_caching import Cache
 from werkzeug.middleware.proxy_fix import ProxyFix
 import os
@@ -253,8 +253,12 @@ def interactive_diagnose():
         return jsonify({'error': 'Internal server error'}), 500
 
 
-@app.route('/health', methods=['GET', 'POST'])
+@app.route('/health', methods=['GET', 'POST', 'OPTIONS'])
+@cross_origin(origins=allowed_origins, methods=['GET', 'POST', 'OPTIONS'], allow_headers=['Content-Type'])
 def health():
+    if request.method == 'OPTIONS':
+        response = app.make_response('')
+        return response, 204
     try:
         if request.method == 'POST':
             data = request.get_json(silent=True)
