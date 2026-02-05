@@ -54,8 +54,14 @@ class TorchClassifier:
         model.eval()
         return model, mapping
 
-    def predict(self, image_path, confidence_threshold=0.3):
-        image = Image.open(image_path).convert("RGB")
+    def predict(self, image_input, confidence_threshold=0.3):
+        # Handle both PIL Image objects and file paths
+        if isinstance(image_input, str):
+            image = Image.open(image_input).convert("RGB")
+        else:
+            # Assume it's already a PIL Image
+            image = image_input.convert("RGB") if hasattr(image_input, 'convert') else image_input
+
         input_tensor = VAL_TRANSFORM(image).unsqueeze(0).to(self.device)
         with torch.no_grad():
             outputs = self.model(input_tensor)
