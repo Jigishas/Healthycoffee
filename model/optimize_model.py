@@ -154,7 +154,7 @@ def benchmark_models():
     # Load optimized models
     print("Loading optimized models...")
     optimized_disease = OptimizedTorchClassifier(
-        'models/leaf_diseases/efficientnet_disease_balanced.pth',
+        'models/leaf_diseases/efficientnet_disease_balanced',
         'models/leaf_diseases/class_mapping_diseases.json'
     )
 

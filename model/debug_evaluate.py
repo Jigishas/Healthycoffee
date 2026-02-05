@@ -79,7 +79,7 @@ def main(args):
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--csv', default='validation_labels.csv', help='CSV with image_path,disease_label,deficiency_label')
-    p.add_argument('--disease-model', dest='disease_model', default='models/leaf_diseases/efficientnet_disease_balanced.pth')
+    p.add_argument('--disease-model', dest='disease_model', default='models/leaf_diseases/efficientnet_disease_balanced')
     p.add_argument('--disease-map', dest='disease_map', default='models/leaf_diseases/class_mapping_diseases.json')
     p.add_argument('--def-model', dest='def_model', default='models/leaf_deficiencies/efficientnet_deficiency_balanced.pth')
     p.add_argument('--def-map', dest='def_map', default='models/leaf_deficiencies/class_mapping_deficiencies.json')
