@@ -45,15 +45,13 @@ class RealDatasetEvaluator:
                 'models/leaf_deficiencies/class_mapping_deficiencies.json'
             )
         elif model_type == 'optimized':
-            self.disease_classifier = OptimizedTorchClassifier(
+            self.disease_classifier = TorchClassifier(
                 'models/leaf_diseases/efficientnet_disease_balanced.pth',
-                'models/leaf_diseases/class_mapping_diseases.json',
-                confidence_threshold=0.3
+                'models/leaf_diseases/class_mapping_diseases.json'
             )
-            self.deficiency_classifier = OptimizedTorchClassifier(
+            self.deficiency_classifier = TorchClassifier(
                 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-                'models/leaf_deficiencies/class_mapping_deficiencies.json',
-                confidence_threshold=0.3
+                'models/leaf_deficiencies/class_mapping_deficiencies.json'
             )
         else:  # improved
             self.disease_classifier = TorchClassifier(
