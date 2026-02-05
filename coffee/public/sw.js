@@ -1,6 +1,8 @@
 // Custom Service Worker for Healthy Coffee PWA
 // Simplified version without external dependencies for compatibility
 
+/* global clients */
+
 // Inject manifest placeholder for Workbox
 self.__WB_MANIFEST
 
