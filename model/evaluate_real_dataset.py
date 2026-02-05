@@ -61,7 +61,7 @@ class RealDatasetEvaluator:
                 'models/leaf_diseases/class_mapping_diseases.json'
             )
             self.deficiency_classifier = TorchClassifier(
-                'models/leaf_deficiencies/improved_deficiency_model.pth',
+                'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
                 'models/leaf_deficiencies/class_mapping_deficiencies.json'
             )
 

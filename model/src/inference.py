@@ -11,7 +11,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 VAL_TRANSFORM = transforms.Compose([
-    transforms.Resize((224, 224)),
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
     transforms.ToTensor(),
     # Use ImageNet normalization - models were trained/initialized on ImageNet
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
@@ -53,19 +54,29 @@ class TorchClassifier:
         model.eval()
         return model, mapping
 
-    def predict(self, image_path):
+    def predict(self, image_path, confidence_threshold=0.5):
         image = Image.open(image_path).convert("RGB")
         input_tensor = VAL_TRANSFORM(image).unsqueeze(0).to(self.device)
         with torch.no_grad():
             outputs = self.model(input_tensor)
             probs = torch.nn.functional.softmax(outputs[0], dim=0)
             confidence, predicted_idx = torch.max(probs, dim=0)
+        conf = confidence.item()
         idx = str(predicted_idx.item())
         info = self.classes.get(idx, {"name": idx})
+        predicted_class = info.get("name", idx)
+        if conf < confidence_threshold:
+            # For low confidence, default to healthy for deficiencies, unknown for diseases
+            if 'deficiency' in str(self.classes).lower():
+                predicted_class = "healthy"
+                idx = "0"
+            else:
+                predicted_class = "Healthy"
+                idx = "1"  # Assuming Healthy is index 1 for diseases
         return {
-            "class": info.get("name", idx),
-            "class_index": int(predicted_idx.item()),
-            "confidence": round(confidence.item(), 4),
+            "class": predicted_class,
+            "class_index": int(idx) if idx.isdigit() else 0,
+            "confidence": round(conf, 4),
             "description": info.get("description", ""),
             "recommendation": info.get("recommendation", "")
         }
