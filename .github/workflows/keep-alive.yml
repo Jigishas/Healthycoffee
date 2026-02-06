@@ -1,0 +1,27 @@
+name: Keep Backend Alive
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Backend Health Endpoint
+        run: |
+          echo "Pinging backend to keep it alive..."
+          curl -f -X GET "https://healthycoffee.onrender.com/health" \
+            -H "Content-Type: application/json" \
+            -H "Cache-Control: no-cache" \
+            --max-time 30 \
+            --retry 3 \
+            --retry-delay 5 \
+            || echo "Ping failed, but continuing..."
+
+      - name: Log Ping Success
+        run: |
+          echo "Backend ping completed at $(date)"

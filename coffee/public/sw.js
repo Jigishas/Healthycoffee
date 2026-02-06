@@ -126,6 +126,62 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Handle API requests to backend
+  if (event.request.url.includes('healthycoffee.onrender.com')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Cache successful API responses for offline use
+          if (response.ok && event.request.method === 'GET') {
+            const responseClone = response.clone();
+            caches.open(API_CACHE).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // If offline, try to serve from cache for GET requests
+          if (event.request.method === 'GET') {
+            return caches.match(event.request).then((cachedResponse) => {
+              if (cachedResponse) {
+                return cachedResponse;
+              } else {
+                // Return offline response for health endpoint
+                if (event.request.url.includes('/health')) {
+                  return new Response(JSON.stringify({
+                    status: 'offline',
+                    message: 'Backend is currently offline. Please check your connection.',
+                    cached: true,
+                    timestamp: Date.now()
+                  }), {
+                    headers: { 'Content-Type': 'application/json' }
+                  });
+                }
+                // For other API requests, return offline error
+                return new Response(JSON.stringify({
+                  error: 'Service temporarily unavailable. Please try again when online.',
+                  offline: true
+                }), {
+                  status: 503,
+                  headers: { 'Content-Type': 'application/json' }
+                });
+              }
+            });
+          }
+          // For non-GET requests when offline, return error
+          return new Response(JSON.stringify({
+            error: 'Cannot perform this action while offline.',
+            offline: true
+          }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        })
+    );
+    return;
+  }
+
   // Handle navigation requests (HTML pages)
   if (event.request.mode === 'navigate') {
     event.respondWith(

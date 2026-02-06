@@ -221,12 +221,13 @@ const Footer = () => {
           </div>
         </div>
         
-        {/* Achievement Badge */}
-        <div className="flex justify-center">
+        {/* Achievement Badge and Backend Status */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
           <div className="bg-amber-800/40 border border-amber-600/50 rounded-full px-4 sm:px-6 py-2 inline-flex items-center gap-2">
             <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
             <span className="text-amber-200 text-xs sm:text-sm">Trusted by 5,000+ Farmers</span>
           </div>
+          <BackendStatus />
         </div>
       </div>
 
