@@ -245,7 +245,7 @@ function Body() {
                 }}
                 startIcon={<MessageCircle />}
               >
-                Get Expert Help
+               <a href='https://wa.me/254743121169'> Get Expert Help</a>
               </Button>
             </Stack>
           </motion.div>
