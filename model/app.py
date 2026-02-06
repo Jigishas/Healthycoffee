@@ -68,7 +68,7 @@ CORS(app, resources={
     r"/health": {
         "origins": allowed_origins,
         "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"],
+        "allow_headers": ["Content-Type", "Cache-Control", "Authorization"],
         "max_age": 86400
     }
 })
