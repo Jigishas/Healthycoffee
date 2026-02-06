@@ -17,7 +17,7 @@ CORS(app, origins=["https://healthycoffee.vercel.app", "http://localhost:3000"])
 
 # Load optimized models with confidence threshold and preload for faster inference
 disease_classifier = OptimizedTorchClassifier(
-    'models/leaf_diseases/efficientnet_disease_balanced',
+    'models/leaf_diseases/efficientnet_disease_balanced.pth',
     'models/leaf_diseases/class_mapping_diseases.json',
     confidence_threshold=0.3,
     preload=True

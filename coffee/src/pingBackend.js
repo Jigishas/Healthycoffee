@@ -8,8 +8,7 @@ function pingBackend(retryCount = 0) {
   fetch(BACKEND_URL, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      'Content-Type': 'application/json'
     },
     mode: 'cors'
   })

@@ -126,7 +126,7 @@ class ImprovedTorchClassifier(TorchClassifier):
 try:
     # Try to load improved disease model
     disease_classifier = ImprovedTorchClassifier(
-        'models/leaf_diseases/efficientnet_disease_balanced',
+        'models/leaf_diseases/efficientnet_disease_balanced.pth',
         'models/leaf_diseases/class_mapping_diseases.json',
         str(IMPROVED_MODELS_DIR / 'improved_disease_model.pth'),
         'disease'

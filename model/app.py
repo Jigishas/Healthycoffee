@@ -98,7 +98,7 @@ def validate_image_file(file):
 
 # Model configs
 disease_classifier_config = {
-    'model_path': 'models/leaf_diseases/efficientnet_disease_balanced',
+    'model_path': 'models/leaf_diseases/efficientnet_disease_balanced.pth',
     'classes_path': 'models/leaf_diseases/class_mapping_diseases.json'
 }
 deficiency_classifier_config = {

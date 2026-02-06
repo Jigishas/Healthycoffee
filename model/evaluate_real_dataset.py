@@ -37,7 +37,7 @@ class RealDatasetEvaluator:
         # Initialize models based on type
         if model_type == 'original':
             self.disease_classifier = TorchClassifier(
-                'models/leaf_diseases/efficientnet_disease_balanced',
+                'models/leaf_diseases/efficientnet_disease_balanced.pth',
                 'models/leaf_diseases/class_mapping_diseases.json'
             )
             self.deficiency_classifier = TorchClassifier(
