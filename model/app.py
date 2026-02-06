@@ -263,7 +263,24 @@ def health():
         if request.method == 'POST':
             data = request.get_json(silent=True)
             logger.info(f'Health ping: {data}')
-        return jsonify({'status': 'healthy', 'timestamp': time.time()}), 200
+
+        # Check if models are loaded
+        disease_loaded = disease_classifier is not None
+        deficiency_loaded = deficiency_classifier is not None
+
+        response_data = {
+            'status': 'healthy' if disease_loaded and deficiency_loaded else 'degraded',
+            'timestamp': time.time(),
+            'models_loaded': {
+                'disease_model': disease_loaded,
+                'deficiency_model': deficiency_loaded
+            },
+            'model_stats': {
+                'disease': disease_classifier.get_stats() if disease_loaded and hasattr(disease_classifier, 'get_stats') else {},
+                'deficiency': deficiency_classifier.get_stats() if deficiency_loaded and hasattr(deficiency_classifier, 'get_stats') else {}
+            }
+        }
+        return jsonify(response_data), 200
     except Exception:
         logger.exception('Health check error')
         return jsonify({'status': 'unhealthy'}), 500
