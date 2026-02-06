@@ -74,8 +74,10 @@ def upload_image():
             logger.warning(f'File validation failed: {error_msg}')
             return jsonify({'error': error_msg}), 400
 
+        import uuid
         filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
 
         try:
             file.save(filepath)

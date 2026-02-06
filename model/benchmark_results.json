@@ -1,0 +1,21 @@
+{
+  "timestamp": 1770403515.4316068,
+  "sequential": {
+    "name": "Sequential",
+    "total_requests": 50,
+    "successful": 50,
+    "success_rate": 100.0,
+    "mean_total_time": 2.5521084451675415,
+    "mean_processing_time": 0.47127399999999997,
+    "throughput": 0.39183287916056864
+  },
+  "concurrent": {
+    "name": "Concurrent",
+    "total_requests": 50,
+    "successful": 13,
+    "success_rate": 26.0,
+    "mean_total_time": 2.6189084970034084,
+    "mean_processing_time": 0.5379384615384616,
+    "throughput": 0.38183846482006295
+  }
+}

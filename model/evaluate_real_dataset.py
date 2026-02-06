@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 import matplotlib.pyplot as plt
 import seaborn as sns
 from src.inference import TorchClassifier
-from optimize_model import OptimizedTorchClassifier
+from optimize_model import LightweightTorchClassifier as OptimizedTorchClassifier
 import pandas as pd
 from collections import defaultdict
 import time
