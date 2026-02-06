@@ -68,7 +68,7 @@ CORS(app, resources={
     r"/health": {
         "origins": allowed_origins,
         "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Cache-Control", "Authorization"],
+        "allow_headers": ["Content-Type", "cache-control", "Cache-Control", "Authorization"],
         "max_age": 86400
     }
 })
@@ -254,7 +254,7 @@ def interactive_diagnose():
 
 
 @app.route('/health', methods=['GET', 'POST', 'OPTIONS'])
-@cross_origin(origins=allowed_origins, methods=['GET', 'POST', 'OPTIONS'], allow_headers=['Content-Type', 'Cache-Control'])
+@cross_origin(origins=allowed_origins, methods=['GET', 'POST', 'OPTIONS'], allow_headers=['Content-Type', 'cache-control', 'Cache-Control'])
 def health():
     if request.method == 'OPTIONS':
         response = app.make_response('')
