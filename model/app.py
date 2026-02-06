@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+u#!/usr/bin/env python3
 """
 Combined Production Flask Application (in-memory image processing)
 
@@ -176,6 +176,9 @@ def upload_image():
         del img_bytes
         del image
 
+        # Force garbage collection to free memory
+        gc.collect()
+
         try:
             recommendations = get_additional_recommendations(
                 disease_class=disease_result.get('class_index', -1),
@@ -236,8 +239,16 @@ def interactive_diagnose():
                 raise RuntimeError('Interactive system not available')
         except Exception:
             disease_clf, deficiency_clf = get_classifiers()
-            disease_result = disease_clf.predict(image)
-            deficiency_result = deficiency_clf.predict(image)
+
+            # Run predictions in parallel using threads for better performance
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+                disease_future = executor.submit(disease_clf.predict, image)
+                deficiency_future = executor.submit(deficiency_clf.predict, image)
+
+                disease_result = disease_future.result()
+                deficiency_result = deficiency_future.result()
+
             diagnosis_result = {
                 'disease_prediction': {**disease_result, 'similar_previous_cases': 0, 'certainty_level': 'Unknown'},
                 'deficiency_prediction': {**deficiency_result, 'similar_previous_cases': 0, 'certainty_level': 'Unknown'},

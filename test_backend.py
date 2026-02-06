@@ -3,7 +3,7 @@
 Test script for backend initialization and upload functionality
 """
 
-from app import app
+from model.app import app
 import json
 
 def test_backend():

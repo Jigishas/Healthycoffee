@@ -10,6 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Optimized transforms for faster preprocessing
 VAL_TRANSFORM = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
@@ -17,6 +18,32 @@ VAL_TRANSFORM = transforms.Compose([
     # Use ImageNet normalization - models were trained/initialized on ImageNet
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
+
+# Optimized PIL-based preprocessing for speed
+def fast_preprocess_image(image):
+    """Fast PIL-based preprocessing without torchvision transforms"""
+    # Resize to 256, then center crop to 224
+    width, height = image.size
+    if width > height:
+        new_width = int(256 * width / height)
+        new_height = 256
+    else:
+        new_width = 256
+        new_height = int(256 * height / width)
+    image = image.resize((new_width, new_height), Image.BILINEAR)
+
+    # Center crop
+    left = (new_width - 224) // 2
+    top = (new_height - 224) // 2
+    right = left + 224
+    bottom = top + 224
+    image = image.crop((left, top, right, bottom))
+
+    # Convert to tensor and normalize
+    img_array = np.array(image).astype(np.float32) / 255.0
+    img_array = (img_array - [0.485, 0.456, 0.406]) / [0.229, 0.224, 0.225]
+    img_tensor = torch.from_numpy(img_array).permute(2, 0, 1)
+    return img_tensor.unsqueeze(0)
 
 class TorchClassifier:
     def __init__(self, model_path, classes_path):
@@ -82,11 +109,15 @@ class TorchClassifier:
             # Assume it's already a PIL Image
             image = image_input.convert("RGB") if hasattr(image_input, 'convert') else image_input
 
-        input_tensor = VAL_TRANSFORM(image).unsqueeze(0).to(self.device)
-        with torch.no_grad():
+        # Use fast preprocessing for speed
+        input_tensor = fast_preprocess_image(image).to(self.device)
+
+        # Use inference_mode for faster inference (PyTorch 1.9+)
+        with torch.inference_mode():
             outputs = self.model(input_tensor)
             probs = torch.nn.functional.softmax(outputs[0], dim=0)
             confidence, predicted_idx = torch.max(probs, dim=0)
+
         conf = confidence.item()
         idx = str(predicted_idx.item())
         info = self.classes.get(idx, {"name": idx})
