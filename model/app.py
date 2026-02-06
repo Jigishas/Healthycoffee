@@ -331,6 +331,9 @@ def performance():
 
 
 if __name__ == '__main__':
+    # For development, use WSGI server instead of Flask's built-in server
+    from gevent.pywsgi import WSGIServer
     port = int(os.environ.get('PORT', 8000))
-    logger.info(f'Starting server on port {port}')
-    app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
+    logger.info(f'Starting WSGI server on port {port}')
+    http_server = WSGIServer(('0.0.0.0', port), app)
+    http_server.serve_forever()
