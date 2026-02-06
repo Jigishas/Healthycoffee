@@ -1,4 +1,4 @@
-u#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Combined Production Flask Application (in-memory image processing)
 
