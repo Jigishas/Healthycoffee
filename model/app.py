@@ -20,6 +20,7 @@ import threading
 from PIL import Image
 import hashlib
 import secrets
+import gc
 
 from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation

@@ -42,7 +42,7 @@ def fast_preprocess_image(image):
     # Convert to tensor and normalize
     img_array = np.array(image).astype(np.float32) / 255.0
     img_array = (img_array - [0.485, 0.456, 0.406]) / [0.229, 0.224, 0.225]
-    img_tensor = torch.from_numpy(img_array).permute(2, 0, 1)
+    img_tensor = torch.from_numpy(img_array).permute(2, 0, 1).float()
     return img_tensor.unsqueeze(0)
 
 class TorchClassifier:
@@ -50,6 +50,7 @@ class TorchClassifier:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model, self.classes = self.load_model_and_mapping(model_path, classes_path)
         self.model.to(self.device)
+        self.model.float()  # Convert model to float precision
         self.model.eval()
 
     def load_model_and_mapping(self, weights_path, mapping_path):
