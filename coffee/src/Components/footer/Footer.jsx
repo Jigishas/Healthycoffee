@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, MapPin, Phone } from 'lucide-react';
+import BackendStatus from '../BackendStatus';
 
 const BACKEND_URL = 'https://healthycoffee.onrender.com';
 

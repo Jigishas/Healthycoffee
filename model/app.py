@@ -254,7 +254,7 @@ def interactive_diagnose():
 
 
 @app.route('/health', methods=['GET', 'POST', 'OPTIONS'])
-@cross_origin(origins=allowed_origins, methods=['GET', 'POST', 'OPTIONS'], allow_headers=['Content-Type'])
+@cross_origin(origins=allowed_origins, methods=['GET', 'POST', 'OPTIONS'], allow_headers=['Content-Type', 'Cache-Control'])
 def health():
     if request.method == 'OPTIONS':
         response = app.make_response('')
