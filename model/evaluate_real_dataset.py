@@ -232,7 +232,7 @@ class RealDatasetEvaluator:
 
 def main():
     """Main evaluation function"""
-    real_test_dataset_path = '../model_improvement/test'
+    real_test_dataset_path = 'test_dataset'
 
     if not os.path.exists(real_test_dataset_path):
         print(f"Real test dataset not found at {real_test_dataset_path}")

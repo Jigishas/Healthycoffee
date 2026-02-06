@@ -27,8 +27,8 @@
 - [x] Reduce memory allocations
 
 ## 6. Testing and Benchmarking
-- [ ] Create benchmark script to measure improvements
-- [ ] Test with various image sizes
+- [x] Create benchmark script to measure improvements
+- [x] Test with various image sizes
 - [ ] Validate accuracy is maintained
 
 ## 7. WSGI Server Implementation

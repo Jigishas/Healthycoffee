@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from optimize_model import OptimizedTorchClassifier
+from optimize_model import LightweightTorchClassifier as OptimizedTorchClassifier
 import os
 import tempfile
 from werkzeug.utils import secure_filename

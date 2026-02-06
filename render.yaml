@@ -4,4 +4,4 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r model/requirements.txt
-    startCommand: cd model && python app.py
+    startCommand: cd model && gunicorn --bind 0.0.0.0:$PORT wsgi:app --worker-class gevent --workers 4
