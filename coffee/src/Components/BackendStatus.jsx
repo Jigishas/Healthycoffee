@@ -3,7 +3,7 @@ import { Badge } from './ui/badge';
 import useBackendHealth from '../hooks/useBackendHealth';
 
 const BackendStatus = () => {
-  const { status, isOnline, isOffline, isChecking, lastChecked } = useBackendHealth();
+  const { isOnline, isOffline, lastChecked } = useBackendHealth();
 
   const getStatusColor = () => {
     if (isOnline) return 'bg-green-500';
