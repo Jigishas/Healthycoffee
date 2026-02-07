@@ -207,7 +207,7 @@ function Body() {
                 fullWidth
                 onClick={() => window.open('https://www.fao.org/3/i9060en/I9060EN.pdf', '_blank')}
                 sx={{
-                  bgcolor: 'white',
+                  bgcolor: 'green.500',
                   color: 'emerald.700',
                   py: 2,
                   borderRadius: '14px',
@@ -320,9 +320,10 @@ function Body() {
 
                 <Button
                   variant="contained"
+                  onClick={() => window.open('https://www.fao.org/3/i9060en/I9060EN.pdf', '_blank')}
                   fullWidth
                   sx={{
-                    bgcolor: 'white',
+                    bgcolor: 'green.600',
                     color: 'amber.700',
                     py: 1.5,
                     borderRadius: '12px',
