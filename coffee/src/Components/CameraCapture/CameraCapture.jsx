@@ -94,6 +94,14 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       setStream(mediaStream);
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        try {
+          await videoRef.current.play();
+        } catch (err) {
+          console.error('Video play failed', err);
+          setError('Failed to start video playback. Please check camera permissions.');
+          setMode('idle');
+          return;
+        }
       }
       setMode('camera');
     } catch (err) {
