@@ -533,7 +533,7 @@ function Body() {
                     <Button
                       variant="contained"
                       fullWidth
-                      onClick={() => document.getElementById('askme')?.scrollIntoView({ behavior: 'smooth' })}
+                      onClick={() => window.open('https://wa.me/254719149781', '_blank')}
                       sx={{
                         bgcolor: 'emerald.600',
                         py: 1.5,
