@@ -205,6 +205,7 @@ function Body() {
               <Button
                 variant="contained"
                 fullWidth
+                onClick={() => window.open('https://www.fao.org/3/i9060en/I9060EN.pdf', '_blank')}
                 sx={{
                   bgcolor: 'white',
                   color: 'emerald.700',
@@ -226,7 +227,7 @@ function Body() {
               <Button
                 variant="outlined"
                 fullWidth
-                onClick={() => document.getElementById('askme')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => window.open('https://wa.me/254719149781', '_blank')}
                 sx={{
                   borderColor: 'white',
                   borderWidth: 2,
@@ -245,7 +246,7 @@ function Body() {
                 }}
                 startIcon={<MessageCircle />}
               >
-               <a href='https://wa.me/254719149781'> Get Expert Help</a>
+                Get Expert Help
               </Button>
             </Stack>
           </motion.div>
@@ -532,6 +533,7 @@ function Body() {
                     <Button
                       variant="contained"
                       fullWidth
+                      onClick={() => document.getElementById('askme')?.scrollIntoView({ behavior: 'smooth' })}
                       sx={{
                         bgcolor: 'emerald.600',
                         py: 1.5,
@@ -549,10 +551,11 @@ function Body() {
                     >
                       Chat with Expert
                     </Button>
-                    
+
                     <Button
                       variant="outlined"
                       fullWidth
+                      onClick={() => window.open('tel:+254743121169', '_self')}
                       sx={{
                         borderColor: 'emerald.300',
                         borderWidth: 2,
