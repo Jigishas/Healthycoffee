@@ -227,7 +227,7 @@ function Body() {
               <Button
                 variant="outlined"
                 fullWidth
-                onClick={() => window.open('https://wa.me/254719149781', '_blank')}
+                onClick={() => document.getElementById('askme')?.scrollIntoView({ behavior: 'smooth' })}
                 sx={{
                   borderColor: 'white',
                   borderWidth: 2,
