@@ -98,6 +98,7 @@ function Body() {
                 fontSize: { xs: '0.875rem', sm: '1rem' },
                 px: 2,
                 py: 1,
+                mt:3,
                 backdropFilter: 'blur(10px)'
               }}
             />
