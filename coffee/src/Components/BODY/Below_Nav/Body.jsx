@@ -364,7 +364,7 @@ function Body() {
                 color: 'rgba(255, 255, 255, 0.9)',
                 fontSize: '0.75rem',
                 fontWeight: 500,
-                mb: 1,
+                mb: -1,
                 display: 'block'
               }}
             >
