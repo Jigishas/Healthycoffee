@@ -29,7 +29,7 @@ class LightweightTorchClassifier:
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
-        # Preload model if requested
+        # Preload model if requested for faster first inference
         if preload:
             self.load_model()
 

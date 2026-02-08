@@ -1,3 +1,4 @@
+
 /**
  * Resizes an image file or blob to 224x224 pixels
  * @param file - The image file or blob to resize
@@ -48,7 +49,7 @@ export function resizeImage(file: File | Blob): Promise<Blob> {
         } else {
           reject(new Error('Failed to create resized image blob'));
         }
-      }, file.type, 0.95); // Maintain quality
+      }, file.type, 0.8); // Optimized for speed - reduced quality for faster uploads
     };
 
     img.onerror = () => {
