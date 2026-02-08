@@ -827,9 +827,53 @@ For optimal results, combine this AI analysis with field observations and profes
 
       addPageNumber();
 
-      // New Page - Contact Information
+      // New Page - Contact Information (Complete this section)
+      pdf.addPage();
+      y = 30;
 
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('10. Contact Information & Support', 30, y);
+      y += 25;
+
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      const contactText = `For technical support, additional analysis, or consultation services, please contact our team:`;
+      const contactSplit = pdf.splitTextToSize(contactText, pageWidth - 60);
+      pdf.text(contactSplit, 30, y);
+      y += contactSplit.length * 13 + 20;
+
+      // Contact Details
+      const contactDetails = [
+        { label: 'Technical Support:', value: 'support@healthycoffee.ai' },
+        { label: 'Customer Service:', value: 'contact@healthycoffee.ai' },
+        { label: 'Emergency Hotline:', value: '+1-800-HEALTHY-COFFEE' },
+        { label: 'Website:', value: 'www.healthycoffee.ai' },
+        { label: 'Report Generated:', value: new Date().toLocaleDateString() },
+        { label: 'Report ID:', value: `HC-${Date.now().toString().slice(-8)}` }
+      ];
+
+      contactDetails.forEach(detail => {
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(detail.label, 30, y);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(detail.value, 150, y);
+        y += 15;
+      });
+
+      addPageNumber();
+
+      // Save the PDF
+      pdf.save(`HealthyCoffee_Analysis_Report_${Date.now()}.pdf`);
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      setError('Failed to generate PDF report. Please try again.');
+    }
+  };
+
+  // Render the component
   return (
+
     <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
       {/* Header */}
       <motion.div
