@@ -1,7 +1,7 @@
 # HealthyCoffee - Coffee Leaf Disease and Deficiency Detection System
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-https://healthycoffee.vercel.app-green)](https://healthycoffee.vercel.app)
-[![Backend](https://img.shields.io/badge/Backend-Vercel-black)](https://healthycoffee.vercel.app)
+
 
 [![Frontend](https://img.shields.io/badge/Frontend-Vercel-black)](https://healthycoffee.vercel.app)
 
@@ -142,7 +142,7 @@ This project combines:
 
 The application is already deployed at:
 - **Frontend**: [https://healthycoffee.vercel.app](https://healthycoffee.vercel.app)
-- **Backend**: [https://healthycoffee.vercel.app](https://healthycoffee.vercel.app)
+
 
 
 ### Quick Start with Docker
@@ -425,7 +425,7 @@ The backend is optimized for Render's free tier with keep-alive:
 
 3. **Environment Variables:**
    ```env
-   VITE_BACKEND_URL=https://healthycoffee.vercel.app
+   VITE_BACKEND_URL=""
 
    ```
 
