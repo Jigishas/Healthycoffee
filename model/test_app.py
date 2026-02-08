@@ -97,7 +97,7 @@ class TestFlaskApp:
 
     def test_upload_image_options_request(self):
         """Test upload-image endpoint OPTIONS request"""
-        response = requests.options(f"{self.base_url}/api/upload-image")
+        response = requests.options(f"{self.base_url}/api/v1/upload-image")
         assert response.status_code == 204
 
         # Check CORS headers
@@ -107,7 +107,8 @@ class TestFlaskApp:
 
     def test_upload_image_no_file(self):
         """Test upload-image endpoint with no file"""
-        response = requests.post(f"{self.base_url}/api/upload-image")
+        response = requests.post(f"{self.base_url}/api/v1/upload-image")
+        # Endpoint expects POST with file, but no file provided - should be 400
         assert response.status_code == 400
 
         data = response.json()
@@ -118,7 +119,7 @@ class TestFlaskApp:
         """Test upload-image endpoint with invalid file type"""
         # Create a text file
         files = {'image': ('test.txt', io.BytesIO(b'test content'), 'text/plain')}
-        response = requests.post(f"{self.base_url}/api/upload-image", files=files)
+        response = requests.post(f"{self.base_url}/api/v1/upload-image", files=files)
         assert response.status_code == 400
 
         data = response.json()
@@ -130,7 +131,7 @@ class TestFlaskApp:
         # Create a large file (>10MB)
         large_content = b'x' * (11 * 1024 * 1024)  # 11MB
         files = {'image': ('large.jpg', io.BytesIO(large_content), 'image/jpeg')}
-        response = requests.post(f"{self.base_url}/api/upload-image", files=files)
+        response = requests.post(f"{self.base_url}/api/v1/upload-image", files=files)
         assert response.status_code == 400
 
         data = response.json()
