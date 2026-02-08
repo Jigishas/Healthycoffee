@@ -6,11 +6,18 @@
 // Inject manifest placeholder for Workbox
 self.__WB_MANIFEST
 
-// Cache names
-const STATIC_CACHE = 'static-assets-cache-v1';
-const IMAGES_CACHE = 'images-cache-v1';
-const PAGES_CACHE = 'pages-cache-v1';
-const API_CACHE = 'api-cache-v1';
+// Version for cache invalidation - increment this on each deployment
+const CACHE_VERSION = 'v2';
+const BUILD_TIMESTAMP = new Date().toISOString();
+
+// Cache names with version for automatic invalidation
+const STATIC_CACHE = `static-assets-cache-${CACHE_VERSION}`;
+const IMAGES_CACHE = `images-cache-${CACHE_VERSION}`;
+const PAGES_CACHE = `pages-cache-${CACHE_VERSION}`;
+const API_CACHE = `api-cache-${CACHE_VERSION}`;
+
+console.log(`[SW] Service Worker starting - Version: ${CACHE_VERSION}, Build: ${BUILD_TIMESTAMP}`);
+
 
 // Assets to cache on install
 const STATIC_ASSETS = [
@@ -32,12 +39,16 @@ const ESSENTIAL_IMAGES = [
 
 // Install event - cache essential resources for offline functionality
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing.');
+  console.log(`[SW] Installing - Version: ${CACHE_VERSION}`);
+  
+  // Skip waiting to activate immediately
+  self.skipWaiting();
 
   event.waitUntil(
     Promise.all([
       // Cache essential images
-      caches.open('images-cache-v1').then((cache) => {
+      caches.open(IMAGES_CACHE).then((cache) => {
+
         const imageUrls = [
           '/src/assets/author.jpg',
           '/src/assets/coffee.webp',
@@ -76,7 +87,8 @@ self.addEventListener('install', (event) => {
       }),
 
       // Cache the main HTML page and essential static assets
-      caches.open('pages-cache').then((cache) => {
+      caches.open(PAGES_CACHE).then((cache) => {
+
         const essentialUrls = [
           '/',
           '/index.html',
@@ -96,28 +108,42 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches and take control
+// Activate event - clean up old caches and take control immediately
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker activating.');
+  console.log(`[SW] Activating - Version: ${CACHE_VERSION}`);
 
   event.waitUntil(
     Promise.all([
-      // Clean up old caches
+      // Clean up ALL old caches that don't match current version
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (!['images-cache-v1', 'pages-cache', 'static-assets-cache', 'images-cache', 'api-cache'].includes(cacheName)) {
-              console.log('Deleting old cache:', cacheName);
+            // Delete any cache that doesn't include current version
+            if (!cacheName.includes(CACHE_VERSION)) {
+              console.log('[SW] Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       }),
-      // Take control of all clients immediately
+      // Take control of all clients immediately without waiting
       self.clients.claim()
-    ])
+    ]).then(() => {
+      console.log('[SW] Activation complete - controlling all clients');
+      // Notify all clients that update is complete
+      return self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({
+            type: 'UPDATE_COMPLETE',
+            version: CACHE_VERSION,
+            timestamp: BUILD_TIMESTAMP
+          });
+        });
+      });
+    })
   );
 });
+
 
 // Fetch event - provide offline functionality
 self.addEventListener('fetch', (event) => {
@@ -222,18 +248,29 @@ self.addEventListener('fetch', (event) => {
 // Message event - handle custom messages from the app
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[SW] Skip waiting requested by client');
     self.skipWaiting();
   }
 
   if (event.data && event.data.type === 'CACHE_IMAGE') {
     // Cache a specific image
     event.waitUntil(
-      caches.open('images-cache').then((cache) => {
+      caches.open(IMAGES_CACHE).then((cache) => {
         return cache.add(event.data.url);
       })
     );
   }
+  
+  if (event.data && event.data.type === 'GET_VERSION') {
+    // Respond with current version info
+    event.source.postMessage({
+      type: 'VERSION_INFO',
+      version: CACHE_VERSION,
+      timestamp: BUILD_TIMESTAMP
+    });
+  }
 });
+
 
 // Background sync for offline functionality (if needed)
 self.addEventListener('sync', (event) => {

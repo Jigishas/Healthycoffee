@@ -1,66 +1,40 @@
-# Frontend Functionality Testing & Fixes
+# PDF Styling Implementation TODO
 
-## Status: In Progress
-Dev server running on http://localhost:5173/
+## Task: Style PDF contents in CameraCapture.jsx with all backend recommendations
 
-## Components to Test & Fix
+### Steps:
+- [x] 1. Analyze current PDF structure and backend data
+- [x] 2. Create comprehensive plan for PDF improvements
+- [x] 3. Get user confirmation for the plan
+- [ ] 4. Create TODO.md file (this file)
+- [ ] 5. Implement updated downloadPdf function with:
+  - [ ] Add analyzed image to pages 1, 3, and 4
+  - [ ] Include all disease recommendations from backend
+  - [ ] Include all deficiency recommendations from backend
+  - [ ] Improve styling with professional design
+  - [ ] Optimize to fit within 12 pages maximum
+- [ ] 6. Test and verify the implementation
 
-### 1. Navbar Component
-- [ ] Navigation links (#home, #gallery, #features, #askme) - smooth scrolling
-- [ ] Camera trigger button - scrolls to camera section and clicks button
-- [ ] Gallery trigger button - scrolls to camera section and clicks button
-- [ ] Mobile menu toggle and links
-- [ ] Search functionality
+### Implementation Details:
 
-### 2. Body Component
-- [ ] "Learn Farming" button - currently no functionality
-- [ ] "Get Expert Help" WhatsApp link - opens WhatsApp
-- [ ] Carousel dots/buttons - change active tip
-- [ ] Scroll indicator - scrolls to expert section
-- [ ] Floating call button - opens phone dialer
+**Page Structure (12 pages max):**
+1. Cover Page + Executive Summary (with image)
+2. Analysis Overview
+3. Detailed Disease Analysis (with image)
+4. Nutrient Deficiency Analysis (with image)
+5. Risk Assessment
+6. Integrated Management
+7. Severity-Specific & Emergency Recommendations
+8. Resistant Varieties & Monitoring Schedule
+9. Economic Impact Analysis
+10. Coffee-Specific Recommendations
+11. Deficiency Management
+12. Methodology, Contact & Disclaimer
 
-### 3. CameraCapture Component
-- [ ] Camera start/stop functionality
-- [ ] Photo capture and preview
-- [ ] File upload from gallery
-- [ ] Analyze button - sends to backend
-- [ ] Backend health check
-- [ ] PDF download functionality
-- [ ] Error handling
-
-### 4. Footer Component
-- [ ] Social media links (Facebook, Twitter, Instagram)
-- [ ] Contact links (Phone, Email, WhatsApp)
-- [ ] Newsletter subscription form
-- [ ] Backend status display
-
-### 5. ContactUs Component
-- [ ] WhatsApp link
-- [ ] Email link
-- [ ] Phone link
-- [ ] Location link (placeholder)
-
-### 6. Whatsapp Component
-- [ ] Message saving functionality
-- [ ] WhatsApp redirect with message
-- [ ] Quick suggestion buttons
-- [ ] Character counter
-
-### 7. ImageSlider Component
-- [ ] Navigation buttons (prev/next)
-- [ ] Dot navigation
-- [ ] Auto-play functionality
-- [ ] Pause on interaction
-
-## Issues Found & Fixed
-- [x] Dev server started successfully
-- [ ] Add missing functionality to "Learn Farming" button
-- [ ] Fix any broken links or buttons
-- [ ] Ensure all scroll behaviors work
-- [ ] Test backend integration
-
-## Testing Notes
-- Use browser dev tools to test functionality
-- Check console for errors
-- Verify mobile responsiveness
-- Test all user interactions
+**Backend Data to Include:**
+- Disease prediction details (class, confidence, explanation, recommendation)
+- Deficiency prediction details (class, confidence, explanation, recommendation)
+- Disease recommendations (overview, symptoms, integrated_management, severity_specific_recommendations, emergency_measures, resistant_varieties, monitoring_schedule, economic_considerations, coffee_specific_recommendations)
+- Deficiency recommendations (basic, symptoms, management)
+- Products and varieties lists
+- Processing time and model version

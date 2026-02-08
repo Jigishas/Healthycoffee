@@ -9,8 +9,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+
       manifest: {
         name: 'Healthy Coffee - Leaf Disease Detection',
         short_name: 'Healthy Coffee',
@@ -42,7 +43,10 @@ export default defineConfig({
       },
       strategies: 'generateSW',
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'image',
