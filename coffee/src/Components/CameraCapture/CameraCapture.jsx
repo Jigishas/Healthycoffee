@@ -919,8 +919,8 @@ For optimal results, combine this AI analysis with field observations and profes
       const contactDetails = [
         { label: 'Technical Support:', value: 'support@healthycoffee.ai' },
         { label: 'Customer Service:', value: 'contact@healthycoffee.ai' },
-        { label: 'Emergency Hotline:', value: '+1-800-HEALTHY-COFFEE' },
-        { label: 'Website:', value: 'www.healthycoffee.ai' },
+        { label: 'Emergency Hotline:', value: '+254743121169' },
+        { label: 'Website:', value: 'https://healthycoffee.vercel.app' },
         { label: 'Report Generated:', value: new Date().toLocaleDateString() },
         { label: 'Report ID:', value: `HC-${Date.now().toString().slice(-8)}` }
       ];
