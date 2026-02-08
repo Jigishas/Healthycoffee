@@ -79,6 +79,87 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     };
   }, [checkBackendStatus, stream]);
 
+  // Connect video stream to video element when camera mode is active
+  useEffect(() => {
+    let isActive = true;
+    let checkInterval = null;
+
+    const connectVideo = async () => {
+      if (!isActive || mode !== 'camera' || !stream) {
+        return;
+      }
+
+      // Wait for video element to be available in DOM
+      if (!videoRef.current) {
+        console.log('Video element not yet in DOM, waiting...');
+        return;
+      }
+
+      try {
+        // Check if already connected to correct stream
+        if (videoRef.current.srcObject === stream) {
+          // Just ensure it's playing
+          if (videoRef.current.paused) {
+            await videoRef.current.play();
+            console.log('Video resumed playing');
+          }
+          return;
+        }
+
+        // Set the stream
+        console.log('Setting video srcObject...');
+        videoRef.current.srcObject = stream;
+        
+        // Wait for metadata to load
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error('Video load timeout')), 5000);
+          
+          const handleLoaded = () => {
+            clearTimeout(timeout);
+            videoRef.current.removeEventListener('loadedmetadata', handleLoaded);
+            resolve();
+          };
+          
+          videoRef.current.addEventListener('loadedmetadata', handleLoaded);
+        });
+
+        // Now play
+        await videoRef.current.play();
+        console.log('Video playback started successfully');
+
+      } catch (err) {
+        console.error('Video connection error:', err);
+        if (isActive) {
+          setError('Camera failed to start. Please check permissions and try again.');
+        }
+      }
+    };
+
+    // Delay to allow AnimatePresence to render the video element
+    const initialTimeout = setTimeout(() => {
+      connectVideo();
+      
+      // Set up interval to keep trying until successful
+      checkInterval = setInterval(() => {
+        if (videoRef.current && videoRef.current.srcObject !== stream) {
+          connectVideo();
+        } else if (videoRef.current && videoRef.current.paused) {
+          videoRef.current.play().catch(console.error);
+        }
+      }, 500);
+    }, 300);
+
+    return () => {
+      isActive = false;
+      clearTimeout(initialTimeout);
+      if (checkInterval) clearInterval(checkInterval);
+    };
+  }, [mode, stream]);
+
+
+
+
+
   const startCamera = async (newFacingMode) => {
     setError(null);
     const fm = newFacingMode || facingMode;
@@ -92,17 +173,6 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         }
       });
       setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        try {
-          await videoRef.current.play();
-        } catch (err) {
-          console.error('Video play failed', err);
-          setError('Failed to start video playback. Please check camera permissions.');
-          setMode('idle');
-          return;
-        }
-      }
       setMode('camera');
     } catch (err) {
       console.error('Camera start failed', err);
@@ -110,6 +180,8 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       setMode('idle');
     }
   };
+
+
 
   const stopCamera = () => {
     if (stream) {
@@ -1081,16 +1153,22 @@ For optimal results, combine this AI analysis with field observations and profes
               >
                 <Box className="bg-black rounded-3xl overflow-hidden shadow-2xl">
                   {/* Camera Feed */}
-                  <div className="relative aspect-video">
+                  <div className="relative aspect-video bg-black">
                     <video
                       ref={videoRef}
                       autoPlay
                       playsInline
                       muted
                       className="w-full h-full object-cover"
+                      style={{ 
+                        minHeight: '300px',
+                        backgroundColor: 'black',
+                        display: 'block'
+                      }}
                     />
                     
                     {/* Camera Overlay */}
+
                     <div className="absolute inset-0">
                       {/* Capture Frame */}
                       <div className="absolute inset-0 flex items-center justify-center">
