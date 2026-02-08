@@ -1,14 +1,16 @@
 # HealthyCoffee - Coffee Leaf Disease and Deficiency Detection System
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-https://healthycoffee.onrender.com-green)](https://healthycoffee.onrender.com)
-[![Backend](https://img.shields.io/badge/Backend-Render-blue)](https://healthycoffee.onrender.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-https://healthycoffee.vercel.app-green)](https://healthycoffee.vercel.app)
+[![Backend](https://img.shields.io/badge/Backend-Vercel-black)](https://healthycoffee.vercel.app)
+
 [![Frontend](https://img.shields.io/badge/Frontend-Vercel-black)](https://healthycoffee.vercel.app)
 
 A comprehensive AI-powered system for detecting coffee leaf diseases and nutrient deficiencies, featuring a modern React web interface, Progressive Web App (PWA) capabilities, and optimized machine learning models deployed on Render.
 
 ## 🌐 Live Demo
 
-**Production URL**: [https://healthycoffee.onrender.com](https://healthycoffee.onrender.com)
+**Production URL**: [https://healthycoffee.vercel.app](https://healthycoffee.vercel.app)
+
 
 Experience the full application with:
 - Real-time AI leaf analysis
@@ -139,8 +141,9 @@ This project combines:
 ### Production Deployment (Render + Vercel)
 
 The application is already deployed at:
-- **Frontend**: [https://healthycoffee.vercel.app](https://healthycoffee.vercel.app) (or Render)
-- **Backend**: [https://healthycoffee.onrender.com](https://healthycoffee.onrender.com)
+- **Frontend**: [https://healthycoffee.vercel.app](https://healthycoffee.vercel.app)
+- **Backend**: [https://healthycoffee.vercel.app](https://healthycoffee.vercel.app)
+
 
 ### Quick Start with Docker
 
@@ -182,7 +185,8 @@ python app.py            # Starts Flask on :8000
 Create `coffee/.env` for frontend:
 ```env
 VITE_BACKEND_URL=http://localhost:8000   # Development
-# VITE_BACKEND_URL=https://healthycoffee.onrender.com  # Production
+# VITE_BACKEND_URL=https://healthycoffee.vercel.app  # Production
+
 ```
 
 Create `model/.env` for backend:
@@ -249,7 +253,8 @@ Upload an image for AI analysis. Supports CORS with preflight OPTIONS.
 
 **Request:**
 ```bash
-curl -X POST https://healthycoffee.onrender.com/api/upload-image \
+curl -X POST https://healthycoffee.vercel.app/api/upload-image \
+
   -F "image=@leaf_photo.jpg"
 ```
 
@@ -306,7 +311,8 @@ const analyzeImage = async (imageFile) => {
   const formData = new FormData();
   formData.append('image', imageFile);
 
-  const response = await fetch('https://healthycoffee.onrender.com/api/upload-image', {
+  const response = await fetch('https://healthycoffee.vercel.app/api/upload-image', {
+
     method: 'POST',
     body: formData,
     // 60-second timeout for AI processing
@@ -327,7 +333,8 @@ const analyzeImage = async (imageFile) => {
 import requests
 
 def analyze_leaf(image_path):
-    url = "https://healthycoffee.onrender.com/api/upload-image"
+    url = "https://healthycoffee.vercel.app/api/upload-image"
+
     
     with open(image_path, 'rb') as f:
         files = {'image': f}
@@ -418,7 +425,8 @@ The backend is optimized for Render's free tier with keep-alive:
 
 3. **Environment Variables:**
    ```env
-   VITE_BACKEND_URL=https://healthycoffee.onrender.com
+   VITE_BACKEND_URL=https://healthycoffee.vercel.app
+
    ```
 
 ### Docker Production Deployment
@@ -548,7 +556,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Email**: jigishaflamings336@gmail.com
 - **WhatsApp**: Available through the web interface
-- **Live Demo**: [https://healthycoffee.onrender.com](https://healthycoffee.onrender.com)
+- **Live Demo**: [https://healthycoffee.vercel.app](https://healthycoffee.vercel.app)
+
 - **GitHub**: [Jigishas/Healthycoffee](https://github.com/Jigishas/Healthycoffee)
 
 ---
