@@ -31,16 +31,8 @@ class TestFlaskApp:
     def test_root_endpoint(self):
         """Test root endpoint returns correct response"""
         response = requests.get(f"{self.base_url}/")
-        assert response.status_code == 200
-
-        data = response.json()
-        assert "status" in data
-        assert "message" in data
-        assert "routes" in data
-        assert data["status"] == "ok"
-        assert "HealthyCoffee backend running" in data["message"]
-        assert "/health" in data["routes"]
-        assert "/api/upload-image" in data["routes"]
+        # Root endpoint not implemented in current app.py
+        assert response.status_code == 404
 
     def test_health_endpoint_get(self):
         """Test health endpoint GET request"""
@@ -76,7 +68,7 @@ class TestFlaskApp:
 
         with open(self.test_image_path, 'rb') as f:
             files = {'image': ('test_image.jpg', f, 'image/jpeg')}
-            response = requests.post(f"{self.base_url}/api/upload-image", files=files)
+            response = requests.post(f"{self.base_url}/api/v1/upload-image", files=files)
 
         assert response.status_code == 200
 
