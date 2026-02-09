@@ -157,9 +157,6 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
   }, [mode, stream]);
 
 
-
-
-
   const startCamera = async (newFacingMode) => {
     setError(null);
     const fm = newFacingMode || facingMode;
@@ -180,8 +177,6 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       setMode('idle');
     }
   };
-
-
 
   const stopCamera = () => {
     if (stream) {
@@ -338,10 +333,65 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       const addPageNumber = () => {
         pdf.setFontSize(8);
         pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(100, 100, 100);
         pdf.text(`Page ${pageNum}`, pageWidth - 50, pageHeight - 20);
         pageNum++;
       };
 
+      // Helper function to add image to PDF
+      const addImageToPDF = (x, yPos, width, height) => {
+        if (preview) {
+          try {
+            pdf.addImage(preview, 'JPEG', x, yPos, width, height);
+            return true;
+          } catch (e) {
+            console.error('Error adding image to PDF:', e);
+            return false;
+          }
+        }
+        return false;
+      };
+
+      // Helper function to check page space and add new page if needed
+      const checkPageSpace = (requiredSpace) => {
+        if (y + requiredSpace > pageHeight - 60) {
+          pdf.addPage();
+          y = 30;
+          return true;
+        }
+        return false;
+      };
+
+      // Helper function to add a section box
+      const addSectionBox = (title, content, color = [240, 253, 244]) => {
+        checkPageSpace(100);
+        pdf.setFillColor(color[0], color[1], color[2]);
+        pdf.rect(30, y - 5, pageWidth - 60, 25, 'F');
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(title, 40, y + 10);
+        y += 25;
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        const contentSplit = pdf.splitTextToSize(content, pageWidth - 80);
+        pdf.text(contentSplit, 40, y);
+        y += contentSplit.length * 10 + 15;
+      };
+
+      // Helper function to add bullet list
+      const addBulletList = (items, maxItems = 5) => {
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        items.slice(0, maxItems).forEach((item) => {
+          checkPageSpace(15);
+          const itemSplit = pdf.splitTextToSize(`• ${item}`, pageWidth - 80);
+          pdf.text(itemSplit, 40, y);
+          y += itemSplit.length * 10;
+        });
+        y += 5;
+      };
+
+      // PAGE 1: Cover Page with Executive Summary and Image
       // Professional Header with Branding
       pdf.setFillColor(34, 197, 94); // Emerald green
       pdf.rect(0, 0, pageWidth, 80, 'F');
@@ -362,43 +412,21 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       pdf.setFont('helvetica', 'bold');
       pdf.text('Comprehensive Crop Health Analysis Report', 30, 110);
 
-      // Table of Contents
-      y = 140;
-      pdf.setFontSize(14);
+      // Add analyzed image on page 1
+      y = 130;
+      pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Table of Contents', 30, y);
-      y += 20;
+      pdf.text('Analyzed Sample Image:', 30, y);
+      y += 15;
+      const imgWidth = 200;
+      const imgHeight = 150;
+      addImageToPDF(30, y, imgWidth, imgHeight);
+      y += imgHeight + 20;
 
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      const tocItems = [
-        '1. Executive Summary ............................. 2',
-        '2. Analysis Overview ............................. 3',
-        '3. Detailed Disease Analysis ..................... 4',
-        '4. Nutrient Deficiency Analysis .................. 5',
-        '5. Risk Assessment ............................... 6',
-        '6. Management Recommendations .................... 7',
-        '7. Implementation Timeline ....................... 8',
-        '8. Economic Impact Analysis ...................... 9',
-        '9. Quality & Market Considerations ............... 10',
-        '10. Methodology & Quality Assurance ............. 11',
-        '11. Contact Information .......................... 12'
-      ];
-
-      tocItems.forEach(item => {
-        pdf.text(item, 30, y);
-        y += 12;
-      });
-
-      addPageNumber();
-
-      // New Page - Executive Summary
-      pdf.addPage();
-      y = 30;
-
+      // Executive Summary
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('1. Executive Summary', 30, y);
+      pdf.text('Executive Summary', 30, y);
       y += 25;
 
       pdf.setFontSize(11);
@@ -421,35 +449,56 @@ The following report provides detailed analysis, risk assessment, and actionable
       pdf.text(splitSummary, 30, y);
       y += splitSummary.length * 13 + 20;
 
-      // Analysis Overview
+      // Table of Contents
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Analysis Overview', 30, y);
+      pdf.text('Table of Contents', 30, y);
       y += 20;
 
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
-      const overviewText = `This analysis utilized advanced deep learning techniques to examine the submitted coffee leaf sample. The AI system processed the image through multiple neural network layers to identify visual patterns associated with various disease states and nutrient deficiencies. The analysis included automated feature extraction, multi-class classification, and confidence scoring to provide reliable diagnostic results.`;
-      const overviewSplit = pdf.splitTextToSize(overviewText, pageWidth - 60);
-      pdf.text(overviewSplit, 30, y);
+      const tocItems = [
+        '1. Executive Summary ............................. 1',
+        '2. Detailed Disease Analysis ..................... 2',
+        '3. Nutrient Deficiency Analysis .................. 3',
+        '4. Risk Assessment .............................. 4',
+        '5. Management Recommendations ................... 5',
+        '6. Implementation Timeline ....................... 6',
+        '7. Economic Impact Analysis ..................... 7',
+        '8. Quality & Market Considerations ............... 8',
+        '9. Methodology, QA & Contact Information ......... 9'
+      ];
+
+      tocItems.forEach(item => {
+        pdf.text(item, 30, y);
+        y += 12;
+      });
 
       addPageNumber();
 
-      // New Page - Detailed Disease Analysis
+      // PAGE 2: Detailed Disease Analysis
       pdf.addPage();
       y = 30;
 
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('2. Detailed Disease Analysis', 30, y);
+      pdf.text('1. Detailed Disease Analysis', 30, y);
       y += 25;
+
+      // Add analyzed image on page 2 (Disease Analysis page)
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Analyzed Sample:', 30, y);
+      y += 15;
+      addImageToPDF(30, y, 150, 112);
+      y += 125;
 
       if (result.disease_prediction) {
         // Disease Status Box
         pdf.setFillColor(240, 253, 244);
-        pdf.rect(30, y - 5, pageWidth - 60, 100, 'F');
-        pdf.setFillColor(34, 197, 94);
-        pdf.rect(30, y - 5, pageWidth - 60, 100, 'S');
+        pdf.rect(30, y - 5, pageWidth - 60, 80, 'F');
+        pdf.setDrawColor(34, 197, 94);
+        pdf.rect(30, y - 5, pageWidth - 60, 80, 'S');
 
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
@@ -462,12 +511,14 @@ The following report provides detailed analysis, risk assessment, and actionable
         y += 15;
         pdf.text(`Confidence Level: ${diseaseConfidence}%`, 40, y);
         y += 15;
-        pdf.text(`Classification Index: ${result.disease_prediction.class_index || 'N/A'}`, 40, y);
+        pdf.text(`Classification Index: ${result.disease_prediction.class_index !== undefined ? result.disease_prediction.class_index : 'N/A'}`, 40, y);
         y += 15;
-        pdf.text(`Processing Time: ${result.disease_prediction.inference_time || 'N/A'} seconds`, 40, y);
+        pdf.text(`Inference Time: ${result.disease_prediction.inference_time || 'N/A'} seconds`, 40, y);
         y += 25;
 
+        // Disease Explanation
         if (result.disease_prediction.explanation && result.disease_prediction.explanation !== "No explanation available for this condition.") {
+          checkPageSpace(60);
           pdf.setFontSize(12);
           pdf.setFont('helvetica', 'bold');
           pdf.text('Pathological Description:', 30, y);
@@ -479,57 +530,108 @@ The following report provides detailed analysis, risk assessment, and actionable
           y += explanationSplit.length * 10 + 15;
         }
 
-        // Disease Characteristics Table
-        if (y > pageHeight - 150) {
-          pdf.addPage();
-          y = 30;
+        // Disease Recommendation
+        if (result.disease_prediction.recommendation) {
+          checkPageSpace(60);
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Primary Recommendation:', 30, y);
+          y += 15;
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          const recSplit = pdf.splitTextToSize(result.disease_prediction.recommendation, pageWidth - 60);
+          pdf.text(recSplit, 30, y);
+          y += recSplit.length * 10 + 15;
         }
 
-        pdf.setFontSize(12);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Disease Characteristics:', 30, y);
-        y += 15;
+        // Disease Recommendations from backend
+        if (result.disease_recommendations) {
+          checkPageSpace(100);
+          pdf.setFontSize(14);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Comprehensive Disease Management', 30, y);
+          y += 20;
 
-        // Create table-like structure
-        const tableData = [
-          ['Characteristic', 'Status'],
-          ['Infectivity', diseaseStatus === 'Healthy' ? 'None' : 'High'],
-          ['Severity Level', diseaseConfidence > 80 ? 'Critical' : diseaseConfidence > 60 ? 'Moderate' : 'Low'],
-          ['Spread Potential', diseaseStatus === 'Healthy' ? 'None' : 'High'],
-          ['Treatment Urgency', diseaseStatus === 'Healthy' ? 'None' : 'Immediate']
-        ];
-
-        tableData.forEach((row, index) => {
-          if (index === 0) {
-            pdf.setFillColor(240, 240, 240);
-            pdf.rect(30, y - 2, pageWidth - 60, 15, 'F');
+          if (result.disease_recommendations.overview) {
+            pdf.setFontSize(10);
             pdf.setFont('helvetica', 'bold');
-          } else {
+            pdf.text('Overview:', 30, y);
+            y += 12;
             pdf.setFont('helvetica', 'normal');
+            const overviewSplit = pdf.splitTextToSize(result.disease_recommendations.overview, pageWidth - 60);
+            pdf.text(overviewSplit, 30, y);
+            y += overviewSplit.length * 10 + 10;
           }
-          pdf.text(row[0], 40, y + 8);
-          pdf.text(row[1], 200, y + 8);
-          y += 15;
-        });
+
+          // Symptoms
+          if (result.disease_recommendations.symptoms && result.disease_recommendations.symptoms.length > 0) {
+            checkPageSpace(80);
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Symptoms:', 30, y);
+            y += 12;
+            addBulletList(result.disease_recommendations.symptoms, 5);
+          }
+
+          // Integrated Management
+          if (result.disease_recommendations.integrated_management) {
+            const im = result.disease_recommendations.integrated_management;
+            
+            if (im.cultural_practices && im.cultural_practices.length > 0) {
+              checkPageSpace(80);
+              pdf.setFontSize(10);
+              pdf.setFont('helvetica', 'bold');
+              pdf.text('Cultural Practices:', 30, y);
+              y += 12;
+              addBulletList(im.cultural_practices, 3);
+            }
+
+            if (im.chemical_control && im.chemical_control.length > 0) {
+              checkPageSpace(80);
+              pdf.setFontSize(10);
+              pdf.setFont('helvetica', 'bold');
+              pdf.text('Chemical Control:', 30, y);
+              y += 12;
+              addBulletList(im.chemical_control, 3);
+            }
+
+            if (im.biological_control && im.biological_control.length > 0) {
+              checkPageSpace(80);
+              pdf.setFontSize(10);
+              pdf.setFont('helvetica', 'bold');
+              pdf.text('Biological Control:', 30, y);
+              y += 12;
+              addBulletList(im.biological_control, 3);
+            }
+          }
+        }
       }
 
       addPageNumber();
 
-      // New Page - Nutrient Deficiency Analysis
+      // PAGE 3: Nutrient Deficiency Analysis
       pdf.addPage();
       y = 30;
 
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('3. Nutrient Deficiency Analysis', 30, y);
+      pdf.text('2. Nutrient Deficiency Analysis', 30, y);
       y += 25;
+
+      // Add analyzed image on page 3 (Deficiency Analysis page)
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Analyzed Sample:', 30, y);
+      y += 15;
+      addImageToPDF(30, y, 150, 112);
+      y += 125;
 
       if (result.deficiency_prediction) {
         // Nutrient Status Box
         pdf.setFillColor(240, 248, 255);
-        pdf.rect(30, y - 5, pageWidth - 60, 100, 'F');
-        pdf.setFillColor(59, 130, 246);
-        pdf.rect(30, y - 5, pageWidth - 60, 100, 'S');
+        pdf.rect(30, y - 5, pageWidth - 60, 80, 'F');
+        pdf.setDrawColor(59, 130, 246);
+        pdf.rect(30, y - 5, pageWidth - 60, 80, 'S');
 
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
@@ -542,12 +644,14 @@ The following report provides detailed analysis, risk assessment, and actionable
         y += 15;
         pdf.text(`Confidence Level: ${deficiencyConfidence}%`, 40, y);
         y += 15;
-        pdf.text(`Classification Index: ${result.deficiency_prediction.class_index || 'N/A'}`, 40, y);
+        pdf.text(`Classification Index: ${result.deficiency_prediction.class_index !== undefined ? result.deficiency_prediction.class_index : 'N/A'}`, 40, y);
         y += 15;
-        pdf.text(`Processing Time: ${result.deficiency_prediction.inference_time || 'N/A'} seconds`, 40, y);
+        pdf.text(`Inference Time: ${result.deficiency_prediction.inference_time || 'N/A'} seconds`, 40, y);
         y += 25;
 
+        // Deficiency Explanation
         if (result.deficiency_prediction.explanation && result.deficiency_prediction.explanation !== "No explanation available for this condition.") {
+          checkPageSpace(60);
           pdf.setFontSize(12);
           pdf.setFont('helvetica', 'bold');
           pdf.text('Nutritional Assessment:', 30, y);
@@ -558,17 +662,69 @@ The following report provides detailed analysis, risk assessment, and actionable
           pdf.text(explanationSplit, 30, y);
           y += explanationSplit.length * 10 + 15;
         }
+
+        // Deficiency Recommendation
+        if (result.deficiency_prediction.recommendation) {
+          checkPageSpace(60);
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Primary Recommendation:', 30, y);
+          y += 15;
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          const recSplit = pdf.splitTextToSize(result.deficiency_prediction.recommendation, pageWidth - 60);
+          pdf.text(recSplit, 30, y);
+          y += recSplit.length * 10 + 15;
+        }
+
+        // Deficiency Recommendations from backend
+        if (result.deficiency_recommendations) {
+          checkPageSpace(100);
+          pdf.setFontSize(14);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Comprehensive Nutrient Management', 30, y);
+          y += 20;
+
+          // Basic Management
+          if (result.deficiency_recommendations.basic && result.deficiency_recommendations.basic.length > 0) {
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Basic Management:', 30, y);
+            y += 12;
+            addBulletList(result.deficiency_recommendations.basic, 5);
+          }
+
+          // Symptoms
+          if (result.deficiency_recommendations.symptoms && result.deficiency_recommendations.symptoms.length > 0) {
+            checkPageSpace(80);
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Deficiency Symptoms:', 30, y);
+            y += 12;
+            addBulletList(result.deficiency_recommendations.symptoms, 5);
+          }
+
+          // Management Strategies
+          if (result.deficiency_recommendations.management && result.deficiency_recommendations.management.length > 0) {
+            checkPageSpace(80);
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Management Strategies:', 30, y);
+            y += 12;
+            addBulletList(result.deficiency_recommendations.management, 5);
+          }
+        }
       }
 
       addPageNumber();
 
-      // New Page - Risk Assessment
+      // PAGE 4: Risk Assessment
       pdf.addPage();
       y = 30;
 
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('4. Risk Assessment', 30, y);
+      pdf.text('3. Risk Assessment', 30, y);
       y += 25;
 
       pdf.setFontSize(11);
@@ -624,13 +780,13 @@ The following report provides detailed analysis, risk assessment, and actionable
 
       addPageNumber();
 
-      // New Page - Management Recommendations
+      // PAGE 5: Management Recommendations
       pdf.addPage();
       y = 30;
 
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('5. Management Recommendations', 30, y);
+      pdf.text('4. Management Recommendations', 30, y);
       y += 25;
 
       // Immediate Actions
@@ -690,13 +846,13 @@ The following report provides detailed analysis, risk assessment, and actionable
 
       addPageNumber();
 
-      // New Page - Implementation Timeline
+      // PAGE 6: Implementation Timeline
       pdf.addPage();
       y = 30;
 
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('6. Implementation Timeline', 30, y);
+      pdf.text('5. Implementation Timeline', 30, y);
       y += 25;
 
       const timelineItems = [
@@ -739,13 +895,13 @@ The following report provides detailed analysis, risk assessment, and actionable
 
       addPageNumber();
 
-      // New Page - Economic Impact Analysis
+      // PAGE 7: Economic Impact Analysis
       pdf.addPage();
       y = 30;
 
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('7. Economic Impact Analysis', 30, y);
+      pdf.text('6. Economic Impact Analysis', 30, y);
       y += 25;
 
       pdf.setFontSize(11);
@@ -789,13 +945,13 @@ The following report provides detailed analysis, risk assessment, and actionable
 
       addPageNumber();
 
-      // New Page - Quality & Market Considerations
+      // PAGE 8: Quality & Market Considerations
       pdf.addPage();
       y = 30;
 
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('8. Quality & Market Considerations', 30, y);
+      pdf.text('7. Quality & Market Considerations', 30, y);
       y += 25;
 
       pdf.setFontSize(11);
@@ -846,13 +1002,13 @@ The following report provides detailed analysis, risk assessment, and actionable
 
       addPageNumber();
 
-      // New Page - Methodology & Quality Assurance
+      // PAGE 9: Methodology, QA & Contact Information (Combined - 11 pages total)
       pdf.addPage();
       y = 30;
 
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('9. Methodology & Quality Assurance', 30, y);
+      pdf.text('8. Methodology & Quality Assurance', 30, y);
       y += 25;
 
       pdf.setFontSize(12);
@@ -896,16 +1052,12 @@ The system achieves over 85% accuracy on validation datasets and provides confid
 For optimal results, combine this AI analysis with field observations and professional agricultural consultation.`;
       const qaSplit = pdf.splitTextToSize(qaText, pageWidth - 60);
       pdf.text(qaSplit, 30, y);
+      y += qaSplit.length * 10 + 30;
 
-      addPageNumber();
-
-      // New Page - Contact Information (Complete this section)
-      pdf.addPage();
-      y = 30;
-
+      // Contact Information Section
       pdf.setFontSize(16);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('10. Contact Information & Support', 30, y);
+      pdf.text('9. Contact Information & Support', 30, y);
       y += 25;
 
       pdf.setFontSize(11);
@@ -924,16 +1076,16 @@ For optimal results, combine this AI analysis with field observations and profes
         { label: 'Report Generated:', value: new Date().toLocaleDateString() },
         { label: 'Report ID:', value: `HC-${Date.now().toString().slice(-8)}` },
         { label: 'AI Model Version:', value: result.model_version || 'Optimized v1.0' },
-        { label: 'Disclaimer:', value: 'This report is generated by an AI system and should be used as a guide. \
-           Always consult with a professional agronomist for critical decisions.' }
+        { label: 'Disclaimer:', value: 'This report is generated by an AI system and should be used as a guide. Always consult with a professional agronomist for critical decisions.' }
       ];
 
       contactDetails.forEach(detail => {
         pdf.setFont('helvetica', 'bold');
         pdf.text(detail.label, 30, y);
         pdf.setFont('helvetica', 'normal');
-        pdf.text(detail.value, 150, y);
-        y += 15;
+        const valueSplit = pdf.splitTextToSize(detail.value, pageWidth - 200);
+        pdf.text(valueSplit, 150, y);
+        y += valueSplit.length * 12;
       });
 
       addPageNumber();
@@ -946,7 +1098,10 @@ For optimal results, combine this AI analysis with field observations and profes
     }
   };
 
+
+
   // Render the component
+
   return (
 
     <Container maxWidth="lg" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
