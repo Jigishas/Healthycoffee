@@ -362,23 +362,8 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         return false;
       };
 
-      // Helper function to add a section box
-      const addSectionBox = (title, content, color = [240, 253, 244]) => {
-        checkPageSpace(100);
-        pdf.setFillColor(color[0], color[1], color[2]);
-        pdf.rect(30, y - 5, pageWidth - 60, 25, 'F');
-        pdf.setFontSize(11);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(title, 40, y + 10);
-        y += 25;
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'normal');
-        const contentSplit = pdf.splitTextToSize(content, pageWidth - 80);
-        pdf.text(contentSplit, 40, y);
-        y += contentSplit.length * 10 + 15;
-      };
-
       // Helper function to add bullet list
+
       const addBulletList = (items, maxItems = 5) => {
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'normal');
