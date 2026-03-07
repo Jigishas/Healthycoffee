@@ -256,17 +256,6 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     setUploadProgress(0);
 
     try {
-      // Simulate upload progress
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 200);
-
       // Convert base64 to blob
       const response = await fetch(imageToUse);
       const blob = await response.blob();
@@ -275,29 +264,53 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       const formData = new FormData();
       formData.append('image', blob, 'leaf-image.jpg');
 
-      // Upload to backend - use the correct /api/v1/upload-image endpoint
-      console.log('Uploading to:', `${uploadUrl}/api/v1/upload-image`);
-      const uploadResponse = await fetch(`${uploadUrl}/api/v1/upload-image`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
+      // Use XMLHttpRequest to get upload progress events
+      await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `${uploadUrl}/api/v1/upload-image`);
+        xhr.setRequestHeader('Accept', 'application/json');
+
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const percent = Math.round((e.loaded / e.total) * 100);
+            setUploadProgress(percent);
+          } else {
+            // Fallback animation for unknown length
+            setUploadProgress((prev) => Math.min(95, prev + 5));
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const data = JSON.parse(xhr.responseText || '{}');
+              setUploadProgress(100);
+              setResult(data);
+              setMode('result');
+              if (onResult) onResult(data);
+              resolve();
+            } catch (err) {
+              reject(new Error('Invalid JSON response from server'));
+            }
+          } else {
+            let msg = `HTTP ${xhr.status}: Upload failed`;
+            try {
+              const parsed = JSON.parse(xhr.responseText || '{}');
+              if (parsed.error) msg = parsed.error;
+            } catch (e) {}
+            reject(new Error(msg));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error('Network error during upload'));
+        xhr.ontimeout = () => reject(new Error('Upload timed out'));
+
+        // Optional: set a reasonable timeout (e.g., 120s)
+        xhr.timeout = 120000;
+
+        console.log('Uploading to:', `${uploadUrl}/api/v1/upload-image`);
+        xhr.send(formData);
       });
-
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-
-      if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json().catch(() => ({ error: 'Analysis failed' }));
-        throw new Error(errorData.error || `HTTP ${uploadResponse.status}: Analysis failed`);
-      }
-
-      const data = await uploadResponse.json();
-      console.log('Analysis results:', data);
-      setResult(data);
-      setMode('result');
-      if (onResult) onResult(data);
 
     } catch (err) {
       console.error('Analysis error:', err);
@@ -1241,10 +1254,12 @@ For optimal results, combine this AI analysis with field observations and profes
                     {/* Upload Option */}
                     <Grid item xs={12} md={6}>
                       <motion.button
+                        data-gallery-button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => fileInputRef.current?.click()}
                         className="w-full group"
+                        aria-label="Upload image from gallery"
                       >
                         <Box className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-8 text-center hover:border-blue-300 hover:shadow-lg transition-all duration-300">
                           <div className="relative inline-flex mb-4">
@@ -1270,6 +1285,7 @@ For optimal results, combine this AI analysis with field observations and profes
                     ref={fileInputRef}
                     onChange={handleFileSelect}
                     accept="image/*"
+                    aria-label="Select image file"
                     className="hidden"
                   />
 
@@ -1280,6 +1296,7 @@ For optimal results, combine this AI analysis with field observations and profes
                     onChange={handleFileSelect}
                     accept="image/*"
                     capture="environment"
+                    aria-label="Capture image using device camera"
                     className="hidden"
                   />
                 </Box>
@@ -1440,6 +1457,10 @@ For optimal results, combine this AI analysis with field observations and profes
                     <LinearProgress 
                       variant="determinate" 
                       value={uploadProgress}
+                      aria-label="Upload progress"
+                      aria-valuenow={uploadProgress}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
                       sx={{ 
                         height: 8,
                         borderRadius: 4,
@@ -1450,7 +1471,7 @@ For optimal results, combine this AI analysis with field observations and profes
                         }
                       }}
                     />
-                    <Typography variant="caption" className="text-grey-500 mt-2 block">
+                    <Typography variant="caption" className="text-grey-500 mt-2 block" aria-live="polite">
                       {uploadProgress}% complete
                     </Typography>
                   </Box>
