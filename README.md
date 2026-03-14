@@ -2,7 +2,7 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-https://healthycoffee.vercel.app-green)](https://healthycoffee.vercel.app)
 
-
+WEBSITE WORKING AND DEPLOYED
 [![Frontend](https://img.shields.io/badge/Frontend-Vercel-black)](https://healthycoffee.vercel.app)
 
 A comprehensive AI-powered system for detecting coffee leaf diseases and nutrient deficiencies, featuring a modern React web interface, Progressive Web App (PWA) capabilities, and optimized machine learning models deployed on Render.
