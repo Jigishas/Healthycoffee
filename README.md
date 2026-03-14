@@ -9,7 +9,7 @@ A comprehensive AI-powered system for detecting coffee leaf diseases and nutrien
 
 ## 🌐 Live Demo
 
-**Production URL**: [https://healthycoffee.vercel.app](https://healthycoffee.vercel.app)
+**Production URL**: [Healthy](https://healthycoffee.vercel.app)
 
 
 Experience the full application with:
