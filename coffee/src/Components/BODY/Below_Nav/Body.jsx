@@ -206,7 +206,7 @@ function Body() {
               <Button
                 variant="contained"
                 fullWidth
-                onClick={() => window.open('https://www.fao.org/3/i9060en/I9060EN.pdf', '_blank')}
+                onClick={() => window.open('https://faolex.fao.org/docs/pdf/ken63659.pdf', '_blank')}
                 sx={{
                   bgcolor: 'green.500',
                   color: 'emerald.700',
