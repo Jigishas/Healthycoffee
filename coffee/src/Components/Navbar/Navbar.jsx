@@ -144,8 +144,9 @@ function Navbar() {
               <motion.li whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                 <a 
                   href="#home" 
-                  className="nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap" 
+                  className={`nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap ${activeSection === 'home' ? 'active' : ''}`} 
                   onClick={handleNavClick}
+                  aria-current={activeSection === 'home' ? 'page' : undefined}
                 >
                   Home
                 </a>
@@ -153,8 +154,9 @@ function Navbar() {
               <motion.li whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                 <a 
                   href="#gallery" 
-                  className="nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap" 
+                  className={`nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap ${activeSection === 'gallery' ? 'active' : ''}`} 
                   onClick={handleNavClick}
+                  aria-current={activeSection === 'gallery' ? 'page' : undefined}
                 >
                   Gallery
                 </a>
@@ -162,8 +164,9 @@ function Navbar() {
               <motion.li whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                 <a 
                   href="#features" 
-                  className="nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap" 
+                  className={`nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap ${activeSection === 'features' ? 'active' : ''}`} 
                   onClick={handleNavClick}
+                  aria-current={activeSection === 'features' ? 'page' : undefined}
                 >
                   Features
                 </a>
@@ -180,8 +183,9 @@ function Navbar() {
               <motion.li whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                 <a 
                   href="#askme" 
-                  className="nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap" 
+                  className={`nav-link hover:text-amber-800 transition-colors duration-300 whitespace-nowrap ${activeSection === 'askme' ? 'active' : ''}`} 
                   onClick={handleNavClick}
+                  aria-current={activeSection === 'askme' ? 'page' : undefined}
                 >
                   Ask
                 </a>
@@ -262,8 +266,9 @@ function Navbar() {
                     <motion.li whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                       <a 
                         href="#home" 
-                        className="block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target" 
+                        className={`block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target ${activeSection === 'home' ? 'active' : ''}`} 
                         onClick={handleNavClick}
+                        aria-current={activeSection === 'home' ? 'page' : undefined}
                       >
                         Home
                       </a>
@@ -271,8 +276,9 @@ function Navbar() {
                     <motion.li whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                       <a 
                         href="#gallery" 
-                        className="block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target" 
+                        className={`block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target ${activeSection === 'gallery' ? 'active' : ''}`} 
                         onClick={handleNavClick}
+                        aria-current={activeSection === 'gallery' ? 'page' : undefined}
                       >
                         Gallery
                       </a>
@@ -280,8 +286,9 @@ function Navbar() {
                     <motion.li whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                       <a 
                         href="#features" 
-                        className="block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target" 
+                        className={`block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target ${activeSection === 'features' ? 'active' : ''}`} 
                         onClick={handleNavClick}
+                        aria-current={activeSection === 'features' ? 'page' : undefined}
                       >
                         Features
                       </a>
@@ -289,8 +296,9 @@ function Navbar() {
                     <motion.li whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                       <a 
                         href="#stats" 
-                        className="block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target" 
+                        className={`block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target ${activeSection === 'stats' ? 'active' : ''}`} 
                         onClick={handleNavClick}
+                        aria-current={activeSection === 'stats' ? 'page' : undefined}
                       >
                         Stats
                       </a>
@@ -298,8 +306,9 @@ function Navbar() {
                     <motion.li whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                       <a 
                         href="#askme" 
-                        className="block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target" 
+                        className={`block text-amber-700 hover:bg-amber-50 hover:text-amber-800 rounded-lg px-4 py-3 transition-all duration-300 text-sm touch-target ${activeSection === 'askme' ? 'active' : ''}`} 
                         onClick={handleNavClick}
+                        aria-current={activeSection === 'askme' ? 'page' : undefined}
                       >
                         Ask
                       </a>

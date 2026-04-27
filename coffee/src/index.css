@@ -218,6 +218,37 @@ html {
   outline: none;
 }
 
+/* Active link styling: subtle underline and stronger color */
+.nav-link.active {
+  color: rgb(120 53 15);
+  font-weight: 600;
+}
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  bottom: -6px;
+  height: 3px;
+  width: 36px;
+  background: linear-gradient(90deg, rgba(255,183,77,1), rgba(250,130,49,1));
+  border-radius: 999px;
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), opacity 220ms;
+  opacity: 0;
+}
+
+.nav-link:hover::after,
+.nav-link:focus::after,
+.nav-link.active::after {
+  transform: translateX(-50%) scaleX(1);
+  opacity: 1;
+}
+
 /* Small visual tweak for CTA placement in navbar */
 .cta-button {
   background: linear-gradient(90deg, rgba(34,197,94,1) 0%, rgba(59,130,246,1) 100%);
