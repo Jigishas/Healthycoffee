@@ -1,0 +1,3 @@
+model,true_label,predicted_label,confidence,src_path,dest_path,inference_time
+disease,healthy,phoma,0.921,C:\Users\Joseph\OneDrive\Desktop\New folder\model\test_dataset\diseases\healthy\test_image.jpg,C:\Users\Joseph\OneDrive\Desktop\New folder\model\misclassified\disease\healthy__pred_phoma__test_image.jpg,0.9835231304168701
+deficiency,healthy,uncertain,0.2487,C:\Users\Joseph\OneDrive\Desktop\New folder\model\test_dataset\deficiencies\healthy\test_image.jpg,C:\Users\Joseph\OneDrive\Desktop\New folder\model\misclassified\deficiency\healthy__pred_uncertain__test_image.jpg,0.5773735046386719
