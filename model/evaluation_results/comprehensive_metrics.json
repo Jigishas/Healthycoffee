@@ -5,14 +5,14 @@
     "recall": 0.0,
     "f1_score": 0.0,
     "avg_confidence": 0.921,
-    "avg_inference_time": 2.5324349403381348,
+    "avg_inference_time": 0.3670327663421631,
     "per_class": {
-      "Phoma": {
+      "healthy": {
         "precision": 0.0,
         "recall": 0.0,
         "f1_score": 0.0
       },
-      "healthy": {
+      "phoma": {
         "precision": 0.0,
         "recall": 0.0,
         "f1_score": 0.0
@@ -21,16 +21,16 @@
     "confusion_matrix": [
       [
         0,
-        0
+        1
       ],
       [
-        1,
+        0,
         0
       ]
     ],
     "labels": [
-      "Phoma",
-      "healthy"
+      "healthy",
+      "phoma"
     ]
   },
   "deficiency": {
@@ -39,14 +39,14 @@
     "recall": 0.0,
     "f1_score": 0.0,
     "avg_confidence": 0.2487,
-    "avg_inference_time": 1.1315197944641113,
+    "avg_inference_time": 1.0227303504943848,
     "per_class": {
-      "Uncertain": {
+      "healthy": {
         "precision": 0.0,
         "recall": 0.0,
         "f1_score": 0.0
       },
-      "healthy": {
+      "uncertain": {
         "precision": 0.0,
         "recall": 0.0,
         "f1_score": 0.0
@@ -55,16 +55,16 @@
     "confusion_matrix": [
       [
         0,
-        0
+        1
       ],
       [
-        1,
+        0,
         0
       ]
     ],
     "labels": [
-      "Uncertain",
-      "healthy"
+      "healthy",
+      "uncertain"
     ]
   }
 }

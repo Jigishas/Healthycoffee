@@ -106,12 +106,16 @@ class ModelMetricsTester:
                 confidence = result['confidence']
                 true_label = sample['true_label']
 
-                predictions.append(pred_label)
-                true_labels.append(true_label)
+                # Normalize labels for consistent comparison (case-insensitive, trimmed)
+                pred_label_norm = str(pred_label).strip().lower()
+                true_label_norm = str(true_label).strip().lower()
+
+                predictions.append(pred_label_norm)
+                true_labels.append(true_label_norm)
                 confidences.append(confidence)
                 inference_times.append(inference_time)
 
-                status = "✓" if pred_label == true_label else "✗"
+                status = "✓" if pred_label_norm == true_label_norm else "✗"
                 print(f"  [{i}/{len(test_data)}] {status} {true_label} → {pred_label} ({confidence:.2%})")
 
             except Exception as e:

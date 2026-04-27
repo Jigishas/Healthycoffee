@@ -1,0 +1,64 @@
+{
+  "models_scanned": [
+    "leaf_deficiencies",
+    "leaf_diseases"
+  ],
+  "test_scan": {
+    "diseases": {
+      "total_classes": 1,
+      "total_images": 1,
+      "per_class_counts": {
+        "healthy": 1
+      },
+      "example_files": {
+        "healthy": [
+          "C:\\Users\\Joseph\\OneDrive\\Desktop\\New folder\\model\\test_dataset\\diseases\\healthy\\test_image.jpg"
+        ]
+      }
+    },
+    "deficiencies": {
+      "total_classes": 1,
+      "total_images": 1,
+      "per_class_counts": {
+        "healthy": 1
+      },
+      "example_files": {
+        "healthy": [
+          "C:\\Users\\Joseph\\OneDrive\\Desktop\\New folder\\model\\test_dataset\\deficiencies\\healthy\\test_image.jpg"
+        ]
+      }
+    }
+  },
+  "comparison": {
+    "leaf_deficiencies": {
+      "compared_split": "deficiencies",
+      "mapping_file": "C:\\Users\\Joseph\\OneDrive\\Desktop\\New folder\\model\\models\\leaf_deficiencies\\class_mapping_deficiencies.json",
+      "mapping_class_count": 9,
+      "test_class_count": 1,
+      "missing_in_mapping": [],
+      "missing_in_test": [
+        "boron-b",
+        "calcium-ca",
+        "iron-fe",
+        "magnesium-mg",
+        "manganese-mn",
+        "nitrogen-n",
+        "phosphorus-p",
+        "potasium-k"
+      ]
+    },
+    "leaf_diseases": {
+      "compared_split": "diseases",
+      "mapping_file": "C:\\Users\\Joseph\\OneDrive\\Desktop\\New folder\\model\\models\\leaf_diseases\\class_mapping_diseases.json",
+      "mapping_class_count": 5,
+      "test_class_count": 1,
+      "missing_in_mapping": [],
+      "missing_in_test": [
+        "cerscospora",
+        "leaf rust",
+        "miner",
+        "phoma"
+      ]
+    }
+  }
+}
