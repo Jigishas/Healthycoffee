@@ -5,7 +5,7 @@ import { Search, Menu, X, Camera, Image } from 'lucide-react';
 import logo from '../../assets/coffee.webp';
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [, setIsSearchOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
   // Close mobile menu when pressing Escape

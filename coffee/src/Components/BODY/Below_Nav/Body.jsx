@@ -206,7 +206,7 @@ function Body() {
               <Button
                 variant="contained"
                 fullWidth
-                onClick={() => window.open('https://faolex.fao.org/docs/pdf/ken63659.pdf', '_blank')}
+                onClick={() => window.open('https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf', '_blank')}
                 sx={{
                   bgcolor: 'green.500',
                   color: 'emerald.700',
