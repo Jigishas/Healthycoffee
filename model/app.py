@@ -21,6 +21,7 @@ from PIL import Image
 import hashlib
 import secrets
 import gc
+import socket
 
 from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation
@@ -168,8 +169,8 @@ def upload_image():
 
         try:
             image = Image.open(BytesIO(img_bytes)).convert('RGB')
-        except Exception as e:
-            logger.error(f'Invalid image {image_hash}: {e}')
+        except Exception:
+            logger.error(f'Invalid image {image_hash}')
             return jsonify({'error': 'Invalid image file', 'api_version': 'v1.0'}), 400
 
         start = time.time()
@@ -186,7 +187,7 @@ def upload_image():
                 deficiency_result = deficiency_runner.predict_image(image)
             else:
                 deficiency_result = deficiency_runner.predict(image)
-        except Exception as e:
+        except Exception:
             metrics['errors'] += 1
             logger.exception(f'Model prediction failed for {image_hash}')
             disease_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
@@ -230,7 +231,7 @@ def upload_image():
         logger.info(f"Analysis completed in {total_time:.4f}s for {image_hash} - Disease: {disease_result.get('class')}, Deficiency: {deficiency_result.get('class')}")
         return jsonify(response)
 
-    except Exception as e:
+    except Exception:
         logger.exception('Unexpected error in upload_image')
         return jsonify({'error': 'Internal server error', 'api_version': 'v1.0'}), 500
 
@@ -254,8 +255,8 @@ def interactive_diagnose():
         # interactive_system is optional; fallback to classifiers
         try:
             # Try interactive system if available
-            if 'interactive_system' in globals() and interactive_system is not None:
-                diagnosis_result = interactive_system.diagnose(image)
+            if globals().get('interactive_system') is not None:
+                diagnosis_result = globals().get('interactive_system').diagnose(image)
             else:
                 raise RuntimeError('Interactive system not available')
         except Exception:
@@ -353,7 +354,39 @@ def performance():
 if __name__ == '__main__':
     # For development, use WSGI server instead of Flask's built-in server
     from gevent.pywsgi import WSGIServer
-    port = int(os.environ.get('PORT', 8000))
+    # Choose a free port starting at PORT env or 8002, try subsequent ports if in use
+    start_port = int(os.environ.get('PORT', '8002'))
+
+    def _preload():
+        try:
+            logger.info('Preloading models in background...')
+            get_runners()
+            logger.info('Model preload complete')
+        except Exception:
+            logger.exception('Model preload failed')
+
+    t = threading.Thread(target=_preload, daemon=True)
+    t.start()
+
+    def find_free_port(start, max_tries=10):
+        for p in range(start, start + max_tries + 1):
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    s.bind(('0.0.0.0', p))
+                    return p
+                except OSError:
+                    continue
+        return None
+
+    port = find_free_port(start_port, max_tries=10)
+    if port is None:
+        logger.error('No free port found in range %d-%d', start_port, start_port + 10)
+        raise SystemExit('No free port available')
+
     logger.info(f'Starting WSGI server on port {port}')
-    http_server = WSGIServer(('0.0.0.0', port), app)
-    http_server.serve_forever()
+    try:
+        http_server = WSGIServer(('0.0.0.0', port), app)
+        http_server.serve_forever()
+    except OSError as e:
+        logger.exception('Failed to start server')
+        raise
