@@ -21,9 +21,11 @@ from PIL import Image
 import hashlib
 import secrets
 import gc
+import socket
 
 from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation
+from serving_utils import ModelRunner
 from src.inference import TorchClassifier
 
 # Configure logging
@@ -97,38 +99,47 @@ def validate_image_file(file):
         return False, f'File too large. Maximum size is {MAX_FILE_SIZE/1024/1024}MB'
     return True, None
 
-# Model configs
-disease_classifier_config = {
-    'model_path': 'models/leaf_diseases/efficientnet_disease_balanced.pth',
-    'classes_path': 'models/leaf_diseases/class_mapping_diseases.json'
+# Model configs and runner initialization
+disease_paths = {
+    'scripted': 'models/leaf_diseases/efficientnet_disease_balanced_scripted.pt',
+    'quant': 'models/leaf_diseases/efficientnet_disease_balanced_quantized.pt',
+    'mapping': 'models/leaf_diseases/class_mapping_diseases.json'
 }
-deficiency_classifier_config = {
-    'model_path': 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-    'classes_path': 'models/leaf_deficiencies/class_mapping_deficiencies.json'
+deficiency_paths = {
+    'scripted': 'models/leaf_deficiencies/efficientnet_deficiency_balanced_scripted.pt',
+    'quant': 'models/leaf_deficiencies/efficientnet_deficiency_balanced_quantized.pt',
+    'mapping': 'models/leaf_deficiencies/class_mapping_deficiencies.json'
 }
 
-# Cached classifier instances
+# Create ModelRunner instances lazily but keep references for health/metrics
 _model_lock = threading.Lock()
-disease_classifier = None
-deficiency_classifier = None
+disease_runner = None
+deficiency_runner = None
 
-def get_classifiers():
-    """Thread-safe lazy initialization of classifiers."""
-    global disease_classifier, deficiency_classifier
-    if disease_classifier is not None and deficiency_classifier is not None:
-        return disease_classifier, deficiency_classifier
+metrics = {
+    'total_requests': 0,
+    'total_predictions': 0,
+    'errors': 0,
+}
+
+
+def get_runners():
+    global disease_runner, deficiency_runner
+    if disease_runner is not None and deficiency_runner is not None:
+        return disease_runner, deficiency_runner
     with _model_lock:
-        if disease_classifier is None:
-            disease_classifier = TorchClassifier(
-                disease_classifier_config['model_path'],
-                disease_classifier_config['classes_path']
-            )
-        if deficiency_classifier is None:
-            deficiency_classifier = TorchClassifier(
-                deficiency_classifier_config['model_path'],
-                deficiency_classifier_config['classes_path']
-            )
-    return disease_classifier, deficiency_classifier
+        if disease_runner is None:
+            try:
+                disease_runner = ModelRunner(disease_paths['scripted'], disease_paths['quant'], disease_paths['mapping'], device='cpu')
+            except Exception:
+                # fallback to TorchClassifier if necessary
+                disease_runner = TorchClassifier(disease_paths['scripted'], disease_paths['mapping'])
+        if deficiency_runner is None:
+            try:
+                deficiency_runner = ModelRunner(deficiency_paths['scripted'], deficiency_paths['quant'], deficiency_paths['mapping'], device='cpu')
+            except Exception:
+                deficiency_runner = TorchClassifier(deficiency_paths['scripted'], deficiency_paths['mapping'])
+    return disease_runner, deficiency_runner
 
 
 @app.route('/api/v1/upload-image', methods=['POST', 'OPTIONS'])
@@ -158,16 +169,26 @@ def upload_image():
 
         try:
             image = Image.open(BytesIO(img_bytes)).convert('RGB')
-        except Exception as e:
-            logger.error(f'Invalid image {image_hash}: {e}')
+        except Exception:
+            logger.error(f'Invalid image {image_hash}')
             return jsonify({'error': 'Invalid image file', 'api_version': 'v1.0'}), 400
 
         start = time.time()
         try:
-            disease_clf, deficiency_clf = get_classifiers()
-            disease_result = disease_clf.predict(image)
-            deficiency_result = deficiency_clf.predict(image)
-        except Exception as e:
+            metrics['total_requests'] += 1
+            disease_runner, deficiency_runner = get_runners()
+            # Use runners' predict_image (in-memory) when available, else fallback
+            if hasattr(disease_runner, 'predict_image'):
+                disease_result = disease_runner.predict_image(image)
+            else:
+                disease_result = disease_runner.predict(image)
+
+            if hasattr(deficiency_runner, 'predict_image'):
+                deficiency_result = deficiency_runner.predict_image(image)
+            else:
+                deficiency_result = deficiency_runner.predict(image)
+        except Exception:
+            metrics['errors'] += 1
             logger.exception(f'Model prediction failed for {image_hash}')
             disease_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
             deficiency_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
@@ -210,7 +231,7 @@ def upload_image():
         logger.info(f"Analysis completed in {total_time:.4f}s for {image_hash} - Disease: {disease_result.get('class')}, Deficiency: {deficiency_result.get('class')}")
         return jsonify(response)
 
-    except Exception as e:
+    except Exception:
         logger.exception('Unexpected error in upload_image')
         return jsonify({'error': 'Internal server error', 'api_version': 'v1.0'}), 500
 
@@ -234,21 +255,19 @@ def interactive_diagnose():
         # interactive_system is optional; fallback to classifiers
         try:
             # Try interactive system if available
-            if 'interactive_system' in globals() and interactive_system is not None:
-                diagnosis_result = interactive_system.diagnose(image)
+            if globals().get('interactive_system') is not None:
+                diagnosis_result = globals().get('interactive_system').diagnose(image)
             else:
                 raise RuntimeError('Interactive system not available')
         except Exception:
-            disease_clf, deficiency_clf = get_classifiers()
-
-            # Run predictions in parallel using threads for better performance
+            # Use ModelRunner predict_image in parallel
+            disease_runner, deficiency_runner = get_runners()
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-                disease_future = executor.submit(disease_clf.predict, image)
-                deficiency_future = executor.submit(deficiency_clf.predict, image)
-
-                disease_result = disease_future.result()
-                deficiency_result = deficiency_future.result()
+                d_future = executor.submit(getattr(disease_runner, 'predict_image', disease_runner.predict), image)
+                f_future = executor.submit(getattr(deficiency_runner, 'predict_image', deficiency_runner.predict), image)
+                disease_result = d_future.result()
+                deficiency_result = f_future.result()
 
             diagnosis_result = {
                 'disease_prediction': {**disease_result, 'similar_previous_cases': 0, 'certainty_level': 'Unknown'},
@@ -276,9 +295,9 @@ def health():
             data = request.get_json(silent=True)
             logger.info(f'Health ping: {data}')
 
-        # Check if models are loaded
-        disease_loaded = disease_classifier is not None
-        deficiency_loaded = deficiency_classifier is not None
+        # Check if runners/models are loaded
+        disease_loaded = disease_runner is not None
+        deficiency_loaded = deficiency_runner is not None
 
         response_data = {
             'status': 'healthy' if disease_loaded and deficiency_loaded else 'degraded',
@@ -288,8 +307,8 @@ def health():
                 'deficiency_model': deficiency_loaded
             },
             'model_stats': {
-                'disease': disease_classifier.get_stats() if disease_loaded and hasattr(disease_classifier, 'get_stats') else {},
-                'deficiency': deficiency_classifier.get_stats() if deficiency_loaded and hasattr(deficiency_classifier, 'get_stats') else {}
+                'disease': getattr(disease_runner, 'get_stats', lambda: {})() if disease_loaded and hasattr(disease_runner, 'get_stats') else {},
+                'deficiency': getattr(deficiency_runner, 'get_stats', lambda: {})() if deficiency_loaded and hasattr(deficiency_runner, 'get_stats') else {}
             }
         }
         return jsonify(response_data), 200
@@ -302,14 +321,14 @@ def health():
 @cache.cached(timeout=300)
 def model_info():
     try:
-        if disease_classifier is None or deficiency_classifier is None:
+        if disease_runner is None or deficiency_runner is None:
             return jsonify({'message': 'Models not loaded yet'}), 200
-        disease_stats = disease_classifier.get_stats() if hasattr(disease_classifier, 'get_stats') else {}
-        deficiency_stats = deficiency_classifier.get_stats() if hasattr(deficiency_classifier, 'get_stats') else {}
+        disease_stats = getattr(disease_runner, 'get_stats', lambda: {})()
+        deficiency_stats = getattr(deficiency_runner, 'get_stats', lambda: {})()
         return jsonify({
             'model_version': 'optimized_v1.0',
-            'disease_classes': len(disease_classifier.classes) if hasattr(disease_classifier, 'classes') else None,
-            'deficiency_classes': len(deficiency_classifier.classes) if hasattr(deficiency_classifier, 'classes') else None,
+            'disease_classes': len(disease_stats.get('classes', [])) if disease_stats else None,
+            'deficiency_classes': len(deficiency_stats.get('classes', [])) if deficiency_stats else None,
             'model_stats': {'disease': disease_stats, 'deficiency': deficiency_stats}
         })
     except Exception:
@@ -320,12 +339,13 @@ def model_info():
 @app.route('/api/performance', methods=['GET'])
 def performance():
     try:
-        if disease_classifier is None or deficiency_classifier is None:
-            return jsonify({'message': 'Models not loaded yet'}), 200
-        disease_stats = disease_classifier.get_stats() if hasattr(disease_classifier, 'get_stats') else {'total_predictions': 0}
-        deficiency_stats = deficiency_classifier.get_stats() if hasattr(deficiency_classifier, 'get_stats') else {'total_predictions': 0}
+        disease_stats = getattr(disease_runner, 'get_stats', lambda: {'total_predictions': 0})()
+        deficiency_stats = getattr(deficiency_runner, 'get_stats', lambda: {'total_predictions': 0})()
         total_preds = disease_stats.get('total_predictions', 0) + deficiency_stats.get('total_predictions', 0)
-        return jsonify({'performance_metrics': {'disease_model': disease_stats, 'deficiency_model': deficiency_stats, 'total_predictions': total_preds}, 'timestamp': time.time()})
+        # include simple service-level metrics
+        perf = {'disease_model': disease_stats, 'deficiency_model': deficiency_stats, 'total_predictions': total_preds}
+        perf.update({'service_total_requests': metrics['total_requests'], 'service_errors': metrics['errors']})
+        return jsonify({'performance_metrics': perf, 'timestamp': time.time()})
     except Exception:
         logger.exception('Performance error')
         return jsonify({'error': 'Internal server error'}), 500
@@ -334,7 +354,39 @@ def performance():
 if __name__ == '__main__':
     # For development, use WSGI server instead of Flask's built-in server
     from gevent.pywsgi import WSGIServer
-    port = int(os.environ.get('PORT', 8000))
+    # Choose a free port starting at PORT env or 8002, try subsequent ports if in use
+    start_port = int(os.environ.get('PORT', '8002'))
+
+    def _preload():
+        try:
+            logger.info('Preloading models in background...')
+            get_runners()
+            logger.info('Model preload complete')
+        except Exception:
+            logger.exception('Model preload failed')
+
+    t = threading.Thread(target=_preload, daemon=True)
+    t.start()
+
+    def find_free_port(start, max_tries=10):
+        for p in range(start, start + max_tries + 1):
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    s.bind(('0.0.0.0', p))
+                    return p
+                except OSError:
+                    continue
+        return None
+
+    port = find_free_port(start_port, max_tries=10)
+    if port is None:
+        logger.error('No free port found in range %d-%d', start_port, start_port + 10)
+        raise SystemExit('No free port available')
+
     logger.info(f'Starting WSGI server on port {port}')
-    http_server = WSGIServer(('0.0.0.0', port), app)
-    http_server.serve_forever()
+    try:
+        http_server = WSGIServer(('0.0.0.0', port), app)
+        http_server.serve_forever()
+    except OSError as e:
+        logger.exception('Failed to start server')
+        raise
