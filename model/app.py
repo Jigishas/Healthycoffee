@@ -27,6 +27,10 @@ from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation
 from serving_utils import ModelRunner
 from src.inference import TorchClassifier
+import torch
+
+# Limit PyTorch threads to reduce memory fragmentation on Render free tier
+torch.set_num_threads(1)
 
 # Configure logging
 logging.basicConfig(
@@ -75,6 +79,27 @@ CORS(app, resources={
         "max_age": 86400
     }
 })
+
+
+# Ensure CORS headers are present on all responses (safer and explicit)
+@app.after_request
+def apply_cors(response):
+    origin = request.headers.get('Origin')
+    if origin:
+        # allow if origin in allowed_origins or allowed_origins contains '*'
+        try:
+            allowed = [o.strip() for o in allowed_origins]
+        except Exception:
+            allowed = []
+
+        if '*' in allowed or origin in allowed:
+            response.headers['Access-Control-Allow-Origin'] = origin if '*' not in allowed else '*'
+            response.headers['Vary'] = 'Origin'
+        # always allow these headers/methods for safety
+        response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.setdefault('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+        response.headers.setdefault('Access-Control-Allow-Credentials', 'true')
+    return response
 
 # File validation
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -131,14 +156,20 @@ def get_runners():
         if disease_runner is None:
             try:
                 disease_runner = ModelRunner(disease_paths['scripted'], disease_paths['quant'], disease_paths['mapping'], device='cpu')
+                gc.collect()
+                logger.info('Disease model loaded')
             except Exception:
                 # fallback to TorchClassifier if necessary
                 disease_runner = TorchClassifier(disease_paths['scripted'], disease_paths['mapping'])
+                gc.collect()
         if deficiency_runner is None:
             try:
                 deficiency_runner = ModelRunner(deficiency_paths['scripted'], deficiency_paths['quant'], deficiency_paths['mapping'], device='cpu')
+                gc.collect()
+                logger.info('Deficiency model loaded')
             except Exception:
                 deficiency_runner = TorchClassifier(deficiency_paths['scripted'], deficiency_paths['mapping'])
+                gc.collect()
     return disease_runner, deficiency_runner
 
 
@@ -278,6 +309,12 @@ def interactive_diagnose():
         total_time = time.time() - start
         diagnosis_result['processing_time'] = round(total_time, 4)
         diagnosis_result['model_version'] = 'interactive_learning_v1.0'
+
+        # Clean up image data and force garbage collection
+        del img_bytes
+        del image
+        gc.collect()
+
         return jsonify(diagnosis_result)
     except Exception:
         logger.exception('Interactive diagnosis error')
