@@ -321,7 +321,7 @@ function Body() {
 
                 <Button
                   variant="contained"
-                  onClick={() => window.open('https://www.fao.org/3/i9060en/I9060EN.pdf', '_blank')}
+                  onClick={() => window.open('https://www.kenyacoffee.co.ke/resources/The%20Coffee%20Guide%204th%20Edition.pdf', '_blank')}
                   fullWidth
                   sx={{
                     bgcolor: 'green.600',

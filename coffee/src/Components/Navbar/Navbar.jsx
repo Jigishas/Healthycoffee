@@ -6,6 +6,7 @@ import logo from '../../assets/coffee.webp';
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
   // Close mobile menu when pressing Escape
   useEffect(() => {
@@ -74,10 +75,34 @@ function Navbar() {
       const element = document.querySelector(href);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
+        const id = href.replace('#', '');
+        setActiveSection(id);
       }
     }
     setIsMobileMenuOpen(false);
   };
+
+  // Observe sections to update active nav link for a more professional feel
+  useEffect(() => {
+    const ids = ['home', 'gallery', 'features', 'stats', 'askme'];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0.15 }
+    );
+
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <motion.nav
