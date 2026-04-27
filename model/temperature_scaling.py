@@ -14,6 +14,7 @@ from sklearn.metrics import log_loss, accuracy_score
 import json
 
 from src.inference import load_model_and_mapping, VAL_TRANSFORM
+import argparse
 
 
 class TemperatureScaler(nn.Module):
@@ -51,19 +52,37 @@ def fit_temperature(logits, labels):
     labels_t = torch.tensor(labels, dtype=torch.long)
 
     temp_model = TemperatureScaler()
-    optimizer = torch.optim.LBFGS([temp_model.temperature], max_iter=50, line_search_fn='strong_wolfe')
-
     nll = nn.CrossEntropyLoss()
 
-    def closure():
-        optimizer.zero_grad()
-        scaled = temp_model(logits_t)
-        loss = nll(scaled, labels_t)
-        loss.backward()
-        return loss
+    # Try LBFGS first (fast), but on some Windows/BLAS installs it may fail.
+    try:
+        optimizer = torch.optim.LBFGS([temp_model.temperature], max_iter=50, line_search_fn='strong_wolfe')
 
-    optimizer.step(closure)
-    return float(temp_model.temperature.item())
+        def closure():
+            optimizer.zero_grad()
+            scaled = temp_model(logits_t)
+            loss = nll(scaled, labels_t)
+            loss.backward()
+            return loss
+
+        optimizer.step(closure)
+        return float(temp_model.temperature.item())
+    except Exception:
+        # Fallback: simple grid search over plausible temperatures
+        logits_np = logits_t.numpy()
+        labels_np = labels_t.numpy()
+        temps = np.linspace(0.5, 5.0, 46)
+        best_temp = 1.0
+        best_nll = float('inf')
+        for t in temps:
+            scaled = logits_np / t
+            probs = np.exp(scaled - np.max(scaled, axis=1, keepdims=True))
+            probs = probs / probs.sum(axis=1, keepdims=True)
+            nll_val = -np.mean(np.log(probs[np.arange(len(labels_np)), labels_np] + 1e-12))
+            if nll_val < best_nll:
+                best_nll = nll_val
+                best_temp = float(t)
+        return best_temp
 
 
 def apply_temperature_and_eval(temperature, logits, labels):

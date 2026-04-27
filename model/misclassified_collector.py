@@ -67,13 +67,13 @@ def collect_misclassified(output_dir='misclassified'):
     process_split('diseases', disease_model, 'disease')
     process_split('deficiencies', deficiency_model, 'deficiency')
 
-    # Save CSV
+    # Save CSV (include suggested_correction column for active review)
     csv_path = out_dir / 'misclassified_summary.csv'
     with open(csv_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['model', 'true_label', 'predicted_label', 'confidence', 'src_path', 'dest_path', 'inference_time'])
+        writer.writerow(['model', 'true_label', 'predicted_label', 'confidence', 'src_path', 'dest_path', 'inference_time', 'suggested_correction'])
         for r in rows:
-            writer.writerow(r)
+            writer.writerow(r + [''])
 
     print(f"Saved {len(rows)} misclassified examples to {out_dir} and summary CSV {csv_path}")
 
