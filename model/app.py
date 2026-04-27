@@ -24,6 +24,7 @@ import gc
 
 from src.recommendations import get_additional_recommendations
 from src.explanations import get_explanation, get_recommendation
+from serving_utils import ModelRunner
 from src.inference import TorchClassifier
 
 # Configure logging
@@ -97,38 +98,47 @@ def validate_image_file(file):
         return False, f'File too large. Maximum size is {MAX_FILE_SIZE/1024/1024}MB'
     return True, None
 
-# Model configs
-disease_classifier_config = {
-    'model_path': 'models/leaf_diseases/efficientnet_disease_balanced.pth',
-    'classes_path': 'models/leaf_diseases/class_mapping_diseases.json'
+# Model configs and runner initialization
+disease_paths = {
+    'scripted': 'models/leaf_diseases/efficientnet_disease_balanced_scripted.pt',
+    'quant': 'models/leaf_diseases/efficientnet_disease_balanced_quantized.pt',
+    'mapping': 'models/leaf_diseases/class_mapping_diseases.json'
 }
-deficiency_classifier_config = {
-    'model_path': 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-    'classes_path': 'models/leaf_deficiencies/class_mapping_deficiencies.json'
+deficiency_paths = {
+    'scripted': 'models/leaf_deficiencies/efficientnet_deficiency_balanced_scripted.pt',
+    'quant': 'models/leaf_deficiencies/efficientnet_deficiency_balanced_quantized.pt',
+    'mapping': 'models/leaf_deficiencies/class_mapping_deficiencies.json'
 }
 
-# Cached classifier instances
+# Create ModelRunner instances lazily but keep references for health/metrics
 _model_lock = threading.Lock()
-disease_classifier = None
-deficiency_classifier = None
+disease_runner = None
+deficiency_runner = None
 
-def get_classifiers():
-    """Thread-safe lazy initialization of classifiers."""
-    global disease_classifier, deficiency_classifier
-    if disease_classifier is not None and deficiency_classifier is not None:
-        return disease_classifier, deficiency_classifier
+metrics = {
+    'total_requests': 0,
+    'total_predictions': 0,
+    'errors': 0,
+}
+
+
+def get_runners():
+    global disease_runner, deficiency_runner
+    if disease_runner is not None and deficiency_runner is not None:
+        return disease_runner, deficiency_runner
     with _model_lock:
-        if disease_classifier is None:
-            disease_classifier = TorchClassifier(
-                disease_classifier_config['model_path'],
-                disease_classifier_config['classes_path']
-            )
-        if deficiency_classifier is None:
-            deficiency_classifier = TorchClassifier(
-                deficiency_classifier_config['model_path'],
-                deficiency_classifier_config['classes_path']
-            )
-    return disease_classifier, deficiency_classifier
+        if disease_runner is None:
+            try:
+                disease_runner = ModelRunner(disease_paths['scripted'], disease_paths['quant'], disease_paths['mapping'], device='cpu')
+            except Exception:
+                # fallback to TorchClassifier if necessary
+                disease_runner = TorchClassifier(disease_paths['scripted'], disease_paths['mapping'])
+        if deficiency_runner is None:
+            try:
+                deficiency_runner = ModelRunner(deficiency_paths['scripted'], deficiency_paths['quant'], deficiency_paths['mapping'], device='cpu')
+            except Exception:
+                deficiency_runner = TorchClassifier(deficiency_paths['scripted'], deficiency_paths['mapping'])
+    return disease_runner, deficiency_runner
 
 
 @app.route('/api/v1/upload-image', methods=['POST', 'OPTIONS'])
@@ -164,10 +174,20 @@ def upload_image():
 
         start = time.time()
         try:
-            disease_clf, deficiency_clf = get_classifiers()
-            disease_result = disease_clf.predict(image)
-            deficiency_result = deficiency_clf.predict(image)
+            metrics['total_requests'] += 1
+            disease_runner, deficiency_runner = get_runners()
+            # Use runners' predict_image (in-memory) when available, else fallback
+            if hasattr(disease_runner, 'predict_image'):
+                disease_result = disease_runner.predict_image(image)
+            else:
+                disease_result = disease_runner.predict(image)
+
+            if hasattr(deficiency_runner, 'predict_image'):
+                deficiency_result = deficiency_runner.predict_image(image)
+            else:
+                deficiency_result = deficiency_runner.predict(image)
         except Exception as e:
+            metrics['errors'] += 1
             logger.exception(f'Model prediction failed for {image_hash}')
             disease_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
             deficiency_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
@@ -239,16 +259,14 @@ def interactive_diagnose():
             else:
                 raise RuntimeError('Interactive system not available')
         except Exception:
-            disease_clf, deficiency_clf = get_classifiers()
-
-            # Run predictions in parallel using threads for better performance
+            # Use ModelRunner predict_image in parallel
+            disease_runner, deficiency_runner = get_runners()
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-                disease_future = executor.submit(disease_clf.predict, image)
-                deficiency_future = executor.submit(deficiency_clf.predict, image)
-
-                disease_result = disease_future.result()
-                deficiency_result = deficiency_future.result()
+                d_future = executor.submit(getattr(disease_runner, 'predict_image', disease_runner.predict), image)
+                f_future = executor.submit(getattr(deficiency_runner, 'predict_image', deficiency_runner.predict), image)
+                disease_result = d_future.result()
+                deficiency_result = f_future.result()
 
             diagnosis_result = {
                 'disease_prediction': {**disease_result, 'similar_previous_cases': 0, 'certainty_level': 'Unknown'},
@@ -276,9 +294,9 @@ def health():
             data = request.get_json(silent=True)
             logger.info(f'Health ping: {data}')
 
-        # Check if models are loaded
-        disease_loaded = disease_classifier is not None
-        deficiency_loaded = deficiency_classifier is not None
+        # Check if runners/models are loaded
+        disease_loaded = disease_runner is not None
+        deficiency_loaded = deficiency_runner is not None
 
         response_data = {
             'status': 'healthy' if disease_loaded and deficiency_loaded else 'degraded',
@@ -288,8 +306,8 @@ def health():
                 'deficiency_model': deficiency_loaded
             },
             'model_stats': {
-                'disease': disease_classifier.get_stats() if disease_loaded and hasattr(disease_classifier, 'get_stats') else {},
-                'deficiency': deficiency_classifier.get_stats() if deficiency_loaded and hasattr(deficiency_classifier, 'get_stats') else {}
+                'disease': getattr(disease_runner, 'get_stats', lambda: {})() if disease_loaded and hasattr(disease_runner, 'get_stats') else {},
+                'deficiency': getattr(deficiency_runner, 'get_stats', lambda: {})() if deficiency_loaded and hasattr(deficiency_runner, 'get_stats') else {}
             }
         }
         return jsonify(response_data), 200
@@ -302,14 +320,14 @@ def health():
 @cache.cached(timeout=300)
 def model_info():
     try:
-        if disease_classifier is None or deficiency_classifier is None:
+        if disease_runner is None or deficiency_runner is None:
             return jsonify({'message': 'Models not loaded yet'}), 200
-        disease_stats = disease_classifier.get_stats() if hasattr(disease_classifier, 'get_stats') else {}
-        deficiency_stats = deficiency_classifier.get_stats() if hasattr(deficiency_classifier, 'get_stats') else {}
+        disease_stats = getattr(disease_runner, 'get_stats', lambda: {})()
+        deficiency_stats = getattr(deficiency_runner, 'get_stats', lambda: {})()
         return jsonify({
             'model_version': 'optimized_v1.0',
-            'disease_classes': len(disease_classifier.classes) if hasattr(disease_classifier, 'classes') else None,
-            'deficiency_classes': len(deficiency_classifier.classes) if hasattr(deficiency_classifier, 'classes') else None,
+            'disease_classes': len(disease_stats.get('classes', [])) if disease_stats else None,
+            'deficiency_classes': len(deficiency_stats.get('classes', [])) if deficiency_stats else None,
             'model_stats': {'disease': disease_stats, 'deficiency': deficiency_stats}
         })
     except Exception:
@@ -320,12 +338,13 @@ def model_info():
 @app.route('/api/performance', methods=['GET'])
 def performance():
     try:
-        if disease_classifier is None or deficiency_classifier is None:
-            return jsonify({'message': 'Models not loaded yet'}), 200
-        disease_stats = disease_classifier.get_stats() if hasattr(disease_classifier, 'get_stats') else {'total_predictions': 0}
-        deficiency_stats = deficiency_classifier.get_stats() if hasattr(deficiency_classifier, 'get_stats') else {'total_predictions': 0}
+        disease_stats = getattr(disease_runner, 'get_stats', lambda: {'total_predictions': 0})()
+        deficiency_stats = getattr(deficiency_runner, 'get_stats', lambda: {'total_predictions': 0})()
         total_preds = disease_stats.get('total_predictions', 0) + deficiency_stats.get('total_predictions', 0)
-        return jsonify({'performance_metrics': {'disease_model': disease_stats, 'deficiency_model': deficiency_stats, 'total_predictions': total_preds}, 'timestamp': time.time()})
+        # include simple service-level metrics
+        perf = {'disease_model': disease_stats, 'deficiency_model': deficiency_stats, 'total_predictions': total_preds}
+        perf.update({'service_total_requests': metrics['total_requests'], 'service_errors': metrics['errors']})
+        return jsonify({'performance_metrics': perf, 'timestamp': time.time()})
     except Exception:
         logger.exception('Performance error')
         return jsonify({'error': 'Internal server error'}), 500
