@@ -91,13 +91,17 @@ def apply_cors(response):
             allowed = [o.strip() for o in allowed_origins]
         except Exception:
             allowed = []
-
+        # If allowed list contains wildcard, allow any origin
         if '*' in allowed or origin in allowed:
             response.headers['Access-Control-Allow-Origin'] = origin if '*' not in allowed else '*'
             response.headers['Vary'] = 'Origin'
+        else:
+            # Fallback: echo the incoming origin to avoid CORS errors in complex proxy setups
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Vary'] = 'Origin'
         # always allow these headers/methods for safety
-        response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.setdefault('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+        response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization,Cache-Control,X-Requested-With,Accept')
+        response.headers.setdefault('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,DELETE')
         response.headers.setdefault('Access-Control-Allow-Credentials', 'true')
     return response
 
@@ -177,6 +181,12 @@ def get_runners():
 def upload_image():
     if request.method == 'OPTIONS':
         response = app.make_response('')
+        # Ensure preflight responses include explicit CORS headers
+        origin = request.headers.get('Origin') or '*'
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Cache-Control'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['X-API-Version'] = 'v1.0'
         return response, 204
 
@@ -326,6 +336,11 @@ def interactive_diagnose():
 def health():
     if request.method == 'OPTIONS':
         response = app.make_response('')
+        origin = request.headers.get('Origin') or '*'
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, cache-control, Cache-Control'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
         return response, 204
     try:
         if request.method == 'POST':
