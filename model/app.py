@@ -64,23 +64,10 @@ cache = Cache(app, config={
 
 # CORS - Restrict origins for production
 allowed_origins = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000,https://healthycoffee.vercel.app,https://healthycoffee.onrender.com').split(',')
-CORS(app, resources={
-    r"/api/.*": {
-        "origins": allowed_origins,
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization", "cache-control", "Cache-Control"],
-        "expose_headers": ["X-API-Version"],
-        "max_age": 86400,
-        "supports_credentials": True
-    },
-    r"/health": {
-        "origins": allowed_origins,
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "cache-control", "Cache-Control", "Authorization"],
-        "max_age": 86400,
-        "supports_credentials": True
-    }
-})
+
+# Temporary permissive CORS for debugging on Render — allow all origins.
+# WARNING: This setting is permissive and should be reverted/tightened for production.
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 
 # Ensure CORS headers are present on all responses (safer and explicit)
