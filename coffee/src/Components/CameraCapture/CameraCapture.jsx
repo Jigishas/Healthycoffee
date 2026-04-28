@@ -42,6 +42,38 @@ const checkBackendStatus = useCallback(async () => {
     let timeoutId;
     try {
       const controller = new AbortController();
+      timeoutId = setTimeout(() => {
+        controller.abort(new DOMException('Health check timed out after 15s', 'TimeoutError'));
+      }, 15000);
+
+      const response = await fetch(`${uploadUrl}/health`, {
+        signal: controller.signal,
+        mode: 'cors',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const data = await response.json().catch(() => ({}));
+        setBackendStatus('online');
+        console.log('Backend health check passed:', data);
+      } else {
+        setBackendStatus('offline');
+        console.warn('Backend health check failed with status:', response.status);
+      }
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.error('Backend health check failed:', err.message);
+      if (err && (err.name === 'AbortError' || err.name === 'TimeoutError')) {
+        setBackendStatus('offline');
+        setError('Backend connection timeout. Please check your internet connection or try again shortly.');
+      } else {
+        setBackendStatus('offline');
+      }
+    }
+  }, [uploadUrl]);
 
   useEffect(() => {
     checkBackendStatus();
