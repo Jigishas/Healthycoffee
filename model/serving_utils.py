@@ -7,10 +7,12 @@ from src.inference import VAL_TRANSFORM, fast_preprocess_image, TorchClassifier
 
 
 class ModelRunner:
-    def __init__(self, scripted_path=None, quant_path=None, mapping_path=None, device='cpu', max_workers=4):
+    def __init__(self, scripted_path=None, quant_path=None, pth_path=None, mapping_path=None, device='cpu', max_workers=4):
         self.device = torch.device(device)
         self.scripted_path = Path(scripted_path) if scripted_path else None
         self.quant_path = Path(quant_path) if quant_path else None
+        self.pth_path = Path(pth_path) if pth_path else None
+        self.mapping_path = Path(mapping_path) if mapping_path else None
         self.mapping = None
 
         # Attempt to locate mapping if not provided
@@ -18,9 +20,9 @@ class ModelRunner:
             with open(mapping_path, 'r', encoding='utf-8') as f:
                 self.mapping = json.load(f)
         else:
-            # try finding class_mapping_*.json in same dir
+            # try finding class_mapping_*.json in same dir as any model path
             cand = None
-            for p in [self.scripted_path, self.quant_path]:
+            for p in [self.scripted_path, self.quant_path, self.pth_path]:
                 if p is None:
                     continue
                 for f in p.parent.glob('class_mapping*.json'):
@@ -37,50 +39,64 @@ class ModelRunner:
         self._load_model()
 
     def _load_model(self):
-        # Prefer quantized scripted model, then scripted, then weight-based TorchClassifier
+        errors = []
+        # 1) Prefer quantized scripted model
         try:
             if self.quant_path and self.quant_path.exists():
                 self.model = torch.jit.load(str(self.quant_path), map_location=self.device)
-            elif self.scripted_path and self.scripted_path.exists():
+                self.model_nn = self.model
+                return
+        except Exception as e:
+            errors.append(f"quant: {e}")
+
+        # 2) Try scripted model
+        try:
+            if self.scripted_path and self.scripted_path.exists():
                 self.model = torch.jit.load(str(self.scripted_path), map_location=self.device)
-        except Exception:
-            self.model = None
+                self.model_nn = self.model
+                return
+        except Exception as e:
+            errors.append(f"scripted: {e}")
 
-        if self.model is None:
-            # Fallback: try to locate a .pth weights file in sibling directories
-            weights = None
-            mapping_file = None
-            candidates = []
-            for base in [self.scripted_path, self.quant_path]:
-                if base is None:
-                    continue
-                for ft in base.parent.glob('*.pth'):
-                    candidates.append(ft)
-                for fm in base.parent.glob('class_mapping*.json'):
-                    mapping_file = str(fm)
-
-            if candidates:
-                weights = str(candidates[0])
-                # load with TorchClassifier
-                tc = TorchClassifier(weights, mapping_file or '')
+        # 3) Try explicit .pth weights via TorchClassifier
+        try:
+            if self.pth_path and self.pth_path.exists():
+                tc = TorchClassifier(str(self.pth_path), str(self.mapping_path) if self.mapping_path else '')
                 self.model = tc
                 self.model_nn = tc.model
-                # set mapping if not already loaded
                 if self.mapping is None:
                     self.mapping = tc.classes
-            else:
-                raise RuntimeError('No model file found (no scripted/quant or .pth weights).')
+                return
+        except Exception as e:
+            errors.append(f"pth: {e}")
 
-        else:
-            # loaded a scripted/quant module
-            self.model_nn = self.model
+        # 4) Final fallback: auto-discover any .pth in parent dirs of provided paths
+        candidates = []
+        mapping_file = None
+        for base in [self.scripted_path, self.quant_path, self.pth_path]:
+            if base is None:
+                continue
+            for ft in base.parent.glob('*.pth'):
+                candidates.append(ft)
+            for fm in base.parent.glob('class_mapping*.json'):
+                mapping_file = str(fm)
 
-        # ensure model on correct device
-        try:
-            if hasattr(self.model_nn, 'to'):
-                self.model_nn.to(self.device)
-        except Exception:
-            pass
+        if candidates:
+            weights = str(candidates[0])
+            tc = TorchClassifier(weights, mapping_file or '')
+            self.model = tc
+            self.model_nn = tc.model
+            if self.mapping is None:
+                self.mapping = tc.classes
+            return
+
+        raise RuntimeError(f"No model file found. Errors: {'; '.join(errors)}")
+
+    def to(self, device):
+        self.device = torch.device(device)
+        if self.model_nn is not None and hasattr(self.model_nn, 'to'):
+            self.model_nn = self.model_nn.to(self.device)
+        return self
 
     def _preprocess(self, image_path):
         img = Image.open(image_path).convert('RGB')

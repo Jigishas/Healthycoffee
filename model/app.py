@@ -9,8 +9,7 @@ Changes:
 """
 
 from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
-from flask_caching import Cache
+from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 import os
 import logging
@@ -68,12 +67,15 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 #     default_limits=["100 per minute", "1000 per hour"]
 # )
 
-# Simple cache (Redis URL configurable)
-cache = Cache(app, config={
-    'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_URL': os.environ.get('REDIS_URL'),
-    'CACHE_DEFAULT_TIMEOUT': 300
-})
+# Simple in-memory cache (no Redis dependency for Render free tier)
+try:
+    from flask_caching import Cache
+    cache = Cache(app, config={
+        'CACHE_TYPE': 'simple',
+        'CACHE_DEFAULT_TIMEOUT': 300
+    })
+except ImportError:
+    cache = None
 
 # CORS - Restrict origins for production
 allowed_origins = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000,https://healthycoffee.vercel.app,https://healthycoffee.onrender.com').split(',')
@@ -131,14 +133,18 @@ def validate_image_file(file):
     return True, None
 
 # Model configs and runner initialization
+# Deficiency model only has .pth weights (no scripted/quantized versions yet),
+# so we pass pth_path explicitly so ModelRunner can fall back correctly.
 disease_paths = {
     'scripted': 'models/leaf_diseases/efficientnet_disease_balanced_scripted.pt',
     'quant': 'models/leaf_diseases/efficientnet_disease_balanced_quantized.pt',
+    'pth': 'models/leaf_diseases/efficientnet_disease_balanced.pth',
     'mapping': 'models/leaf_diseases/class_mapping_diseases.json'
 }
 deficiency_paths = {
     'scripted': 'models/leaf_deficiencies/efficientnet_deficiency_balanced_scripted.pt',
     'quant': 'models/leaf_deficiencies/efficientnet_deficiency_balanced_quantized.pt',
+    'pth': 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
     'mapping': 'models/leaf_deficiencies/class_mapping_deficiencies.json'
 }
 
@@ -161,20 +167,33 @@ def get_runners():
     with _model_lock:
         if disease_runner is None:
             try:
-                disease_runner = ModelRunner(disease_paths['scripted'], disease_paths['quant'], disease_paths['mapping'], device='cpu')
+                disease_runner = ModelRunner(
+                    scripted_path=disease_paths['scripted'],
+                    quant_path=disease_paths['quant'],
+                    pth_path=disease_paths['pth'],
+                    mapping_path=disease_paths['mapping'],
+                    device='cpu'
+                )
                 gc.collect()
                 logger.info('Disease model loaded')
-            except Exception:
-                # fallback to TorchClassifier if necessary
-                disease_runner = TorchClassifier(disease_paths['scripted'], disease_paths['mapping'])
+            except Exception as e:
+                logger.warning(f'Disease ModelRunner failed: {e}, falling back to TorchClassifier')
+                disease_runner = TorchClassifier(disease_paths['pth'], disease_paths['mapping'])
                 gc.collect()
         if deficiency_runner is None:
             try:
-                deficiency_runner = ModelRunner(deficiency_paths['scripted'], deficiency_paths['quant'], deficiency_paths['mapping'], device='cpu')
+                deficiency_runner = ModelRunner(
+                    scripted_path=deficiency_paths['scripted'],
+                    quant_path=deficiency_paths['quant'],
+                    pth_path=deficiency_paths['pth'],
+                    mapping_path=deficiency_paths['mapping'],
+                    device='cpu'
+                )
                 gc.collect()
                 logger.info('Deficiency model loaded')
-            except Exception:
-                deficiency_runner = TorchClassifier(deficiency_paths['scripted'], deficiency_paths['mapping'])
+            except Exception as e:
+                logger.warning(f'Deficiency ModelRunner failed: {e}, falling back to TorchClassifier')
+                deficiency_runner = TorchClassifier(deficiency_paths['pth'], deficiency_paths['mapping'])
                 gc.collect()
     return disease_runner, deficiency_runner
 
@@ -334,7 +353,6 @@ def interactive_diagnose():
 
 
 @app.route('/health', methods=['GET', 'POST', 'OPTIONS'])
-@cross_origin(origins=allowed_origins, methods=['GET', 'POST', 'OPTIONS'], allow_headers=['Content-Type', 'cache-control', 'Cache-Control'])
 def health():
     if request.method == 'OPTIONS':
         response = app.make_response('')
@@ -372,7 +390,6 @@ def health():
 
 
 @app.route('/api/model-info', methods=['GET'])
-@cache.cached(timeout=300)
 def model_info():
     try:
         if disease_runner is None or deficiency_runner is None:
@@ -403,6 +420,20 @@ def performance():
     except Exception:
         logger.exception('Performance error')
         return jsonify({'error': 'Internal server error'}), 500
+
+
+@app.errorhandler(Exception)
+def handle_unhandled_exception(e):
+    """Catch-all error handler to ensure CORS headers are always present."""
+    logger.exception('Unhandled exception')
+    response = jsonify({'error': 'Internal server error', 'api_version': 'v1.0'})
+    origin = request.headers.get('Origin')
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Cache-Control,X-Requested-With,Accept'
+        response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS,PUT,DELETE'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+    return response, 500
 
 
 if __name__ == '__main__':

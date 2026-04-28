@@ -4,5 +4,11 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r model/requirements.txt
-    startCommand: cd model && gunicorn --bind 0.0.0.0:$PORT wsgi:app --worker-class gevent --workers 1 --timeout 120
+    startCommand: cd model && gunicorn --bind 0.0.0.0:$PORT wsgi:app --worker-class gevent --workers 1 --timeout 300 --keep-alive 5
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "true"
+      - key: ALLOWED_ORIGINS
+        value: "https://healthycoffee.vercel.app,https://healthycoffee.onrender.com"
 
