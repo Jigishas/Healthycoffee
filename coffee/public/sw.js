@@ -147,8 +147,11 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - provide offline functionality
 self.addEventListener('fetch', (event) => {
-  // Skip cross-origin requests
-  if (!event.request.url.startsWith(self.location.origin)) {
+  // Allow same-origin requests and also handle requests to our known backend domain.
+  // Previously we returned early for all cross-origin requests which prevented
+  // handling and fallback for backend API calls (e.g. /health). Keep skipping
+  // truly unrelated cross-origin requests for performance.
+  if (!event.request.url.startsWith(self.location.origin) && !event.request.url.includes('healthycoffee.onrender.com')) {
     return;
   }
 

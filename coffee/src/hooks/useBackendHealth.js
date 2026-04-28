@@ -12,12 +12,18 @@ const useBackendHealth = () => {
   const checkHealth = async () => {
     setIsChecking(true);
     try {
+      // Use AbortController to avoid hanging requests (10s timeout)
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
       const response = await fetch(`${BACKEND_URL}/health`, {
         method: 'GET',
+        mode: 'cors',
+        signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
         },
       });
+      clearTimeout(timeout);
       if (response.ok) {
         setIsOnline(true);
         setIsOffline(false);
@@ -27,7 +33,9 @@ const useBackendHealth = () => {
         setIsOffline(true);
         setStatus('offline');
       }
-    } catch {
+    } catch (err) {
+      // Distinguish timeouts vs other errors when possible
+      console.warn('Health check error:', err && err.name ? `${err.name} ${err.message || ''}` : err);
       setIsOnline(false);
       setIsOffline(true);
       setStatus('offline');

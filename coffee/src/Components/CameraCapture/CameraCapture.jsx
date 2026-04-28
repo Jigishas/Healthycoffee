@@ -41,10 +41,12 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
     setBackendStatus('checking');
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      // Increase health-check timeout to account for cold starts on the backend
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const response = await fetch(`${uploadUrl}/health`, {
         signal: controller.signal,
+        mode: 'cors',
         headers: {
           'Cache-Control': 'no-cache'
         }
@@ -60,8 +62,8 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
         console.warn('Backend health check failed with status:', response.status);
       }
     } catch (err) {
-      console.error('Backend health check failed:', err.message);
-      if (err.name === 'AbortError') {
+      console.error('Backend health check failed:', err);
+      if (err && err.name === 'AbortError') {
         setBackendStatus('offline');
         setError('Backend connection timeout. Please check your internet connection.');
       } else {
