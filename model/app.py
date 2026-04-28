@@ -42,6 +42,19 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+# Lightweight ping endpoint placed early to verify service reachability
+# and always return CORS-safe responses even if heavy model code misbehaves.
+@app.route('/_ping', methods=['GET', 'OPTIONS'])
+def _ping():
+    if request.method == 'OPTIONS':
+        response = app.make_response('')
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response, 204
+    return jsonify({'status': 'ok', 'service': 'healthycoffee-backend'}), 200
+
 # Security: Generate secret key
 app.secret_key = secrets.token_hex(32)
 
