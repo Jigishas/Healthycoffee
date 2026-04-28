@@ -15,13 +15,11 @@ const useBackendHealth = () => {
       // Use AbortController to avoid hanging requests (10s timeout)
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 10000);
+      // Avoid sending Content-Type header to prevent preflight
       const response = await fetch(`${BACKEND_URL}/health`, {
         method: 'GET',
         mode: 'cors',
-        signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        signal: controller.signal
       });
       clearTimeout(timeout);
       if (response.ok) {

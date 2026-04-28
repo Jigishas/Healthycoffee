@@ -270,7 +270,8 @@ const CameraCapture = ({ uploadUrl, onResult }) => {
       await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `${uploadUrl}/api/v1/upload-image`);
-        xhr.setRequestHeader('Accept', 'application/json');
+        // Avoid setting custom headers like Accept to prevent CORS preflight requests.
+        // The browser will send appropriate Accept headers by default.
 
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) {

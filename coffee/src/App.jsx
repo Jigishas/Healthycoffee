@@ -18,28 +18,18 @@ function App() {
   // Immediately check backend status on app render in production
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-      fetch(`${backendUrl}/health`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ping_type: 'app_load_check',
-          timestamp: new Date().toISOString(),
-          source: 'frontend_app',
-          version: '1.0.0'
+      // Use a simple GET for app-load health check to avoid preflight OPTIONS
+      fetch(`${backendUrl}/health`, { method: 'GET', mode: 'cors' })
+        .then(response => {
+          if (response.ok) {
+            console.log('[App Load] Backend is online and responding');
+          } else {
+            console.log('[App Load] Backend check failed with status:', response.status);
+          }
         })
-      })
-      .then(response => {
-        if (response.ok) {
-          console.log('[App Load] Backend is online and responding');
-        } else {
-          console.log('[App Load] Backend check failed with status:', response.status);
-        }
-      })
-      .catch(error => {
-        console.log('[App Load] Backend check error:', error.message);
-      });
+        .catch(error => {
+          console.log('[App Load] Backend check error:', error.message);
+        });
     }
   }, []);
 

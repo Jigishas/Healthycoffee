@@ -5,13 +5,8 @@ const RETRY_ATTEMPTS = 3;
 const RETRY_DELAY = 5000; // 5 seconds
 
 function pingBackend(retryCount = 0) {
-  fetch(BACKEND_URL, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    mode: 'cors'
-  })
+  // Use a plain GET without custom headers to avoid preflight
+  fetch(BACKEND_URL, { method: 'GET', mode: 'cors' })
   .then(response => {
     if (response.ok) {
       console.log(`[${new Date().toLocaleTimeString()}] ✅ Backend online & responsive`);
