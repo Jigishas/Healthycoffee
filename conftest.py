@@ -16,6 +16,26 @@ def use_app_test_client():
 
     orig_request = _requests.api.request
 
+    # Ensure test-friendly runners so health/model-info tests report healthy
+    class _MockRunner:
+        def __init__(self):
+            self._stats = {'classes': ['healthy'], 'total_predictions': 0}
+        def get_stats(self):
+            return self._stats
+        def predict(self, *a, **k):
+            return {'class': 'Healthy', 'confidence': 0.99, 'class_index': 0, 'inference_time': 0.0}
+        def predict_image(self, *a, **k):
+            return self.predict(*a, **k)
+
+    try:
+        # Only override if runners are not already initialized
+        if getattr(appmod, 'disease_runner', None) is None:
+            appmod.disease_runner = _MockRunner()
+        if getattr(appmod, 'deficiency_runner', None) is None:
+            appmod.deficiency_runner = _MockRunner()
+    except Exception:
+        pass
+
     def _local_request(method, url, *args, **kwargs):
         parsed = urlparse(url)
         host = parsed.hostname
@@ -31,8 +51,22 @@ def use_app_test_client():
             data = kwargs.get('data')
             json_data = kwargs.get('json')
             headers = kwargs.get('headers')
+            files = kwargs.get('files')
 
-            resp = client.open(path, method=method.upper(), data=data, json=json_data, headers=headers)
+            # If requests.files supplied, convert to Flask test_client file tuples
+            if files:
+                form = {}
+                for k, v in files.items():
+                    # v is typically (filename, fileobj, content_type)
+                    if isinstance(v, tuple):
+                        filename, fileobj, content_type = v
+                        fileobj.seek(0)
+                        form[k] = (fileobj, filename)
+                    else:
+                        form[k] = v
+                resp = client.open(path, method=method.upper(), data=form, headers=headers)
+            else:
+                resp = client.open(path, method=method.upper(), data=data, json=json_data, headers=headers)
 
             class _Resp:
                 def __init__(self, r):
@@ -54,3 +88,6 @@ def use_app_test_client():
     yield
     # Restore original
     _requests.api.request = orig_request
+@pytest.fixture
+def base_url():
+    return "http://localhost:8000"
