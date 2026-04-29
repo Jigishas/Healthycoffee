@@ -10,7 +10,7 @@
 - [ ] Execute `test_backend.py`
 
 ### 3. Start Backend Server
-- [ ] Run `python model/app.py` (port 8000+)
+- [] Run `python model/app.py` (port 8000+)
 - [ ] Verify /health endpoint
 
 ### 4. Run Integration Tests
