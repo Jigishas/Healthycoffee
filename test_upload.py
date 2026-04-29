@@ -54,8 +54,8 @@ def test_upload_endpoint():
                             disease = result['disease_prediction']
                             deficiency = result['deficiency_prediction']
 
-                            print("
-🎯 Predictions:"                            print(f"   Disease: {disease.get('class', 'N/A')} (confidence: {disease.get('confidence', 0):.3f})")
+                            print("\n🎯 Predictions:")
+                            print(f"   Disease: {disease.get('class', 'N/A')} (confidence: {disease.get('confidence', 0):.3f})")
                             print(f"   Deficiency: {deficiency.get('class', 'N/A')} (confidence: {deficiency.get('confidence', 0):.3f})")
 
                             if disease.get('confidence', 0) > 0 or deficiency.get('confidence', 0) > 0:
