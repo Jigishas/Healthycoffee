@@ -55,6 +55,14 @@ def _ping():
         return response, 204
     return jsonify({'status': 'ok', 'service': 'healthycoffee-backend'}), 200
 
+
+# Basic root route to satisfy platform health checks and browsers requesting '/'
+@app.route('/', methods=['GET', 'HEAD'])
+def index():
+    # Return a lightweight JSON payload so Render and other services don't
+    # treat requests to `/` as a 404. Keeps logs clean and is safe for probes.
+    return jsonify({'service': 'healthycoffee-backend', 'status': 'ok', 'api_version': 'v1.0'}), 200
+
 # Security: Generate secret key
 app.secret_key = secrets.token_hex(32)
 
