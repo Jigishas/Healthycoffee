@@ -38,5 +38,3 @@
 - [ ] Full end-to-end test (frontend -> backend)
 - [ ] Cleanup & complete
 
-**Next Step: Environment setup**
-
