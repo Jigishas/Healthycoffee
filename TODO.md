@@ -13,12 +13,6 @@
 - [] Run `python model/app.py` (port 8000+)
 - [ ] Verify /health endpoint
 
-### 4. Run Integration Tests
-- [ ] Execute `test_upload.py`
-- [ ] Execute `test_upload_functionality.py`
-
-### 5. Benchmark Current Performance
-- [ ] Run `model/benchmark.py`
 - [ ] Note baseline metrics (time, memory, accuracy)
 
 ### 6. Optimize Deficiency Model
