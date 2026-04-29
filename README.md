@@ -369,12 +369,22 @@ python compare_models.py           # Model comparison
 ### Backend Testing
 ```bash
 cd model
-python test_app.py                 # Test API endpoints
+# create and activate a venv, then install deps
+python -m venv venv
+# Linux/macOS: source venv/bin/activate
+# Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+# Run the full pytest suite (recommended)
+pytest -q
+
+# Legacy / individual test scripts
+python test_app.py                 # Legacy endpoint tests
 python debug_evaluate.py           # Debug evaluation
 
-# Or use the test scripts in root
+# Root-level test helpers
 python test_backend.py             # Test backend connectivity
-python test_upload.py                # Test image upload
+python test_upload.py              # Test image upload
 python test_upload_functionality.py  # Full upload test
 ```
 
@@ -391,6 +401,20 @@ The application includes comprehensive integration tests:
 - CORS preflight validation
 - Image upload pipeline
 - Real AI analysis flow (no mock data)
+
+Developer notes (tests & local development)
+- The test suite includes a `conftest.py` fixture that routes `requests` calls for `localhost:8000` into Flask's `test_client` to avoid starting a separate HTTP server during pytest runs.
+- For speed, the fixture provides lightweight mock model runners so integration tests exercise the request/response pipeline without loading heavy model weights. To test real model loading, remove or adapt the mocks in `conftest.py` and run the backend normally (`python app.py`).
+- Use `pytest -q` to run all tests. Use `pytest path/to/test.py -q` to run specific tests.
+
+Common test commands
+```bash
+# run full test suite
+pytest -q
+
+# run a single test file
+pytest model/test_app.py -q
+```
 
 
 ## 🚀 Deployment

@@ -106,3 +106,17 @@ coffee/
 ## License
 
 This project is licensed under the MIT License.
+
+## Backend URL & Testing
+
+- During development the frontend expects the backend at `http://localhost:8000` by default. Update `VITE_BACKEND_URL` in `coffee/.env` if your backend runs elsewhere.
+- Quick test of the backend integration (from project root):
+```bash
+# run backend tests (from repo root)
+pytest -q
+
+# or test only the frontend-dev + backend interaction manually:
+cd coffee
+npm run dev
+# open http://localhost:5173 and use the UI to upload an image (ensure backend is running at VITE_BACKEND_URL)
+```
