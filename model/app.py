@@ -11,6 +11,7 @@ Changes:
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.exceptions import HTTPException
 import os
 import logging
 import time
@@ -424,16 +425,31 @@ def performance():
 
 @app.errorhandler(Exception)
 def handle_unhandled_exception(e):
-    """Catch-all error handler to ensure CORS headers are always present."""
+    """Catch-all error handler to ensure CORS headers are always present.
+
+    Preserve HTTPExceptions (404, 405, etc.) and return their original
+    status code instead of masking them as 500 Internal Server Error.
+    """
     logger.exception('Unhandled exception')
-    response = jsonify({'error': 'Internal server error', 'api_version': 'v1.0'})
     origin = request.headers.get('Origin')
+
+    # If this is an HTTPException (like NotFound), return its code and
+    # a JSON payload rather than converting it to a 500.
+    if isinstance(e, HTTPException):
+        payload = {'error': e.name, 'description': e.description}
+        response = jsonify(payload)
+        status_code = e.code
+    else:
+        response = jsonify({'error': 'Internal server error', 'api_version': 'v1.0'})
+        status_code = 500
+
     if origin:
         response.headers['Access-Control-Allow-Origin'] = origin
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Cache-Control,X-Requested-With,Accept'
         response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS,PUT,DELETE'
         response.headers['Access-Control-Allow-Credentials'] = 'true'
-    return response, 500
+
+    return response, status_code
 
 
 if __name__ == '__main__':
