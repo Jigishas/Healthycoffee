@@ -19,6 +19,8 @@ import os
 from io import BytesIO
 from PIL import Image
 from serving_utils import ModelRunner
+from src.recommendations import get_additional_recommendations
+from src.explanations import get_explanation, get_recommendation
 import gc
 import threading
 import time
@@ -52,6 +54,13 @@ QUANT = ROOT / 'models' / 'leaf_diseases' / 'efficientnet_disease_balanced_quant
 # Lazy-initialized runner and batcher to reduce memory footprint on low-memory instances.
 runner = None
 batcher = None
+# Two-model runners
+disease_runner = None
+deficiency_runner = None
+
+# Paths for deficiency model (mirror disease paths)
+DEF_SCRIPTED = ROOT / 'models' / 'leaf_deficiencies' / 'efficientnet_deficiency_balanced_scripted.pt'
+DEF_QUANT = ROOT / 'models' / 'leaf_deficiencies' / 'efficientnet_deficiency_balanced_quantized.pt'
 
 
 def create_runner_and_batcher():
@@ -62,19 +71,28 @@ def create_runner_and_batcher():
       BATCH_MAX_SIZE (default 4)
     """
     global runner, batcher
-    if runner is None:
+    if disease_runner is None:
         try:
             max_workers = int(os.environ.get('MODEL_MAX_WORKERS', '1'))
         except Exception:
             max_workers = 1
-        # Create ModelRunner (this may load model weights)
-        runner = ModelRunner(str(SCRIPTED), str(QUANT), device='cpu', max_workers=max_workers)
+        # Create ModelRunner instances (this may load model weights)
+        try:
+            disease_runner = ModelRunner(str(SCRIPTED), str(QUANT), device='cpu', max_workers=max_workers)
+        except Exception:
+            disease_runner = ModelRunner(str(SCRIPTED), None, device='cpu', max_workers=max_workers)
+    if deficiency_runner is None:
+        try:
+            deficiency_runner = ModelRunner(str(DEF_SCRIPTED), str(DEF_QUANT), device='cpu', max_workers=max_workers)
+        except Exception:
+            deficiency_runner = ModelRunner(str(DEF_SCRIPTED), None, device='cpu', max_workers=max_workers)
     if batcher is None:
         try:
             max_batch_size = int(os.environ.get('BATCH_MAX_SIZE', '4'))
         except Exception:
             max_batch_size = 4
-        batcher = Batcher(runner, max_batch_size=max_batch_size, max_latency=0.05)
+        # keep a lightweight batcher for single-model compatibility, but primary flow uses two runners
+        batcher = Batcher(disease_runner, max_batch_size=max_batch_size, max_latency=0.05)
 
 
 class Batcher:
