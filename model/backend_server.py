@@ -280,25 +280,42 @@ def upload_image_api():
     except Exception:
         return jsonify({'error': 'Invalid image file provided'}), 400
 
-    # Submit to batcher and wait
-    fut = batcher.collect([img])
-    try:
-        results = fut.result(timeout=30.0)
-    except concurrent.futures.TimeoutError:
-        return jsonify({'error': 'Prediction timed out'}), 504
+    # Run two-model flow for single upload
+    create_runner_and_batcher()
 
-    # Wrap into a frontend-friendly payload
-    disease_pred = results[0] if results and len(results) > 0 else {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}
+    try:
+        disease_res = disease_runner.predict_batch_pil([img]) if hasattr(disease_runner, 'predict_batch_pil') else [{'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}]
+    except Exception:
+        disease_res = [{'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}]
+
+    try:
+        deficiency_res = deficiency_runner.predict_batch_pil([img]) if hasattr(deficiency_runner, 'predict_batch_pil') else [{'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}]
+    except Exception:
+        deficiency_res = [{'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}]
+
+    d = disease_res[0] if disease_res else {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}
+    f = deficiency_res[0] if deficiency_res else {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}
+
+    try:
+        recommendations = get_additional_recommendations(disease_class=d.get('class_index', -1), deficiency_class=f.get('class_index', -1))
+    except Exception:
+        recommendations = []
+
+    disease_expl = get_explanation(d.get('class', 'Unknown'), 'disease')
+    disease_rec = get_recommendation(d.get('class', 'Unknown'), 'disease')
+    deficiency_expl = get_explanation(f.get('class', 'Unknown'), 'deficiency')
+    deficiency_rec = get_recommendation(f.get('class', 'Unknown'), 'deficiency')
+
     response = {
-        'disease_prediction': disease_pred,
-        'deficiency_prediction': {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0},
-        'recommendations': [],
+        'disease_prediction': {**d, 'explanation': disease_expl, 'recommendation': disease_rec},
+        'deficiency_prediction': {**f, 'explanation': deficiency_expl, 'recommendation': deficiency_rec},
+        'recommendations': recommendations,
         'processing_time': 0.0,
         'model_version': 'dev_runner',
         'api_version': 'v1.0',
         'status': 'success'
     }
-    # Free PIL image
+
     try:
         del img
     except Exception:
