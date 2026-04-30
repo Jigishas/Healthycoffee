@@ -198,31 +198,46 @@ def predict():
         if not images:
             return jsonify({'error': 'No valid image files provided'}), 400
 
-        # Ensure runner/batcher exist (lazy init) then send to batcher
+        # Ensure the two runners exist (lazy init)
         create_runner_and_batcher()
-        fut = batcher.collect(images)
+
+        # Run both models on the batch of PIL images
         try:
-            results = fut.result(timeout=15.0)
-        except concurrent.futures.TimeoutError:
-            return jsonify({'error': 'Prediction timed out'}), 504
+            disease_results = disease_runner.predict_batch_pil(images) if hasattr(disease_runner, 'predict_batch_pil') else disease_runner.predict_batch([None])
+        except Exception as e:
+            disease_results = [{'class': 'Unknown', 'class_index': -1, 'confidence': 0.0} for _ in images]
 
-        # Build response compatible with frontend expectations (single-image friendly)
-        if len(results) == 1:
-            disease_pred = results[0]
-        else:
-            disease_pred = results
+        try:
+            deficiency_results = deficiency_runner.predict_batch_pil(images) if hasattr(deficiency_runner, 'predict_batch_pil') else deficiency_runner.predict_batch([None])
+        except Exception as e:
+            deficiency_results = [{'class': 'Unknown', 'class_index': -1, 'confidence': 0.0} for _ in images]
 
-        # Provide a minimal compatibility payload similar to app.py
-        response = {
-            'disease_prediction': disease_pred,
-            'deficiency_prediction': {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0},
-            'recommendations': [],
-            'processing_time': 0.0,
-            'model_version': 'dev_runner',
-            'api_version': 'v1.0',
-            'status': 'success'
-        }
-        return jsonify(response)
+        # Compose per-image rich payloads
+        payloads = []
+        for i in range(len(images)):
+            d = disease_results[i] if i < len(disease_results) else {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}
+            f = deficiency_results[i] if i < len(deficiency_results) else {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}
+            try:
+                recommendations = get_additional_recommendations(disease_class=d.get('class_index', -1), deficiency_class=f.get('class_index', -1))
+            except Exception:
+                recommendations = []
+            disease_expl = get_explanation(d.get('class', 'Unknown'), 'disease') if 'get_explanation' in globals() else None
+            disease_rec = get_recommendation(d.get('class', 'Unknown'), 'disease') if 'get_recommendation' in globals() else None
+            deficiency_expl = get_explanation(f.get('class', 'Unknown'), 'deficiency') if 'get_explanation' in globals() else None
+            deficiency_rec = get_recommendation(f.get('class', 'Unknown'), 'deficiency') if 'get_recommendation' in globals() else None
+
+            payloads.append({
+                'disease_prediction': {**d, 'explanation': disease_expl, 'recommendation': disease_rec},
+                'deficiency_prediction': {**f, 'explanation': deficiency_expl, 'recommendation': deficiency_rec},
+                'recommendations': recommendations,
+                'processing_time': 0.0,
+                'model_version': 'dev_runner',
+                'api_version': 'v1.0',
+                'status': 'success'
+            })
+
+        # If single image, return object; else list
+        return jsonify(payloads[0] if len(payloads) == 1 else payloads)
     finally:
         # Explicitly delete PIL images to free memory
         try:
