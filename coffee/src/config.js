@@ -1,7 +1,8 @@
    //Centralized configuration for backend URLs
 export const BACKEND_CONFIG = {
   PRODUCTION_URL: 'https://healthycoffee.onrender.com',
-  LOCAL_FALLBACK: 'http://localhost:8000'
+  // Match the simple Flask dev server default port (backend_server.py runs on 5000)
+  LOCAL_FALLBACK: 'http://localhost:5000'
 };
 
 // Determine which backend URL to use based on environment

@@ -8,6 +8,11 @@ Production (example):
   gunicorn -w 4 -k gthread -b 0.0.0.0:5000 backend_server:app
 """
 from flask import Flask, request, jsonify
+try:
+    # Prefer flask_cors when available for robust CORS handling
+    from flask_cors import CORS
+except Exception:
+    CORS = None
 from pathlib import Path
 import tempfile
 import os
@@ -18,6 +23,23 @@ import uuid
 import concurrent.futures
 
 app = Flask(__name__)
+
+# Enable permissive CORS for local development when flask_cors is available.
+# In production, tighten `origins` to trusted domains.
+if CORS is not None:
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
+
+@app.after_request
+def _apply_cors_headers(response):
+    origin = request.headers.get('Origin')
+    if origin:
+        response.headers.setdefault('Access-Control-Allow-Origin', '*')
+        response.headers.setdefault('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,DELETE')
+        response.headers.setdefault('Access-Control-Allow-Headers', 'Content-Type,Authorization,Cache-Control,X-Requested-With,Accept')
+        response.headers.setdefault('Access-Control-Allow-Credentials', 'true')
+        response.headers.setdefault('Vary', 'Origin')
+    return response
 
 # Configure model paths (change if necessary)
 ROOT = Path(__file__).resolve().parent
