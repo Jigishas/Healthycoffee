@@ -16,6 +16,8 @@ except Exception:
 from pathlib import Path
 import tempfile
 import os
+from io import BytesIO
+from PIL import Image
 from serving_utils import ModelRunner
 import gc
 import threading
@@ -145,7 +147,7 @@ class Batcher:
 
 
 # global batcher instance
-batcher = Batcher(runner, max_batch_size=16, max_latency=0.05)
+# Do not create a global batcher here; create it lazily via create_runner_and_batcher()
 
 
 @app.route('/predict', methods=['POST'])
