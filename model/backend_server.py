@@ -17,6 +17,7 @@ from pathlib import Path
 import tempfile
 import os
 from serving_utils import ModelRunner
+import gc
 import threading
 import time
 import uuid
@@ -46,8 +47,32 @@ ROOT = Path(__file__).resolve().parent
 SCRIPTED = ROOT / 'models' / 'leaf_diseases' / 'efficientnet_disease_balanced_scripted.pt'
 QUANT = ROOT / 'models' / 'leaf_diseases' / 'efficientnet_disease_balanced_quantized.pt'
 
-# Initialize runner (CPU)
-runner = ModelRunner(str(SCRIPTED), str(QUANT), device='cpu', max_workers=4)
+# Lazy-initialized runner and batcher to reduce memory footprint on low-memory instances.
+runner = None
+batcher = None
+
+
+def create_runner_and_batcher():
+    """Create the ModelRunner and Batcher lazily with conservative defaults.
+
+    Use environment variables to override defaults in CI or higher-memory hosts:
+      MODEL_MAX_WORKERS (default 1)
+      BATCH_MAX_SIZE (default 4)
+    """
+    global runner, batcher
+    if runner is None:
+        try:
+            max_workers = int(os.environ.get('MODEL_MAX_WORKERS', '1'))
+        except Exception:
+            max_workers = 1
+        # Create ModelRunner (this may load model weights)
+        runner = ModelRunner(str(SCRIPTED), str(QUANT), device='cpu', max_workers=max_workers)
+    if batcher is None:
+        try:
+            max_batch_size = int(os.environ.get('BATCH_MAX_SIZE', '4'))
+        except Exception:
+            max_batch_size = 4
+        batcher = Batcher(runner, max_batch_size=max_batch_size, max_latency=0.05)
 
 
 class Batcher:
@@ -111,6 +136,12 @@ class Batcher:
                 part = preds[idx: idx + n]
                 idx += n
                 fut.set_result(part)
+            # Free large objects and run GC to reduce resident memory.
+            try:
+                del preds
+            except Exception:
+                pass
+            gc.collect()
 
 
 # global batcher instance
@@ -133,7 +164,8 @@ def predict():
             f.save(dest)
             paths.append(dest)
 
-        # send to batcher and wait for result
+        # Ensure runner/batcher exist (lazy init) then send to batcher
+        create_runner_and_batcher()
         fut = batcher.collect(paths)
         try:
             results = fut.result(timeout=15.0)
@@ -166,6 +198,9 @@ def predict():
             response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Cache-Control'
             response.headers['Access-Control-Allow-Credentials'] = 'true'
             return response, 204
+
+        # Ensure runner/batcher exist before processing
+        create_runner_and_batcher()
 
         # Accept single file under key 'image' for compatibility with frontend
         file = request.files.get('image')
