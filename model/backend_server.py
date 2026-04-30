@@ -98,6 +98,7 @@ class Batcher:
         fut = concurrent.futures.Future()
         req_id = str(uuid.uuid4())
         with self.lock:
+            # store a shallow copy of the incoming items (images or paths)
             self.queue.append((req_id, list(paths), fut))
             # notify worker
             self.lock.notify()
@@ -122,9 +123,13 @@ class Batcher:
             if not batch_items:
                 continue
 
-            # run model on flattened batch
+                # run model on flattened batch (PIL images expected)
             try:
-                preds = self.runner.predict_batch(batch)
+                # If runner provides predict_batch_pil, prefer it
+                if hasattr(self.runner, 'predict_batch_pil'):
+                    preds = self.runner.predict_batch_pil(batch)
+                else:
+                    preds = self.runner.predict_batch(batch)
             except Exception as e:
                 # set exception on all futures
                 for _req_id, _paths, fut in batch_items:
@@ -156,79 +161,117 @@ def predict():
     files = request.files.getlist('images')
     if not files:
         return jsonify({'error': 'No files received (field name "images" expected)'}), 400
-
-    tmpdir = tempfile.mkdtemp()
-    paths = []
+    # Read files into in-memory PIL images and use streaming/batched inference
+    images = []
     try:
         for f in files:
-            # use a safe filename
-            dest = os.path.join(tmpdir, f.filename)
-            f.save(dest)
-            paths.append(dest)
+            try:
+                # Use file.stream if available to avoid copying into temp files
+                stream = getattr(f, 'stream', None)
+                if stream is not None:
+                    img = Image.open(stream).convert('RGB')
+                else:
+                    img = Image.open(BytesIO(f.read())).convert('RGB')
+                images.append(img)
+            except Exception:
+                # skip invalid images
+                continue
+
+        if not images:
+            return jsonify({'error': 'No valid image files provided'}), 400
 
         # Ensure runner/batcher exist (lazy init) then send to batcher
         create_runner_and_batcher()
-        fut = batcher.collect(paths)
+        fut = batcher.collect(images)
         try:
             results = fut.result(timeout=15.0)
         except concurrent.futures.TimeoutError:
             return jsonify({'error': 'Prediction timed out'}), 504
 
-        return jsonify({'results': results})
+        # Build response compatible with frontend expectations (single-image friendly)
+        if len(results) == 1:
+            disease_pred = results[0]
+        else:
+            disease_pred = results
+
+        # Provide a minimal compatibility payload similar to app.py
+        response = {
+            'disease_prediction': disease_pred,
+            'deficiency_prediction': {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0},
+            'recommendations': [],
+            'processing_time': 0.0,
+            'model_version': 'dev_runner',
+            'api_version': 'v1.0',
+            'status': 'success'
+        }
+        return jsonify(response)
     finally:
-        # cleanup files
-        for p in paths:
-            try:
-                os.remove(p)
-            except Exception:
-                pass
+        # Explicitly delete PIL images to free memory
         try:
-            os.rmdir(tmpdir)
+            for im in images:
+                try:
+                    del im
+                except Exception:
+                    pass
         except Exception:
             pass
+        gc.collect()
 
+@app.route('/api/v1/upload-image', methods=['POST', 'OPTIONS'])
+def upload_image_api():
+    # Simple compatibility wrapper so the frontend can POST 'image' (single file)
+    if request.method == 'OPTIONS':
+        response = app.make_response('')
+        origin = request.headers.get('Origin') or '*'
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Cache-Control'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response, 204
 
+    # Ensure runner/batcher exist before processing
+    create_runner_and_batcher()
 
-    @app.route('/api/v1/upload-image', methods=['POST', 'OPTIONS'])
-    def upload_image_api():
-        # Simple compatibility wrapper so the frontend can POST 'image' (single file)
-        if request.method == 'OPTIONS':
-            response = app.make_response('')
-            origin = request.headers.get('Origin') or '*'
-            response.headers['Access-Control-Allow-Origin'] = origin
-            response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-            response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Cache-Control'
-            response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 204
+    # Accept single file under key 'image' for compatibility with frontend
+    file = request.files.get('image')
+    if not file:
+        return jsonify({'error': 'No image file provided (field name "image" expected)'}), 400
 
-        # Ensure runner/batcher exist before processing
-        create_runner_and_batcher()
+    # Read file into PIL image (streaming, no disk writes)
+    try:
+        stream = getattr(file, 'stream', None)
+        if stream is not None:
+            img = Image.open(stream).convert('RGB')
+        else:
+            img = Image.open(BytesIO(file.read())).convert('RGB')
+    except Exception:
+        return jsonify({'error': 'Invalid image file provided'}), 400
 
-        # Accept single file under key 'image' for compatibility with frontend
-        file = request.files.get('image')
-        if not file:
-            return jsonify({'error': 'No image file provided (field name "image" expected)'}), 400
+    # Submit to batcher and wait
+    fut = batcher.collect([img])
+    try:
+        results = fut.result(timeout=30.0)
+    except concurrent.futures.TimeoutError:
+        return jsonify({'error': 'Prediction timed out'}), 504
 
-        tmpdir = tempfile.mkdtemp()
-        try:
-            dest = os.path.join(tmpdir, file.filename)
-            file.save(dest)
-            fut = batcher.collect([dest])
-            try:
-                results = fut.result(timeout=30.0)
-            except concurrent.futures.TimeoutError:
-                return jsonify({'error': 'Prediction timed out'}), 504
-
-            return jsonify({'results': results})
-        finally:
-            try:
-                os.remove(dest)
-            except Exception:
-                pass
-            try:
-                os.rmdir(tmpdir)
-            except Exception:
-                pass
+    # Wrap into a frontend-friendly payload
+    disease_pred = results[0] if results and len(results) > 0 else {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0}
+    response = {
+        'disease_prediction': disease_pred,
+        'deficiency_prediction': {'class': 'Unknown', 'class_index': -1, 'confidence': 0.0},
+        'recommendations': [],
+        'processing_time': 0.0,
+        'model_version': 'dev_runner',
+        'api_version': 'v1.0',
+        'status': 'success'
+    }
+    # Free PIL image
+    try:
+        del img
+    except Exception:
+        pass
+    gc.collect()
+    return jsonify(response)
 
 
 if __name__ == '__main__':
