@@ -154,5 +154,45 @@ def predict():
             pass
 
 
+
+    @app.route('/api/v1/upload-image', methods=['POST', 'OPTIONS'])
+    def upload_image_api():
+        # Simple compatibility wrapper so the frontend can POST 'image' (single file)
+        if request.method == 'OPTIONS':
+            response = app.make_response('')
+            origin = request.headers.get('Origin') or '*'
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Cache-Control'
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 204
+
+        # Accept single file under key 'image' for compatibility with frontend
+        file = request.files.get('image')
+        if not file:
+            return jsonify({'error': 'No image file provided (field name "image" expected)'}), 400
+
+        tmpdir = tempfile.mkdtemp()
+        try:
+            dest = os.path.join(tmpdir, file.filename)
+            file.save(dest)
+            fut = batcher.collect([dest])
+            try:
+                results = fut.result(timeout=30.0)
+            except concurrent.futures.TimeoutError:
+                return jsonify({'error': 'Prediction timed out'}), 504
+
+            return jsonify({'results': results})
+        finally:
+            try:
+                os.remove(dest)
+            except Exception:
+                pass
+            try:
+                os.rmdir(tmpdir)
+            except Exception:
+                pass
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True)
