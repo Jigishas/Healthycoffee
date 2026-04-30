@@ -70,7 +70,7 @@ def create_runner_and_batcher():
       MODEL_MAX_WORKERS (default 1)
       BATCH_MAX_SIZE (default 4)
     """
-    global runner, batcher
+    global runner, batcher, disease_runner, deficiency_runner
     if disease_runner is None:
         try:
             max_workers = int(os.environ.get('MODEL_MAX_WORKERS', '1'))
