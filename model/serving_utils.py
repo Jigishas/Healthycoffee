@@ -182,3 +182,43 @@ class ModelRunner:
             })
 
         return results
+
+    def predict_batch_pil(self, pil_images):
+        """Predict from a list of PIL Image objects and return list of result dicts."""
+        tensors = []
+        for img in pil_images:
+            try:
+                tensors.append(self._preprocess_pil(img))
+            except Exception:
+                tensors.append(torch.zeros(1, 3, 224, 224))
+
+        batch = torch.cat([t if t.ndim == 4 else t.unsqueeze(0) for t in tensors], dim=0)
+        batch = batch.to(self.device)
+
+        with torch.inference_mode():
+            out = self.model_nn(batch)
+            try:
+                probs = torch.nn.functional.softmax(out, dim=1)
+            except Exception:
+                out0 = out[0] if isinstance(out, (list, tuple)) else out
+                probs = torch.nn.functional.softmax(out0, dim=1)
+
+        results = []
+        for i in range(probs.shape[0]):
+            p = probs[i].cpu()
+            conf, idx = torch.max(p, dim=0)
+            idx_i = int(idx.item())
+            conf_f = float(conf.item())
+            label = None
+            if self.mapping:
+                label = self.mapping.get(str(idx_i), {}).get('name') or self.mapping.get(str(idx_i), {}).get('label')
+            if label is None:
+                label = str(idx_i)
+
+            results.append({
+                'class': label,
+                'class_index': idx_i,
+                'confidence': round(conf_f, 4)
+            })
+
+        return results
