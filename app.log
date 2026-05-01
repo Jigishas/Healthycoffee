@@ -1,0 +1,62 @@
+2026-05-01 15:02:26,780 - __main__ - INFO - Preloading models in background...
+2026-05-01 15:02:26,787 - __main__ - INFO - Starting WSGI server on port 8002
+2026-05-01 15:02:26,795 - __main__ - WARNING - Disease ModelRunner failed: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json', falling back to TorchClassifier
+2026-05-01 15:02:26,802 - __main__ - ERROR - Model preload failed
+Traceback (most recent call last):
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\app.py", line 213, in get_runners
+    disease_runner = ModelRunner(
+        scripted_path=disease_paths['scripted'],
+    ...<3 lines>...
+        device='cpu'
+    )
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\serving_utils.py", line 20, in __init__
+    with open(mapping_path, 'r', encoding='utf-8') as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\app.py", line 560, in _preload
+    get_runners()
+    ~~~~~~~~~~~^^
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\app.py", line 224, in get_runners
+    disease_runner = TorchClassifier(disease_paths['pth'], disease_paths['mapping'])
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\src\inference.py", line 51, in __init__
+    self.model, self.classes = self.load_model_and_mapping(model_path, classes_path)
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\src\inference.py", line 57, in load_model_and_mapping
+    with open(mapping_path, "r", encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json'
+2026-05-01 18:52:57,917 - __main__ - INFO - Preloading models in background...
+2026-05-01 18:52:57,920 - __main__ - INFO - Starting WSGI server on port 8003
+2026-05-01 18:52:57,922 - __main__ - WARNING - Disease ModelRunner failed: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json', falling back to TorchClassifier
+2026-05-01 18:52:57,925 - __main__ - ERROR - Model preload failed
+Traceback (most recent call last):
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\app.py", line 212, in get_runners
+    disease_runner = ModelRunner(
+        scripted_path=disease_paths['scripted'],
+    ...<3 lines>...
+        device='cpu'
+    )
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\serving_utils.py", line 20, in __init__
+    with open(mapping_path, 'r', encoding='utf-8') as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\app.py", line 559, in _preload
+    get_runners()
+    ~~~~~~~~~~~^^
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\app.py", line 223, in get_runners
+    disease_runner = TorchClassifier(disease_paths['pth'], disease_paths['mapping'])
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\src\inference.py", line 51, in __init__
+    self.model, self.classes = self.load_model_and_mapping(model_path, classes_path)
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Joseph\OneDrive\Desktop\New folder\model\src\inference.py", line 57, in load_model_and_mapping
+    with open(mapping_path, "r", encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json'

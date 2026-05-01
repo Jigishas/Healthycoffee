@@ -176,18 +176,20 @@ def validate_image_file(file):
     return True, None
 
 # Model configs and runner initialization
-# Use correct paths that exist on the server
+# Use paths relative to this file's directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 disease_paths = {
-    'scripted': 'models/leaf_diseases/efficientnet_disease_balanced_scripted.pt',
-    'quant': 'models/leaf_diseases/efficientnet_disease_balanced_quantized.pt',
-    'pth': 'models/leaf_diseases/efficientnet_disease_balanced.pth',
-    'mapping': 'models/leaf_diseases/class_mapping_diseases.json'
+    'scripted': os.path.join(BASE_DIR, 'models/leaf_diseases/efficientnet_disease_balanced_scripted.pt'),
+    'quant': os.path.join(BASE_DIR, 'models/leaf_diseases/efficientnet_disease_balanced_quantized.pt'),
+    'pth': os.path.join(BASE_DIR, 'models/leaf_diseases/efficientnet_disease_balanced.pth'),
+    'mapping': os.path.join(BASE_DIR, 'models/leaf_diseases/class_mapping_diseases.json')
 }
 deficiency_paths = {
     'scripted': None,  # No scripted version exists
     'quant': None,  # No quantized version exists
-    'pth': 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
-    'mapping': 'models/leaf_deficiencies/class_mapping_deficiencies.json'
+    'pth': os.path.join(BASE_DIR, 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth'),
+    'mapping': os.path.join(BASE_DIR, 'models/leaf_deficiencies/class_mapping_deficiencies.json')
 }
 
 # Create ModelRunner instances lazily but keep references for health/metrics
