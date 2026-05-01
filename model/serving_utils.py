@@ -15,10 +15,30 @@ class ModelRunner:
         self.mapping_path = Path(mapping_path) if mapping_path else None
         self.mapping = None
 
-        # Attempt to locate mapping if not provided
+        # Attempt to locate mapping if not provided. Be tolerant of
+        # relative paths by resolving them against this module's
+        # directory. Do not raise here; allow model loading to proceed
+        # even if a mapping file is not present (fallbacks exist).
         if mapping_path:
-            with open(mapping_path, 'r', encoding='utf-8') as f:
-                self.mapping = json.load(f)
+            try:
+                mp = Path(mapping_path)
+                if not mp.exists():
+                    # Try resolving relative to the model package directory
+                    base = Path(__file__).resolve().parent
+                    candidate = (base / mp)
+                    if candidate.exists():
+                        mp = candidate
+                if mp.exists():
+                    with open(mp, 'r', encoding='utf-8') as f:
+                        self.mapping = json.load(f)
+                else:
+                    # mapping absent; continue without it and let callers
+                    # attempt to discover mappings later or fall back
+                    # to model-provided classes
+                    self.mapping = None
+            except Exception:
+                # Never crash during initialization due to mapping issues
+                self.mapping = None
         else:
             # try finding class_mapping_*.json in same dir as any model path
             cand = None

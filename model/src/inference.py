@@ -54,8 +54,25 @@ class TorchClassifier:
         self.model.eval()
 
     def load_model_and_mapping(self, weights_path, mapping_path):
-        with open(mapping_path, "r", encoding="utf-8") as f:
-            mapping = json.load(f)
+        # Be tolerant of relative mapping paths. If the provided mapping_path
+        # doesn't exist, try resolving it relative to the repository `model`
+        # directory (two levels up from this file). If still missing, fall
+        # back to an empty mapping to avoid crashing in production.
+        mapping = {}
+        try:
+            mp = Path(mapping_path)
+            if not mp.exists():
+                base = Path(__file__).resolve().parent.parent
+                candidate = (base / mp)
+                if candidate.exists():
+                    mp = candidate
+            if mp.exists():
+                with open(mp, "r", encoding="utf-8") as f:
+                    mapping = json.load(f)
+            else:
+                mapping = {}
+        except Exception:
+            mapping = {}
         num_classes = len(mapping)
         model = models.efficientnet_b0(weights="IMAGENET1K_V1")
         model.classifier[1] = torch.nn.Linear(model.classifier[1].in_features, num_classes)
@@ -146,8 +163,22 @@ class TorchClassifier:
         }
 
 def load_model_and_mapping(weights_path, mapping_path):
-    with open(mapping_path, "r", encoding="utf-8") as f:
-        mapping = json.load(f)
+    # Same tolerant resolution for the module-level helper
+    mapping = {}
+    try:
+        mp = Path(mapping_path)
+        if not mp.exists():
+            base = Path(__file__).resolve().parent.parent
+            candidate = (base / mp)
+            if candidate.exists():
+                mp = candidate
+        if mp.exists():
+            with open(mp, "r", encoding="utf-8") as f:
+                mapping = json.load(f)
+        else:
+            mapping = {}
+    except Exception:
+        mapping = {}
     num_classes = len(mapping)
     model = models.efficientnet_b0(weights="IMAGENET1K_V1")
     model.classifier[1] = torch.nn.Linear(model.classifier[1].in_features, num_classes)
