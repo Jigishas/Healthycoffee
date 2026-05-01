@@ -206,19 +206,30 @@ const checkBackendStatus = useCallback(async () => {
 
   const capturePhoto = () => {
     if (!videoRef.current) return;
-
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
 
-    // Set canvas size
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
+    // Downscale to reduce upload size and memory usage (max dimension 1024)
+    const maxDim = 1024;
+    const vw = videoRef.current.videoWidth || 1280;
+    const vh = videoRef.current.videoHeight || 720;
+    let targetW = vw;
+    let targetH = vh;
+    if (Math.max(vw, vh) > maxDim) {
+      const scale = maxDim / Math.max(vw, vh);
+      targetW = Math.round(vw * scale);
+      targetH = Math.round(vh * scale);
+    }
 
-    // Draw video frame
-    context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    // Set canvas size to scaled dimensions
+    canvas.width = targetW;
+    canvas.height = targetH;
+
+    // Draw scaled video frame
+    context.drawImage(videoRef.current, 0, 0, targetW, targetH);
 
     // Get image data URL
-    const imageData = canvas.toDataURL('image/jpeg');
+    const imageData = canvas.toDataURL('image/jpeg', 0.85);
     setPreview(imageData);
     stopCamera();
     // Auto-analyze captured photo
@@ -242,11 +253,30 @@ const checkBackendStatus = useCallback(async () => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      setPreview(e.target.result);
-      // Store file for upload
-      fileInputRef.current.file = file;
-      // Auto-analyze selected image
-      analyzeImage(e.target.result);
+      // Create an offscreen image to downscale large uploads
+      const img = new Image();
+      img.onload = () => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        const maxDim = 1024;
+        let w = img.width;
+        let h = img.height;
+        if (Math.max(w, h) > maxDim) {
+          const scale = maxDim / Math.max(w, h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        canvas.width = w;
+        canvas.height = h;
+        ctx.drawImage(img, 0, 0, w, h);
+        const scaledData = canvas.toDataURL('image/jpeg', 0.85);
+        setPreview(scaledData);
+        // Store original file reference for potential use
+        fileInputRef.current.file = file;
+        // Auto-analyze selected image
+        analyzeImage(scaledData);
+      };
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
     event.target.value = ''; // Reset input
@@ -304,11 +334,15 @@ const checkBackendStatus = useCallback(async () => {
               const parsed = JSON.parse(xhr.responseText || '{}');
               if (parsed.error) msg = parsed.error;
             } catch (e) {}
+            console.error('Upload failed', xhr.status, xhr.statusText, xhr.responseText);
             reject(new Error(msg));
           }
         };
 
-        xhr.onerror = () => reject(new Error('Network error during upload'));
+        xhr.onerror = () => {
+          console.error('XHR network error', { readyState: xhr.readyState, status: xhr.status, response: xhr.responseText });
+          reject(new Error(`Network error during upload (status ${xhr.status || 0})`));
+        };
         xhr.ontimeout = () => reject(new Error('Upload timed out'));
 
         // Optional: set a reasonable timeout (e.g., 120s)
