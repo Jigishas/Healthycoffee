@@ -1,6 +1,6 @@
 // Ping backend service to keep Render free tier awake and responsive
 const BACKEND_URL = 'https://healthycoffee.onrender.com/_ping';
-const PING_INTERVAL = 10 * 60 * 1000; // 10 minutes - keep connection alive
+const PING_INTERVAL = 2 * 60 * 1000; // 2 minutes - keep backend awake
 const RETRY_ATTEMPTS = 3;
 const RETRY_DELAY = 5000; // 5 seconds
 

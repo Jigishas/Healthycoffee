@@ -176,8 +176,8 @@ self.addEventListener('fetch', (event) => {
               if (cachedResponse) {
                 return cachedResponse;
               } else {
-                // Return offline response for health endpoint
-                if (event.request.url.includes('/health')) {
+// Return offline response for _ping endpoint
+                if (event.request.url.includes('/_ping')) {
                   return new Response(JSON.stringify({
                     status: 'offline',
                     message: 'Backend is currently offline. Please check your connection.',
