@@ -176,8 +176,7 @@ def validate_image_file(file):
     return True, None
 
 # Model configs and runner initialization
-# Deficiency model only has .pth weights (no scripted/quantized versions yet),
-# so we pass pth_path explicitly so ModelRunner can fall back correctly.
+# Use correct paths that exist on the server
 disease_paths = {
     'scripted': 'models/leaf_diseases/efficientnet_disease_balanced_scripted.pt',
     'quant': 'models/leaf_diseases/efficientnet_disease_balanced_quantized.pt',
@@ -185,8 +184,8 @@ disease_paths = {
     'mapping': 'models/leaf_diseases/class_mapping_diseases.json'
 }
 deficiency_paths = {
-    'scripted': 'models/leaf_deficiencies/efficientnet_deficiency_balanced_scripted.pt',
-    'quant': 'models/leaf_deficiencies/efficientnet_deficiency_balanced_quantized.pt',
+    'scripted': None,  # No scripted version exists
+    'quant': None,  # No quantized version exists
     'pth': 'models/leaf_deficiencies/efficientnet_deficiency_balanced.pth',
     'mapping': 'models/leaf_deficiencies/class_mapping_deficiencies.json'
 }
