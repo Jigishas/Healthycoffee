@@ -563,8 +563,20 @@ if __name__ == '__main__':
         except Exception:
             logger.exception('Model preload failed')
 
-    t = threading.Thread(target=_preload, daemon=True)
-    t.start()
+    # Only attempt to preload models if explicitly enabled. Preloading
+    # can cause memory/time spikes on constrained platforms and may lead
+    # to upstream 502 responses observed in production. Control with
+    # the `PRELOAD_MODELS` environment variable (set to '1' or 'true').
+    try:
+        preload_flag = os.environ.get('PRELOAD_MODELS', '0').lower()
+    except Exception:
+        preload_flag = '0'
+
+    if preload_flag in ('1', 'true', 'yes'):
+        t = threading.Thread(target=_preload, daemon=True)
+        t.start()
+    else:
+        logger.info('Model preload skipped (PRELOAD_MODELS not set)')
 
     def find_free_port(start, max_tries=10):
         for p in range(start, start + max_tries + 1):
