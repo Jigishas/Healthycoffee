@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
 const BACKEND_URL = 'https://healthycoffee.onrender.com';
-
 const useBackendHealth = () => {
   const [status, setStatus] = useState('checking');
   const [isOnline, setIsOnline] = useState(false);
@@ -15,8 +14,8 @@ const useBackendHealth = () => {
       // Use AbortController to avoid hanging requests (10s timeout)
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 10000);
-      // Avoid sending Content-Type header to prevent preflight
-      const response = await fetch(`${BACKEND_URL}/health`, {
+      // Use _ping endpoint for lightweight health check
+      const response = await fetch(`${BACKEND_URL}/_ping`, {
         method: 'GET',
         mode: 'cors',
         signal: controller.signal
