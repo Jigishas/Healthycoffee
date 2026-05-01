@@ -825,7 +825,10 @@ class CoffeeDiseaseRecommender:
         }
         return calendars.get(disease_name, {"message": "General farm health maintenance calendar recommended"})
 
-    def get_uncertain_recommendations(self):
+def get_uncertain_recommendations(self):
+        """Generate recommendations when model prediction is uncertain"""
+        return {
+            "disease_": "
         """Generate recommendations when model prediction is uncertain"""
         return {
             "disease_name": "Uncertain Diagnosis",
