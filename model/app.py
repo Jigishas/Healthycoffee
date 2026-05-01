@@ -402,29 +402,22 @@ def health():
         origin = request.headers.get('Origin') or '*'
         response.headers['Access-Control-Allow-Origin'] = origin
         response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, cache-control, Cache-Control'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Cache-Control, X-Requested-With, Accept'
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         return response, 204
     try:
         if request.method == 'POST':
             data = request.get_json(silent=True)
-            logger.info(f'Health ping: {data}')
+            if data:
+                logger.info(f'Health ping: {data}')
 
-        # Check if runners/models are loaded
-        disease_loaded = disease_runner is not None
-        deficiency_loaded = deficiency_runner is not None
-
+        # Simple health check - always respond quickly without loading models
+        # This endpoint just checks if the web service is running
         response_data = {
-            'status': 'healthy' if disease_loaded and deficiency_loaded else 'degraded',
+            'status': 'healthy',
             'timestamp': time.time(),
-            'models_loaded': {
-                'disease_model': disease_loaded,
-                'deficiency_model': deficiency_loaded
-            },
-            'model_stats': {
-                'disease': getattr(disease_runner, 'get_stats', lambda: {})() if disease_loaded and hasattr(disease_runner, 'get_stats') else {},
-                'deficiency': getattr(deficiency_runner, 'get_stats', lambda: {})() if deficiency_loaded and hasattr(deficiency_runner, 'get_stats') else {}
-            }
+            'service': 'healthycoffee-backend',
+            'models_loaded': False  # Models are lazy-loaded on demand
         }
         return jsonify(response_data), 200
     except Exception:
