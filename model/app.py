@@ -43,6 +43,29 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Lightweight ping endpoint placed early to verify service reachability
+# ENHANCED: Added model status check
+@app.route('/_ping', methods=['GET', 'OPTIONS'])
+def _ping():
+    if request.method == 'OPTIONS':
+        response = app.make_response('')
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response, 204
+    
+    # Test model runners availability
+    try:
+        disease_runner, deficiency_runner = get_runners()
+        model_status = 'loaded' if (disease_runner and deficiency_runner) else 'lazy-pending'
+    except:
+        model_status = 'error'
+    
+    return jsonify({
+        'status': 'ok', 
+        'service': 'healthycoffee-backend',
+        'models': model_status
+    }), 200
 # and always return CORS-safe responses even if heavy model code misbehaves.
 @app.route('/_ping', methods=['GET', 'OPTIONS'])
 def _ping():
