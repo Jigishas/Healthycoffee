@@ -5,7 +5,7 @@ import json
 import numpy as np
 from pathlib import Path
 from collections import deque
-from sklearn.metrics.pairwise import cosine_similarity
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -205,9 +205,7 @@ def run_inference(model, mapping, image_path, model_name=""):
         "recommendation": info.get("recommendation", "")
     }
 
-class InteractiveMemory:
-    """Stores high-confidence predictions in memory for reference"""
-    def __init__(self, max_size=1000):
+
         self.memory = deque(maxlen=max_size)
         self.confidence_threshold = 0.85
 
