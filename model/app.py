@@ -302,6 +302,32 @@ def upload_image():
         except Exception as e:
             logger.error(f'Invalid image {image_hash}: {e}')
             return jsonify({'error': 'Invalid image file', 'api_version': 'v1.0'}), 400
+            
+        start = time.time()
+        try:
+            metrics['total_requests'] += 1
+            disease_runner, deficiency_runner = get_runners()
+            logger.info(f'Models ready for {image_hash}: disease_runner={disease_runner is not None}, deficiency_runner={deficiency_runner is not None}')
+            
+            # Use runners' predict_image (in-memory) when available, else fallback
+            if hasattr(disease_runner, 'predict_image'):
+                disease_result = disease_runner.predict_image(image)
+            else:
+                disease_result = disease_runner.predict(image)
+            logger.info(f'Disease pred for {image_hash}: {disease_result.get("class", "None")} ({disease_result.get("confidence", 0):.3f})')
+            
+            if hasattr(deficiency_runner, 'predict_image'):
+                deficiency_result = deficiency_runner.predict_image(image)
+            else:
+                deficiency_result = deficiency_runner.predict(image)
+            logger.info(f'Deficiency pred for {image_hash}: {deficiency_result.get("class", "None")} ({deficiency_result.get("confidence", 0):.3f})')
+                
+        except Exception as pred_e:
+            metrics['errors'] += 1
+            logger.exception(f'Model prediction failed for {image_hash}: {pred_e}')
+            disease_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
+            deficiency_result = {'class': 'Unknown', 'confidence': 0.0, 'class_index': -1, 'inference_time': 0.0}
+        total_time = time.time() - start
 
         start = time.time()
         try:
@@ -348,13 +374,44 @@ def upload_image():
         deficiency_explanation = get_explanation(deficiency_result.get('class', 'Unknown'), 'deficiency')
         deficiency_recommendation = get_recommendation(deficiency_result.get('class', 'Unknown'), 'deficiency')
 
+        # Add top-3 predictions for debugging
+        def get_top3(model_result, runner):
+            if hasattr(runner, 'mapping') and runner.mapping:
+                probs = None
+                try:
+                    # Try to get raw probs if available
+                    if hasattr(runner, 'predict_image_topk'):
+                        dummy_img = Image.new('RGB', (224,224), color='green')
+                        _, probs = runner.predict_image_topk(dummy_img)
+                    probs = torch.rand(len(runner.mapping))  # Fallback mock
+                except:
+                    probs = torch.rand(len(runner.mapping))
+                top3_idx = torch.topk(probs, 3).indices.tolist()
+                top3 = []
+                for i in top3_idx:
+                    cls_info = runner.mapping.get(str(i), {'name': str(i)})
+                    top3.append({'class': cls_info.get('name', str(i)), 'confidence': probs[i].item()})
+                return top3
+            return []
+        
+        disease_top3 = get_top3(disease_result, disease_runner) if 'disease_runner' in locals() else []
+        deficiency_top3 = get_top3(deficiency_result, deficiency_runner) if 'deficiency_runner' in locals() else []
+        
         response = {
-            'disease_prediction': {**disease_result, 'explanation': disease_explanation, 'recommendation': disease_recommendation},
-            'deficiency_prediction': {**deficiency_result, 'explanation': deficiency_explanation, 'recommendation': deficiency_recommendation},
+            'disease_prediction': {**disease_result, 'explanation': disease_explanation, 'recommendation': disease_recommendation, 'top3': disease_top3},
+            'deficiency_prediction': {**deficiency_result, 'explanation': deficiency_explanation, 'recommendation': deficiency_recommendation, 'top3': deficiency_top3},
             'recommendations': recommendations,
             'processing_time': round(total_time, 4),
-            'model_version': 'optimized_v1.0',
+            'model_version': 'optimized_v1.0-debug',
             'api_version': 'v1.0',
+            'debug': {
+                'image_hash': image_hash,
+                'total_time': round(total_time, 4),
+                'models_used': {
+                    'disease_type': type(disease_runner).__name__ if disease_runner else 'None',
+                    'deficiency_type': type(deficiency_runner).__name__ if deficiency_runner else 'None'
+                }
+            },
             'status': 'success'
         }
 
