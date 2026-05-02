@@ -546,7 +546,7 @@ def model_info():
 
 @app.route('/api/cors-test', methods=['GET', 'POST', 'OPTIONS'])
 def cors_test():
-    \"\"\"Test CORS configuration - returns full headers for verification\"\"\"
+    """Test CORS configuration - returns full headers for verification"""
     if request.method == 'OPTIONS':
         response = app.make_response('')
         origin = request.headers.get('Origin', '*')
@@ -571,9 +571,10 @@ def cors_test():
         }
     })
 
+
 @app.route('/api/test-image', methods=['GET'])
 def test_image():
-    \"\"\"Test endpoint using sample image from test_dataset - verifies pipeline works\"\"\"
+    """Test endpoint using sample image from test_dataset - verifies pipeline works"""
     try:
         import os
         test_img_path = os.path.join(os.path.dirname(__file__), 'test_dataset/deficiencies/healthy/test_image.jpg')
@@ -600,6 +601,7 @@ def test_image():
     except Exception as e:
         logger.exception('Test image failed')
         return jsonify({'error': str(e), 'status': 'pipeline_error'}), 500
+
 
 @app.route('/api/performance', methods=['GET'])
 def performance():
