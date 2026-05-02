@@ -1,20 +1,27 @@
-# Backend Fix TODO
+# Backend Optimization & Analysis Pipeline Fix
+## Status: [In Progress] ✅ Approved Plan
 
-## Status: In Progress
+## Step 1: Create/Update Primary App (app.py) - Enhanced Logging & Test Endpoint
+- [ ] Enhance model/app.py: Add prediction logging (top-3 classes, image shape), /api/test-image endpoint, top-3 in response
+- [ ] Update model/src/inference.py: TorchClassifier.predict return top-3 predictions
 
-## Steps to Complete:
-- [x] 1. Update ping interval to 2 minutes
-- [ ] 2. Simplify backend app.py with correct model paths
-- [ ] 3. Test backend locally
-- [ ] 4. Build and verify frontend changes work
-- [ ] 5. Deploy to production
+## Step 2: Clean Requirements & Remove Redundancies
+- [ ] Trim model/requirements.txt: Remove unused (redis, Flask-Caching, onnxruntime, opencv, plotting libs)
+- [ ] DELETE: model/app_combined.py, model/app_optimized.py, model/src/api.py, model/src/preprocessing.py
 
-## Current Issues:
-- Backend models paths are incorrect in app.py
-- Memory issues on Render free tier
-- Model loading causing 503 errors
+## Step 3: CORS Verification
+- [ ] Add /api/cors-test endpoint in app.py
+- [ ] Test frontend -> backend connectivity
 
-## Fix Plan:
-1. Fix model paths in app.py to point to correct locations
-2. Use simpler model loading without complex fallbacks
-3. Test locally before deployment
+## Step 4: Install & Test
+- [ ] `pip install -r model/requirements.txt`
+- [ ] Local test: `python model/app.py` + curl POST /api/v1/upload-image & /api/test-image
+- [ ] Deploy Render/Vercel, check logs
+- [ ] Frontend test: coffee/src/Components/BODY/Ask me/Upload.jsx
+
+## Step 5: Validation
+- [ ] Confirm image analysis works (no more "not analyzing")
+- [ ] Verify CORS (frontend calls succeed)
+- [ ] Performance: inference <2s, memory stable
+
+**Next Action:** Update app.py with enhancements
