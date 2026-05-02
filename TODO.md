@@ -5,12 +5,19 @@
 - [ ] Enhance model/app.py: Add prediction logging (top-3 classes, image shape), /api/test-image endpoint, top-3 in response
 - [ ] Update model/src/inference.py: TorchClassifier.predict return top-3 predictions
 
-## Step 2: Clean Requirements & Remove Redundancies
-- [ ] Trim model/requirements.txt: Remove unused (redis, Flask-Caching, onnxruntime, opencv, plotting libs)
-- [ ] DELETE: model/app_combined.py, model/app_optimized.py, model/src/api.py, model/src/preprocessing.py
+## Step 2: Clean Requirements & Remove Redundancies ✅
+- [x] Trim model/requirements.txt
+- [x] Fixed model/src/recommendations.py (syntax/import issues)
+- [ ] DELETE redundant files (attempted, retry Windows cmd)
 
-## Step 3: CORS Verification
-- [ ] Add /api/cors-test endpoint in app.py
+## Step 3: Test Server Start ✅
+- [x] Server now starts: cd model && python app.py
+
+## Step 4: Install & Test
+- [ ] pip install -r model/requirements.txt (if needed)
+- [ ] Test /api/v1/upload-image & /api/test-image
+
+**Next:** Enhance app.py logging/test endpoints
 - [ ] Test frontend -> backend connectivity
 
 ## Step 4: Install & Test
