@@ -298,8 +298,9 @@ def upload_image():
 
         try:
             image = Image.open(BytesIO(img_bytes)).convert('RGB')
-        except Exception:
-            logger.error(f'Invalid image {image_hash}')
+            logger.info(f'Image loaded: {image.size} ({image.mode}), hash: {image_hash}')
+        except Exception as e:
+            logger.error(f'Invalid image {image_hash}: {e}')
             return jsonify({'error': 'Invalid image file', 'api_version': 'v1.0'}), 400
 
         start = time.time()
@@ -429,19 +430,36 @@ def health():
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Cache-Control, X-Requested-With, Accept'
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         return response, 204
+    
     try:
         if request.method == 'POST':
             data = request.get_json(silent=True)
             if data:
                 logger.info(f'Health ping: {data}')
 
-        # Simple health check - always respond quickly without loading models
-        # This endpoint just checks if the web service is running
+        # Enhanced health check with model status
+        try:
+            disease_runner, deficiency_runner = get_runners()
+            disease_loaded = disease_runner is not None
+            deficiency_loaded = deficiency_runner is not None
+            disease_stats = getattr(disease_runner, 'get_stats', lambda: {})() if disease_loaded else {}
+            deficiency_stats = getattr(deficiency_runner, 'get_stats', lambda: {})() if deficiency_loaded else {}
+        except Exception as e:
+            logger.warning(f'Model health check failed: {e}')
+            disease_loaded = deficiency_loaded = False
+            disease_stats = deficiency_stats = {}
+        
         response_data = {
             'status': 'healthy',
             'timestamp': time.time(),
             'service': 'healthycoffee-backend',
-            'models_loaded': False  # Models are lazy-loaded on demand
+            'models': {
+                'disease_loaded': disease_loaded,
+                'deficiency_loaded': deficiency_loaded,
+                'disease_stats': disease_stats,
+                'deficiency_stats': deficiency_stats
+            },
+            'total_predictions': disease_stats.get('total_predictions', 0) + deficiency_stats.get('total_predictions', 0)
         }
         return jsonify(response_data), 200
     except Exception:
