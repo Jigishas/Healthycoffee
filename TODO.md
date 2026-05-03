@@ -31,5 +31,4 @@
 - Test production /_ping endpoint
 
 ### Step 5: Full API Test
-- Test /api/v1/upload-image with sample image
 
