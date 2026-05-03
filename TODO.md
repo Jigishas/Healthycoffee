@@ -30,5 +30,4 @@
 - Check Render logs for "Starting WSGI server"
 - Test production /_ping endpoint
 
-### Step 5: Full API Test
 
