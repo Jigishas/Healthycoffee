@@ -52,6 +52,16 @@ class TorchClassifier:
         self.model.to(self.device)
         self.model.float()  # Convert model to float precision
         self.model.eval()
+        # Flag whether an external per-class bias was applied
+        self.applied_bias = False
+        # Try to apply a saved per-class bias (per_class_bias.json) if available
+        try:
+            applied = torch.nn.Module._apply_saved_bias_to_model_helper(self.model, model_path)
+            if applied:
+                self.applied_bias = True
+        except Exception:
+            # Non-fatal: leave model unchanged if bias application fails
+            pass
 
     def load_model_and_mapping(self, weights_path, mapping_path):
         # Be tolerant of relative mapping paths. If the provided mapping_path
@@ -186,6 +196,45 @@ def load_model_and_mapping(weights_path, mapping_path):
     model.load_state_dict(state_dict)
     model.eval()
     return model, mapping
+
+
+# Helpers to optionally apply a saved per-class additive bias to the final linear
+def _apply_saved_bias_to_model(model, weights_path):
+    try:
+        # Candidate locations for a saved bias file
+        candidates = [Path(weights_path).parent / 'per_class_bias.json',
+                      Path(__file__).resolve().parent.parent / 'per_class_bias.json']
+        bias_path = None
+        for c in candidates:
+            if c.exists():
+                bias_path = c
+                break
+        if bias_path is None:
+            return False
+
+        with open(bias_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        bias = data.get('bias') if isinstance(data, dict) else data
+        if bias is None:
+            return False
+
+        # Apply to final linear bias if shapes match
+        try:
+            final_linear = model.classifier[1]
+            if isinstance(final_linear, torch.nn.Linear) and final_linear.bias is not None:
+                b = torch.tensor(bias, dtype=final_linear.bias.dtype, device=final_linear.bias.device)
+                if b.numel() == final_linear.bias.numel():
+                    with torch.no_grad():
+                        final_linear.bias += b.to(final_linear.bias.device)
+                    return True
+        except Exception:
+            return False
+    except Exception:
+        return False
+
+
+# Attach helper as a method used by TorchClassifier instances
+setattr(torch.nn.Module, '_apply_saved_bias_to_model_helper', staticmethod(_apply_saved_bias_to_model))
 
 def run_inference(model, mapping, image_path, model_name=""):
     image = Image.open(image_path).convert("RGB")
