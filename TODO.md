@@ -14,10 +14,4 @@
   - numpy==2.1.1
   - scikit-learn==1.5.2
 
-### ⏳ Next Steps:
-### Step 2: ✅ Installation verified
-- [x] Core deps (flask-cors, torch 2.6.0, torchvision 0.21.0) satisfied
-- [x] Anaconda pip version quirks handled
 
-### Step 3: ✅ Server running successfully!
-- [x] `python app.py` → "Starting WSGI server on port 8003"
