@@ -24,7 +24,12 @@ import gc
 import socket
 
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))
 from src.inference import TorchClassifier
+from src.explanations import get_explanation, get_recommendation
+from src.recommendations import get_additional_recommendations
 import torch
 
 # Limit PyTorch threads to reduce memory fragmentation on Render free tier

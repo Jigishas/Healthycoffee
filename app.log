@@ -60,3 +60,6 @@ Traceback (most recent call last):
     with open(mapping_path, "r", encoding="utf-8") as f:
          ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 FileNotFoundError: [Errno 2] No such file or directory: 'models/leaf_diseases/class_mapping_diseases.json'
+2026-05-03 21:20:54,290 - model.app - WARNING - Disease ModelRunner failed: name 'ModelRunner' is not defined, falling back to TorchClassifier
+2026-05-03 21:20:55,647 - model.app - WARNING - Deficiency ModelRunner failed: name 'ModelRunner' is not defined, falling back to TorchClassifier
+2026-05-03 21:20:57,250 - model.app - INFO - Image upload request from 127.0.0.1 - User-Agent: Werkzeug/3.1.3...
