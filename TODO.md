@@ -25,5 +25,4 @@
 - [x] Server active (lazy model load)
 
 
-### Step 4: Deploy & Verify
-- Git push triggers Render redeploy
+### Step 4: Deploy & Verif
