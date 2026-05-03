@@ -21,6 +21,3 @@
 
 ### Step 3: ✅ Server running successfully!
 - [x] `python app.py` → "Starting WSGI server on port 8003"
-- [x] No flask_cors import error!
-- [x] Server active (lazy model load)
-
