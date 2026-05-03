@@ -3,6 +3,8 @@
 Enhanced test script for backend - CORS, metrics, prod checks
 """
 
+import sys
+sys.path.insert(0, 'model')
 from model.app import app
 import json
 import requests

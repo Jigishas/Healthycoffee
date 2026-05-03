@@ -20,8 +20,9 @@ def test_upload_endpoint():
         return False
 
     # Backend URLs to test
-    urls = [
-        "http://localhost:8000/api/v1/upload-image",  # Local development
+LOCAL_PORT = int(os.environ.get('BACKEND_PORT', '8002'))
+urls = [
+        f"http://localhost:{LOCAL_PORT}/api/v1/upload-image",  # Local development
         "https://healthycoffee.onrender.com/api/v1/upload-image"  # Production
     ]
 

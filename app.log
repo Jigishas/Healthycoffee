@@ -63,3 +63,6 @@ FileNotFoundError: [Errno 2] No such file or directory: 'models/leaf_diseases/cl
 2026-05-03 21:20:54,290 - model.app - WARNING - Disease ModelRunner failed: name 'ModelRunner' is not defined, falling back to TorchClassifier
 2026-05-03 21:20:55,647 - model.app - WARNING - Deficiency ModelRunner failed: name 'ModelRunner' is not defined, falling back to TorchClassifier
 2026-05-03 21:20:57,250 - model.app - INFO - Image upload request from 127.0.0.1 - User-Agent: Werkzeug/3.1.3...
+2026-05-03 22:53:26,508 - model.app - WARNING - Disease ModelRunner failed: name 'ModelRunner' is not defined, falling back to TorchClassifier
+2026-05-03 22:53:27,703 - model.app - WARNING - Deficiency ModelRunner failed: name 'ModelRunner' is not defined, falling back to TorchClassifier
+2026-05-03 22:53:28,948 - model.app - INFO - Image upload request from 127.0.0.1 - User-Agent: Werkzeug/3.1.3...

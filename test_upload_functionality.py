@@ -21,7 +21,8 @@ def test_upload_functionality():
     print("🖼️  Found test image:", test_image_path)
 
     # Backend URL (local for testing)
-    backend_url = "http://127.0.0.1:8000"
+LOCAL_PORT = int(os.environ.get('BACKEND_PORT', '8002'))
+backend_url = f"http://127.0.0.1:{LOCAL_PORT}"
 
     print(f"🔗 Testing backend at: {backend_url}")
 
