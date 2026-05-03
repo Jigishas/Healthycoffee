@@ -127,7 +127,9 @@ def main():
 
     # Save calibration
     out = root / 'temperature_scaling.json'
-    out.write_text(json.dumps({'temperature': temp, 'before': {'acc': before_acc, 'nll': before_nll}, 'after': {'acc': after_acc, 'nll': after_nll}}, indent=2))
+    out.write_text(json.dumps({'temperature': float(temp),
+                               'before': {'acc': float(before_acc), 'nll': float(before_nll)},
+                               'after': {'acc': float(after_acc), 'nll': float(after_nll)}}, indent=2))
     print('Saved temperature scaling results to', out)
 
 
