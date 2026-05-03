@@ -1,4 +1,5 @@
-- [ ] 3. Tighten CORS in model/app.py: Specific origins list (localhost:3000/5173, vercel.app, onrender.com)
+- [x] 3. Tighten CORS in model/app.py ✓
+
 - [ ] 4. Add gunicorn config endpoint/metrics to model/app.py
 - [ ] 5. Enhance test_backend.py: Add CORS simulation, prod URL tests
 - [ ] 6. Create tests/test_cors.py with pytest-httpx for preflight tests

@@ -83,12 +83,15 @@ try:
 except ImportError:
     cache = None
 
-# CORS - Restrict origins for production
-allowed_origins = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000,https://healthycoffee.vercel.app,https://healthycoffee.onrender.com').split(',')
+# CORS - Production-secure origins list (env override supported)
+ALLOWED_ORIGINS = [
+    'http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173',
+    'https://healthycoffee.vercel.app', 'https://healthycoffee.onrender.com',
+    'https://*.vercel.app'
+]
+allowed_origins = os.environ.get('ALLOWED_ORIGINS', ','.join(ALLOWED_ORIGINS)).split(',')
+CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
 
-# Temporary permissive CORS for debugging on Render — allow all origins.
-# WARNING: This setting is permissive and should be reverted/tightened for production.
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 
 # Ensure CORS headers are present on all responses (safer and explicit)
@@ -581,18 +584,34 @@ def test_image():
 
 
 @app.route('/api/performance', methods=['GET'])
+@app.route('/metrics', methods=['GET'])  # Prometheus-compatible alias
 def performance():
     try:
         disease_stats = getattr(disease_runner, 'get_stats', lambda: {'total_predictions': 0})()
         deficiency_stats = getattr(deficiency_runner, 'get_stats', lambda: {'total_predictions': 0})()
         total_preds = disease_stats.get('total_predictions', 0) + deficiency_stats.get('total_predictions', 0)
-        # include simple service-level metrics
-        perf = {'disease_model': disease_stats, 'deficiency_model': deficiency_stats, 'total_predictions': total_preds}
-        perf.update({'service_total_requests': metrics['total_requests'], 'service_errors': metrics['errors']})
-        return jsonify({'performance_metrics': perf, 'model_version': 'optimized_v1.0-debug', 'timestamp': time.time()})
+        perf = {
+            'disease_model': disease_stats,
+            'deficiency_model': deficiency_stats,
+            'total_predictions': total_preds,
+            'service_requests_total': metrics['total_requests'],
+            'service_errors_total': metrics['errors'],
+            'error_rate': metrics['errors'] / max(metrics['total_requests'], 1),
+            'uptime_seconds': time.time() - app_start_time if 'app_start_time' in globals() else 0
+        }
+        return jsonify({
+            'performance_metrics': perf,
+            'model_version': 'optimized_v1.1-prod',
+            'timestamp': time.time()
+        })
     except Exception:
         logger.exception('Performance error')
         return jsonify({'error': 'Internal server error'}), 500
+
+
+# Global app start time for uptime metric
+app_start_time = time.time()
+
 
 
 # Backwards-compatible alias for older clients/tests that expect /api/upload-image
