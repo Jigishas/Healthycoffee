@@ -12,5 +12,3 @@
 - [ ] 12. Run all tests: python test_backend.py, test_upload.py, test_upload_functionality.py
 - [ ] 13. Performance test: Create & run load test script (ab/wrk)
 - [ ] 14. Deploy & verify prod: Render/Vercel, end-to-end test
-
-**Legend:**
