@@ -3,5 +3,3 @@
 - [ ] 4. Add gunicorn config endpoint/metrics to model/app.py
 - [x] 5. test_backend.py enhanced: CORS OPTIONS, /metrics, model-info, prod health ✓
 
-- [ ] 6. Create tests/test_cors.py with pytest-httpx for preflight tests
-
