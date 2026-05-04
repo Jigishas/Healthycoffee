@@ -8,5 +8,3 @@
 - [ ] 8. Update test_upload.py: Include CORS headers, prod tests
 - [ ] 9. Create deploy/gunicorn.conf.py for production WSGI
 - [ ] 10. Update README.md: Local/prod run instructions, CORS docs
-- [ ] 11. Test local full stack: Backend model/app.py, frontend npm dev
-- [ ] 12. Run all tests: python test_backend.py, test_upload.py, test_upload_functionality.py
