@@ -16,4 +16,3 @@
 **Legend:**
 - Run `python test_upload.py` after backend start (`cd model && python app.py`)
 - Local dev: Backend 8000, Frontend localhost:5173 → http://localhost:8000
-- Prod: https://healthycoffee.onrender.co
