@@ -391,7 +391,7 @@ def upload_image():
             'deficiency_recommendations': structured_recs['deficiency_recommendations'],
             'products': structured_recs['products'],
             'varieties': structured_recs['varieties'],
-            'recommendations': recommendations,  # Legacy field
+'legacy_recommendations': structured_recs.get("products", []),  # Legacy compatibility
             'processing_time': round(total_time, 4),
             'model_version': 'enhanced_v1.1-structured-recs',
             'api_version': 'v1.1',
