@@ -11,7 +11,7 @@ Changes:
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import HTTPExceptiongit p
 import os
 import logging
 import time
@@ -339,17 +339,22 @@ def upload_image():
         # Force garbage collection to free memory
         gc.collect()
 
+        # Get enhanced structured recommendations
         try:
-            recommendations = get_additional_recommendations(
-                disease_class=disease_result.get('class_index', -1),
-                deficiency_class=deficiency_result.get('class_index', -1)
+            structured_recs = get_structured_recommendations(
+                disease_class=disease_result.get('class', 'Healthy'),
+                deficiency_class=deficiency_result.get('class', 'Healthy'),
+                disease_confidence=disease_result.get('confidence', 0.5),
+                deficiency_confidence=deficiency_result.get('confidence', 0.5)
             )
-        except Exception:
-            recommendations = [
-                "Continue regular monitoring of your coffee plants",
-                "Ensure proper watering and soil drainage",
-                "Monitor for common pests and diseases"
-            ]
+        except Exception as rec_err:
+            logger.warning(f"Structured recommendations failed: {rec_err}")
+            structured_recs = {
+                'disease_recommendations': {},
+                'deficiency_recommendations': {},
+                'products': [],
+                'varieties': []
+            }
 
         disease_explanation = get_explanation(disease_result.get('class', 'Unknown'), 'disease')
         disease_recommendation = get_recommendation(disease_result.get('class', 'Unknown'), 'disease')
@@ -382,17 +387,22 @@ def upload_image():
         response = {
             'disease_prediction': {**disease_result, 'explanation': disease_explanation, 'recommendation': disease_recommendation, 'top3': disease_top3},
             'deficiency_prediction': {**deficiency_result, 'explanation': deficiency_explanation, 'recommendation': deficiency_recommendation, 'top3': deficiency_top3},
-            'recommendations': recommendations,
+            'disease_recommendations': structured_recs['disease_recommendations'],
+            'deficiency_recommendations': structured_recs['deficiency_recommendations'],
+            'products': structured_recs['products'],
+            'varieties': structured_recs['varieties'],
+            'recommendations': recommendations,  # Legacy field
             'processing_time': round(total_time, 4),
-            'model_version': 'optimized_v1.0-debug',
-            'api_version': 'v1.0',
+            'model_version': 'enhanced_v1.1-structured-recs',
+            'api_version': 'v1.1',
             'debug': {
                 'image_hash': image_hash,
                 'total_time': round(total_time, 4),
                 'models_used': {
                     'disease_type': type(disease_runner).__name__ if disease_runner else 'None',
                     'deficiency_type': type(deficiency_runner).__name__ if deficiency_runner else 'None'
-                }
+                },
+                'structured_recs_available': bool(structured_recs['disease_recommendations'])
             },
             'status': 'success'
         }
