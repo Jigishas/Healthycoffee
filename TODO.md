@@ -1,5 +1,4 @@
- integrated_management
-   - `deficiency_recommendations`: basic, symptoms, management strategies
+
    - Covers all classes from JSON mappings + uncertain fallbacks
    - Backward compatible with existing `get_additional_recommendations()`
 
