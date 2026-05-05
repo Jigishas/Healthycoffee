@@ -11,7 +11,7 @@ Changes:
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.exceptions import HTTPExceptiongit p
+from werkzeug.exceptions import HTTPException
 import os
 import logging
 import time
