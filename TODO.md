@@ -1,5 +1,4 @@
 
-   - Added comprehensive structured data for all disease/deficiency classes
    - `disease_recommendations`: disease_name, severity, overview, symptoms, integrated_management
    - `deficiency_recommendations`: basic, symptoms, management strategies
    - Covers all classes from JSON mappings + uncertain fallbacks
