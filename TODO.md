@@ -12,6 +12,3 @@
 ### 4. ✅ Frontend Re
 
 
-## Validation Results
-- Backend `/api/v1/upload-image` → ✅ Returns structured recommendations
-
