@@ -23,8 +23,4 @@
 
 **Usage**: 
 ```
-curl -X POST -F "image=@leaf.jpg" http://localhost:8000/api/v1/upload-image
-```
-Response includes `disease_recommendations` & `deficiency_recommendations` matching UI requirements.
-
-
+curl -X PO
