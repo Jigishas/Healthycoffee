@@ -14,6 +14,4 @@
 
 ## Validation Results
 - Backend `/api/v1/upload-image` → ✅ Returns structured recommendations
-- `/api/test-image` → ✅ Works with test images  
-- Frontend CameraCapture → ✅ Displays comprehensive disease/deficiency management
-- PDF Report → ✅ Full content with symptoms, management strategies, products
+
