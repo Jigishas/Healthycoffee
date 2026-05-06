@@ -13,9 +13,6 @@
    - CameraCapture.jsx already consumes structured recs perfectly
    - Detailed UI sections & PDF generation now fully populated
 
-### 5. ✅ Documentation
-   - TODO.md tracking complete
-   - CHANGES_SUMMARY.md should be updated with feature summary
 
 ## Validation Results
 - Backend `/api/v1/upload-image` → ✅ Returns structured recommendations
