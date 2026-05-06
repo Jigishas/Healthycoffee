@@ -21,6 +21,4 @@
 ## Result
 **Task completed**: Backend now attaches comprehensive recommendations after analysis feedback display. Frontend automatically uses enhanced data.
 
-**Usage**: 
-```
-curl -X PO
+
