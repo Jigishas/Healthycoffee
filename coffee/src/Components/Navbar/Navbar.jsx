@@ -207,7 +207,7 @@ function Navbar() {
 
             <motion.button
               onClick={triggerCameraCapture}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-2 px-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium text-sm whitespace-nowrap"
+              className="bg-green hover:from-amber-600 hover:to-orange-600 text-white py-2 px-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium text-sm whitespace-nowrap"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               aria-label="Open camera to analyze"
